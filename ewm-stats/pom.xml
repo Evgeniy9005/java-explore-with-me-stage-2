@@ -10,7 +10,7 @@
     <artifactId>ewm-stats</artifactId>
     <packaging>pom</packaging>
     <name>EWM stats</name>
-  <!--  <url>http://maven.apache.org</url>-->
+    <url>http://maven.apache.org</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

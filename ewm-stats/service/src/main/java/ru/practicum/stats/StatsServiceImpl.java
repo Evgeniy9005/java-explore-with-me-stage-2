@@ -1,12 +1,12 @@
 package ru.practicum.stats;
 
+
 import dto.EndpointHitDto;
 import dto.ViewStats;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import ru.practicum.dao.StatsRepository;
 import ru.practicum.model.EndpointHit;
 import ru.practicum.model.EndpointHitMapper;
