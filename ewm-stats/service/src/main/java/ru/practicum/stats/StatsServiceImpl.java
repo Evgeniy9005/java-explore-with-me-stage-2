@@ -34,14 +34,16 @@ public class StatsServiceImpl implements StatsService {
         return mapper.toEndpointHitDto(save);
     }
 
-    public ViewStats getStats(String start, String end, String uris, String unique) {
+    public List<ViewStats> getStats(String start, String end, String uris, String unique) {
 
         log.info("Запрос на статистику start = {}, end = {}, uris = {}, unique = {}",start,end,uris,unique);
 
         List<EndpointHit> endpointHitList =  repository.findAll();
 
-        log.info("Вернулась статистика {}",endpointHitList);
+        List<ViewStats> viewStatsList = repository.getCountHit();
 
-        return ViewStats.builder().build();
+        log.info("Вернулась статистика {}",viewStatsList);
+
+        return viewStatsList;
     }
 }

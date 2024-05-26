@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.model.EndpointHit;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -27,12 +28,12 @@ public class StatsController {
     }
 
     @GetMapping("/stats")
-    public ViewStats getStats(
+    public List<ViewStats> getStats(
             @RequestParam String start,
             @RequestParam  String end,
             @RequestParam (required = false) String uris,
             @RequestParam (required = false) String unique
     ) {
-        return null;
+        return service.getStats(start,end,uris,unique);
     }
 }
