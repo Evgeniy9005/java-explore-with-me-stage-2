@@ -1,15 +1,19 @@
 package dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Builder(toBuilder = true)
-@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@EqualsAndHashCode
+@Getter
 public class EndpointHitDto {
-    private final String app;
-    private final String uri;
-    private final String ip;
-    private final String timestamp;
+    private String app;
+    private String uri;
+    private String ip;
+    private String timestamp;
 }
