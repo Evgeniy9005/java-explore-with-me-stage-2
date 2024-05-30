@@ -4,15 +4,26 @@ import lombok.*;
 
 import java.util.Objects;
 
-@Builder(toBuilder = true)
-@NoArgsConstructor
-@AllArgsConstructor
+//@Builder(toBuilder = true)
+/*@NoArgsConstructor
+@AllArgsConstructor*/
 @Setter
 @Getter
+@ToString
 public class ViewStats {
     private String app;
     private String uri;
-    private long hits;
+    private Integer hits;
+
+    public ViewStats(String app, String uri, Long hits) {
+        this.app = app;
+        this.uri = uri;
+        this.hits = hits.intValue();
+    }
+
+    public ViewStats() {
+
+    }
 
     @Override
     public boolean equals(Object o) {

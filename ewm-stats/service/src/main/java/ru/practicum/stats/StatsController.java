@@ -18,8 +18,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Validated
 public class StatsController {
-
-
     private final StatsService service;
 
     @PostMapping("/hit")
@@ -30,9 +28,9 @@ public class StatsController {
     @GetMapping("/stats")
     public List<ViewStats> getStats(
             @RequestParam String start,
-            @RequestParam  String end,
+            @RequestParam String end,
             @RequestParam (required = false) String uris,
-            @RequestParam (required = false) String unique
+            @RequestParam (defaultValue = "true") Boolean unique
     ) {
         return service.getStats(start,end,uris,unique);
     }

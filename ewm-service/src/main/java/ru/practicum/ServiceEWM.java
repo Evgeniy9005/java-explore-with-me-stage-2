@@ -1,13 +1,14 @@
 package ru.practicum;
 
-/**
- * Hello world!
- *
- */
+import ru.practicum.client.StatsClient;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+
 public class ServiceEWM
 {
-    public static void main( String[] args )
-    {
-        System.out.println( "Hello World!" );
+    public static void main( String[] args ) {
+
     }
 }

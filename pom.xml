@@ -25,7 +25,8 @@
 	<modules>
 		<module>ewm-stats</module>
 		<module>ewm-service</module>
-	</modules>
+        <module>exceptions</module>
+    </modules>
 
 	<dependencyManagement>
 		<dependencies>
