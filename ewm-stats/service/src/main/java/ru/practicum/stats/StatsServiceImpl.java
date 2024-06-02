@@ -13,6 +13,7 @@ import ru.practicum.model.EndpointHitMapper;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,6 +41,8 @@ public class StatsServiceImpl implements StatsService {
         LocalDateTime timeStart;
         LocalDateTime timeEnd;
         List<Integer> urisId = null;
+        String [] arrUris = new String[0];
+        List<String> urisList =  new ArrayList<>();
         List<ViewStats> viewStatsList = null;
 
         if(start != null | start.isBlank()) {
@@ -61,16 +64,14 @@ public class StatsServiceImpl implements StatsService {
         log.info("Запрос на статистику start = {}, end = {}, uris = {}, unique = {}",start,end,uris,unique);
 
         if(uris != null) {
-            urisId = Arrays.asList(uris.split(",")).stream()
-                    .map(s -> Integer.parseInt(s))
-                    .collect(Collectors.toList());
+            urisList = Arrays.asList(uris.split(","));
         }
 
-        if(unique != null & !unique) { //с учетом уникальности ip пользователя
+        if(unique != null & unique) { //с учетом уникальности ip пользователя
             if (uris != null) {
-                viewStatsList = repository.getCountHitUnique(timeStart,timeEnd,urisId);
+                viewStatsList = repository.getCountHitUnique(timeStart,timeEnd,urisList);
                 log.info("Выборка статистики с учетом уникальности IP пользователя на каждый элемент массива {}," +
-                        " идентификатора регистрированной статистики, в диапазоне времени от {} до {}",urisId, timeStart, timeEnd);
+                        " идентификатора регистрированной статистики, в диапазоне времени от {} до {}",urisList, timeStart, timeEnd);
             } else {
                 viewStatsList = repository.getCountHitUnique(timeStart,timeEnd);
                 log.info("Выборка статистики с учетом уникальности IP пользователя, в диапазоне времени от {} до {}", timeStart, timeEnd);
@@ -78,11 +79,11 @@ public class StatsServiceImpl implements StatsService {
 
         }
 
-        if(unique != null & unique) {//без учета уникальности ip пользователя
+        if(unique != null & !unique) {//без учета уникальности ip пользователя
             if (uris != null) {
-                viewStatsList = repository.getCountHit(timeStart, timeEnd, urisId);
+                viewStatsList = repository.getCountHit(timeStart, timeEnd, urisList);
                 log.info("Выборка статистики с количеством запросов от клиента на каждый элемент массива {}," +
-                        " идентификатора регистрированной статистики, в диапазоне времени от {} до {}",urisId, timeStart, timeEnd);
+                        " идентификатора регистрированной статистики, в диапазоне времени от {} до {}",urisList, timeStart, timeEnd);
             } else {
                 viewStatsList = repository.getCountHit(timeStart, timeEnd);
                 log.info("Выборка статистики с количеством запросов от клиента, в диапазоне времени от {} до {}",timeStart, timeEnd);

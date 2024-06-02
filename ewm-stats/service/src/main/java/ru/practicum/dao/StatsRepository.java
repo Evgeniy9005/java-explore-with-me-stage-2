@@ -14,7 +14,8 @@ public interface StatsRepository extends JpaRepository<EndpointHit,Integer> {
        @Query("select new dto.ViewStats(e.app, e.uri, count(e.uri)) " +
                "from EndpointHit as e " +
                "where e.timestamp >= ?1 and e.timestamp <= ?2 " +
-               "group by e.uri")
+               "group by e.uri " +
+               "order by count(e.uri) desc")
         List<ViewStats> getCountHit(LocalDateTime start, LocalDateTime end);
 
     @Query("select new dto.ViewStats(e.app, e.uri, count(distinct e.ip)) " +
@@ -25,19 +26,20 @@ public interface StatsRepository extends JpaRepository<EndpointHit,Integer> {
 
     @Query("select new dto.ViewStats(e.app, e.uri, count(e.uri)) " +
             "from EndpointHit as e " +
-            "where e.timestamp >= :start and e.timestamp <= :end and e.id in(:uris) " +
-            "group by e.uri")
+            "where e.timestamp >= :start and e.timestamp <= :end and e.uri in(:uris) " +
+            "group by e.uri " +
+            "order by count(e.uri) desc")
     List<ViewStats> getCountHit(@Param("start") LocalDateTime start,
                                 @Param("end") LocalDateTime end,
-                                @Param("uris") List<Integer> uris);
+                                @Param("uris") List<String> uris);
 
     @Query("select new dto.ViewStats(e.app, e.uri, count(distinct e.ip)) " +
             "from EndpointHit as e " +
-            "where e.timestamp >= :start and e.timestamp <= :end and e.id in(:uris) " +
+            "where e.timestamp >= :start and e.timestamp <= :end and e.uri in(:uris) " +
             "group by e.uri")
     List<ViewStats> getCountHitUnique(@Param("start") LocalDateTime start,
                                       @Param("end") LocalDateTime end,
-                                      @Param("uris") List<Integer> uris);
+                                      @Param("uris") List<String> uris);
 
     List<EndpointHit> findDistinctByTimestampBetween(LocalDateTime start, LocalDateTime end);
 

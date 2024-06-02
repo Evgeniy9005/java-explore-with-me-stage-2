@@ -1,4 +1,4 @@
-package ru.practicum.admin.dto;
+package ru.practicum.category.dto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;

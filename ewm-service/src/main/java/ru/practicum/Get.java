@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Get {
-    public static void main(String[] args) {
+   /* public static void main(String[] args) {
 
 
         StatsClient statsClient = new StatsClient("localhost","9090");
@@ -73,6 +73,6 @@ public class Get {
         System.out.println("&".repeat(100));
         System.out.println(statsClient.get(start,end,false));
         System.out.println("&".repeat(100));
-    }
+    }*/
 
 }
