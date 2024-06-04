@@ -1,22 +1,18 @@
 package ru.practicum.events;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.client.StatsClient;
 import ru.practicum.events.dto.EventFullDto;
 import ru.practicum.events.dto.EventShortDto;
 import ru.practicum.events.dto.NewEventDto;
 import ru.practicum.events.model.UpdateEventAdminRequest;
-
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static ru.practicum.stats.Stats.*;
@@ -63,7 +59,7 @@ public class EventsController {
     }
 
     @GetMapping("/users/{userId}/events") //Получение событий, добавленных текущим пользователем
-    public EventShortDto GetEventsAddedCurrentUser(@PathVariable String userId,
+    public EventShortDto getEventsAddedCurrentUser(@PathVariable String userId,
                                                    @RequestParam (defaultValue = "0") Integer from,
                                                    @RequestParam (defaultValue = "10") Integer size,
                                                    HttpServletRequest request

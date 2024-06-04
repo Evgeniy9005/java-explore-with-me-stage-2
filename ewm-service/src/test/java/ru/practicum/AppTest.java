@@ -1,13 +1,11 @@
 package ru.practicum;
 
-
 import org.junit.jupiter.api.Test;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import java.net.URI;
 
-public class AppTest
-{
+public class AppTest {
+
 @Test
     void test() {
     URI uri = UriComponentsBuilder

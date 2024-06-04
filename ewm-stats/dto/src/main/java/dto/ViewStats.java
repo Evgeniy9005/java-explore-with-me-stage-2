@@ -1,12 +1,8 @@
 package dto;
 
 import lombok.*;
-
 import java.util.Objects;
 
-//@Builder(toBuilder = true)
-/*@NoArgsConstructor
-@AllArgsConstructor*/
 @Setter
 @Getter
 @ToString

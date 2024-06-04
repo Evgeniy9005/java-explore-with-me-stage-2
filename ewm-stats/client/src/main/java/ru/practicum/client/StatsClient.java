@@ -29,7 +29,7 @@ public class StatsClient {
     private String timeStartEncoding;
     private String timeEndEncoding;
 
-    public StatsClient(String urlServer, String port){
+    public StatsClient(String urlServer, String port) {
         this.host = urlServer;
         this.port = port;
         this.client = HttpClient.newHttpClient();
@@ -43,10 +43,7 @@ public class StatsClient {
                 .build();
         HttpResponse<String> response = client.newHttpClient()
                 .send(request1, HttpResponse.BodyHandlers.ofString());
-      /*  System.out.println("response " + response);
-        System.out.println("body " + response.body());
-        System.out.println("status " + response.statusCode());*/
-        if(response.statusCode() != 200) {
+        if (response.statusCode() != 200) {
             throw new RequestErrorException(
                     "Неудачная попытка выполнения запроса данных на сервере! Код ответа: "
                             + response.statusCode()
@@ -69,7 +66,7 @@ public class StatsClient {
             HttpResponse<String> response = client.newHttpClient()
                     .send(request, HttpResponse.BodyHandlers.ofString());
            body = response.body();
-            if(response.statusCode() != 201) {
+            if (response.statusCode() != 201) {
                 throw new RequestErrorException(
                         "Неудачная попытка выполнения запроса при сохранении данных на сервере! Код ответа: "
                                 + response.statusCode()
@@ -77,7 +74,7 @@ public class StatsClient {
             }
 
         } catch (IOException | InterruptedException e) {
-            throw new RequestErrorException("Ошибка при формировании запроса сохранения данных на сервере! "+e);
+            throw new RequestErrorException("Ошибка при формировании запроса сохранения данных на сервере! " + e);
         }
         return body;
     }
@@ -94,14 +91,14 @@ public class StatsClient {
                     port +
                     urlStats + "?" +
                     urlStart + "=" +
-                    timeStartEncoding +"&"+
-                    urlEnd +"="+
+                    timeStartEncoding + "&" +
+                    urlEnd + "=" +
                     timeEndEncoding);
 
             body = request(url).body();
 
         } catch (IOException | InterruptedException e) {
-            throw new RequestErrorException("Ошибка при формировании запроса данных с сервера! "+e);
+            throw new RequestErrorException("Ошибка при формировании запроса данных с сервера! " + e);
         }
         return body;
     }
@@ -118,16 +115,16 @@ public class StatsClient {
                     port +
                     urlStats + "?" +
                     urlStart + "=" +
-                    timeStartEncoding +"&"+
-                    urlEnd +"="+
-                    timeEndEncoding +"&"+
-                    urlUnique +"="+
+                    timeStartEncoding + "&" +
+                    urlEnd + "=" +
+                    timeEndEncoding + "&" +
+                    urlUnique + "=" +
                     unique.toString());
 
             body = request(url).body();
 
         } catch (IOException | InterruptedException e) {
-            throw new RequestErrorException("Ошибка при формировании запроса данных с сервера! "+e);
+            throw new RequestErrorException("Ошибка при формировании запроса данных с сервера! " + e);
         }
         return body;
     }

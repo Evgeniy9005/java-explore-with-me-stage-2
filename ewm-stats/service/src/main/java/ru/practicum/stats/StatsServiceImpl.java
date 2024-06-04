@@ -10,15 +10,13 @@ import org.springframework.stereotype.Service;
 import ru.practicum.dao.StatsRepository;
 import ru.practicum.model.EndpointHit;
 import ru.practicum.model.EndpointHitMapper;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import ru.practicum.BadRequestException;
-import ru.practicum.NotFoundException;
+
 
 @Slf4j
 @Service
@@ -40,18 +38,16 @@ public class StatsServiceImpl implements StatsService {
     public List<ViewStats> getStats(String start, String end, String uris, Boolean unique) {
         LocalDateTime timeStart;
         LocalDateTime timeEnd;
-        List<Integer> urisId = null;
-        String [] arrUris = new String[0];
         List<String> urisList =  new ArrayList<>();
         List<ViewStats> viewStatsList = null;
 
-        if(start != null | start.isBlank()) {
+        if (start != null | start.isBlank()) {
             timeStart = LocalDateTime.parse(start, formatter);
         } else {
             timeStart = LocalDateTime.now();
         }
 
-        if(end !=null | end.isBlank()) {
+        if (end != null | end.isBlank()) {
             timeEnd = LocalDateTime.parse(end, formatter);
         } else {
             timeEnd = LocalDateTime.now();
@@ -63,11 +59,11 @@ public class StatsServiceImpl implements StatsService {
 
         log.info("Запрос на статистику start = {}, end = {}, uris = {}, unique = {}",start,end,uris,unique);
 
-        if(uris != null) {
+        if (uris != null) {
             urisList = Arrays.asList(uris.split(","));
         }
 
-        if(unique != null & unique) { //с учетом уникальности ip пользователя
+        if (unique != null && unique) { //с учетом уникальности ip пользователя
             if (uris != null) {
                 viewStatsList = repository.getCountHitUnique(timeStart,timeEnd,urisList);
                 log.info("Выборка статистики с учетом уникальности IP пользователя на каждый элемент массива {}," +
@@ -79,7 +75,7 @@ public class StatsServiceImpl implements StatsService {
 
         }
 
-        if(unique != null & !unique) {//без учета уникальности ip пользователя
+        if (unique != null && !unique) { //без учета уникальности ip пользователя
             if (uris != null) {
                 viewStatsList = repository.getCountHit(timeStart, timeEnd, urisList);
                 log.info("Выборка статистики с количеством запросов от клиента на каждый элемент массива {}," +
