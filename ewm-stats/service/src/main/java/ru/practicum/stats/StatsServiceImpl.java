@@ -41,13 +41,13 @@ public class StatsServiceImpl implements StatsService {
         List<String> urisList =  new ArrayList<>();
         List<ViewStats> viewStatsList = null;
 
-        if (start != null | start.isBlank()) {
+        if (start != null || start.isBlank()) {
             timeStart = LocalDateTime.parse(start, formatter);
         } else {
             timeStart = LocalDateTime.now();
         }
 
-        if (end != null | end.isBlank()) {
+        if (end != null || end.isBlank()) {
             timeEnd = LocalDateTime.parse(end, formatter);
         } else {
             timeEnd = LocalDateTime.now();

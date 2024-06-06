@@ -9,8 +9,9 @@ import java.time.format.DateTimeFormatter;
 
 @Mapper(componentModel = "spring")
 public interface EndpointHitMapper {
+       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-
+       @Mapping(target = "timestamp", expression = "java(formatDateTime(hit))")
        EndpointHitDto toEndpointHitDto(EndpointHit hit);
 
        @Mapping(target = "timestamp", expression = "java(parsingTimestamp(hitDto))")
@@ -18,8 +19,12 @@ public interface EndpointHitMapper {
 
 
        default LocalDateTime parsingTimestamp(EndpointHitDto hitDto) {
-              DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
               LocalDateTime timestamp = LocalDateTime.parse(hitDto.getTimestamp(), formatter);
               return timestamp;
+       }
+
+       default String formatDateTime(EndpointHit hit) {
+              return hit.getTimestamp().format(formatter);
        }
 }
