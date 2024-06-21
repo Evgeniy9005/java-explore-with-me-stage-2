@@ -7,7 +7,6 @@ import org.springframework.data.repository.query.Param;
 import ru.practicum.model.EndpointHit;
 import java.time.LocalDateTime;
 import java.util.List;
-//import java.lang.Integer;
 
 public interface StatsRepository extends JpaRepository<EndpointHit,Integer> {
 

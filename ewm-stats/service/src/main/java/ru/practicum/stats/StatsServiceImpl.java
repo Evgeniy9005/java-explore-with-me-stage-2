@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dao.StatsRepository;
 import ru.practicum.model.EndpointHit;
 import ru.practicum.model.EndpointHitMapper;
@@ -29,6 +30,7 @@ public class StatsServiceImpl implements StatsService {
 
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+    @Transactional
     public EndpointHitDto addStats(EndpointHitDto endpointHitDto) {
         EndpointHit save = repository.save(mapper.toEndpointHit(endpointHitDto));
         log.info("Добавлена статистика {}",save);
@@ -72,7 +74,6 @@ public class StatsServiceImpl implements StatsService {
                 viewStatsList = repository.getCountHitUnique(timeStart,timeEnd);
                 log.info("Выборка статистики с учетом уникальности IP пользователя, в диапазоне времени от {} до {}", timeStart, timeEnd);
             }
-
         }
 
         if (unique != null && !unique) { //без учета уникальности ip пользователя

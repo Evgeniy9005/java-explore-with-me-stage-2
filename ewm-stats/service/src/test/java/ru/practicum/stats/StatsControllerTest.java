@@ -1,8 +1,9 @@
 package ru.practicum.stats;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dto.EndpointHitDto;
+import dto.ViewStats;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,14 +11,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @WebMvcTest(controllers = StatsController.class)
 class StatsControllerTest {
@@ -38,6 +39,12 @@ class StatsControllerTest {
     private LocalDateTime time;
     private String formatTime;
 
+    private ViewStats viewStats1;
+    private ViewStats viewStats2;
+    private ViewStats viewStats3;
+
+    private List<ViewStats> viewStatsList;
+
 
     @BeforeEach
     void start() {
@@ -52,6 +59,14 @@ class StatsControllerTest {
                 .ip("198.168.0.1")
                 .timestamp(formatTime)
                 .build();
+
+        viewStats1 = new ViewStats("app1","/uri1",1L);
+        viewStats2 = new ViewStats("app2","/uri2",2L);
+        viewStats3 = new ViewStats("app3","/uri3",3L);
+
+        viewStatsList = List.of(viewStats1,viewStats2,viewStats3);
+
+
     }
 
     @Test
@@ -62,10 +77,20 @@ class StatsControllerTest {
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isCreated());
     }
 
     @Test
-    void getStats() {
+    void getStats() throws Exception {
+
+        mvc.perform(get("/stats")
+                        .content(objectMapper.writeValueAsString(viewStatsList))
+                        .param("start","2020-05-05 00:00:00")
+                        .param("end","2035-05-05 00:00:00")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
     }
 }
