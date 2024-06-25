@@ -1,11 +1,7 @@
 package ru.practicum.data;
 
-
-
-import dto.EndpointHitDto;
 import dto.ViewStats;
 import ru.practicum.model.EndpointHit;
-
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -44,8 +40,8 @@ public class Data {
         if (type.equals(EndpointHit.class)) {
             return (D) EndpointHit.builder()
                     .id(i)
-                    .app("app"+i)
-                    .uri("/uri"+i)
+                    .app("app" + i)
+                    .uri("/uri" + i)
                     .build();
         }
 /*
