@@ -8,15 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.annotation.DirtiesContext;
-import ru.practicum.data.Data;
 import ru.practicum.model.EndpointHit;
 import ru.practicum.model.EndpointHitMapper;
 import ru.practicum.stats.StatsService;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static ru.practicum.data.Data.*;
@@ -77,7 +74,6 @@ class StatsServiceTest {
         String start = LocalDateTime.now().minusDays(1).format(getFormatter());
         String end = LocalDateTime.now().plusDays(1).format(getFormatter());
 
-
         List<ViewStats> viewStats = statsService.getStats(start,end,"uri/1",false);
         assertEquals(1,viewStats.size());
         assertEquals(5,viewStats.get(0).getHits());
@@ -107,7 +103,13 @@ class StatsServiceTest {
                         .build()))
                 .collect(Collectors.toList());
         viewStats = statsService.getStats(start,end,"uri/3",true);
-        viewStats.stream().forEach(System.out::println);
+        assertEquals(1,viewStats.size());
+        assertEquals(1,viewStats.get(0).getHits());
+        viewStats = statsService.getStats(start,end,"uri/1,uri/2,uri/3",true);
+        assertEquals(3,viewStats.size());
+        assertEquals(5,viewStats.get(0).getHits());
+        assertEquals(4,viewStats.get(1).getHits());
+        assertEquals(1,viewStats.get(2).getHits());
     }
 
 }

@@ -42,7 +42,7 @@ public class Data {
                     .id(i)
                     .app("app" + i)
                     .uri("/uri" + i)
-                    .ip("192.168.0."+i)
+                    .ip("192.168.0." + i)
                     .timestamp(LocalDateTime.now())
                     .build();
         }
