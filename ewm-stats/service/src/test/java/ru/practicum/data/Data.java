@@ -4,6 +4,7 @@ import dto.ViewStats;
 import ru.practicum.model.EndpointHit;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,15 +15,14 @@ public class Data {
     public static final LocalDateTime CREATED_DATE = LocalDateTime.of(2024,1,1,1,1);
     public static final LocalDateTime START_DATE = LocalDateTime.of(2024,2,2,2,2);
     public static final LocalDateTime END_DATE = LocalDateTime.of(2024,3,3,3,3);
-    /**
-     <p><b>- User</b> баз параметров objects;</p>
-     <p><b>- ItemRequest</b> баз параметров objects;</p>
-     <p><b>- Item</b> параметр 1 objects[0] User, параметр 2 objects[1] Long идентификатор requester;</p>
-     <p><b>- Booking</b> параметр 1 objects[0] User, параметр 2 objects[1] Item;</p>
-     <p><b>- CreateBooking</b> параметр 1 objects[0] Long идентификатор Item;</p>
-     <p><b>- Comment</b>  параметр 1 objects[0] Item, параметр 2 objects[1] User.</p>
-     */
 
+    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+
+    /**
+     <p><b>- EndpointHit</b> баз параметров objects;</p>
+     <p><b>- ViewStats</b> баз параметров objects;</p>
+     */
     public static <T> List<T> generationData(Integer createObjects, Type t, Object... objects) {
 
         return (List<T>) IntStream.iterate(1,i -> i + 1)
@@ -42,6 +42,8 @@ public class Data {
                     .id(i)
                     .app("app" + i)
                     .uri("/uri" + i)
+                    .ip("192.168.0."+i)
+                    .timestamp(LocalDateTime.now())
                     .build();
         }
 /*
@@ -118,6 +120,17 @@ public class Data {
         System.out.println("~*~".repeat(33));
         list.stream().forEach(System.out::println);
         System.out.println("~*~".repeat(33));
+    }
+
+    /**
+     <p><b>- Формат </b> "yyyy-MM-dd HH:mm:ss"</p>
+     */
+    public static DateTimeFormatter getFormatter() {
+        return formatter;
+    }
+
+    public static DateTimeFormatter getMyFormatter(String formatter) {
+        return DateTimeFormatter.ofPattern(formatter);
     }
 
     public static void separato__________________________________r() {

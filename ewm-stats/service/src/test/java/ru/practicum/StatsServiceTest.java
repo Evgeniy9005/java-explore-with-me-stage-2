@@ -12,10 +12,14 @@ import ru.practicum.data.Data;
 import ru.practicum.model.EndpointHit;
 import ru.practicum.model.EndpointHitMapper;
 import ru.practicum.stats.StatsService;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static ru.practicum.data.Data.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -42,9 +46,9 @@ class StatsServiceTest {
 
     @BeforeAll
     static void data() {
-        viewStatsList = Data.generationData(5,ViewStats.class);
-        endpointHitList = Data.generationData(5,EndpointHit.class);
-        Data.printList(endpointHitList);
+        viewStatsList = generationData(5,ViewStats.class);
+        endpointHitList = generationData(5,EndpointHit.class);
+        printList(endpointHitList);
 
     }
 
@@ -53,14 +57,57 @@ class StatsServiceTest {
         endpointHitDtoList = endpointHitList.stream()
                 .map(endpointHit -> hitMapper.toEndpointHitDto(endpointHit))
                 .collect(Collectors.toList());
-        Data.printList(endpointHitDtoList);
+        printList(endpointHitDtoList);
     }
 
     @Test
     void methodTest() {
         EndpointHitDto endpointHitDto = statsService.addStats(endpointHitDtoList.get(0));
-        System.out.println(endpointHitDto);
-        //assertEquals();
+        assertEquals(endpointHitDto,endpointHitDtoList.get(0));
+    }
+
+    @Test
+    void methodTestGetStats() {
+        List<EndpointHitDto> uris = endpointHitDtoList.stream()
+                .map(endpointHit -> statsService.addStats(endpointHit.toBuilder()
+                        .app("app")
+                        .uri("uri/1")
+                        .build()))
+                .collect(Collectors.toList());
+        String start = LocalDateTime.now().minusDays(1).format(getFormatter());
+        String end = LocalDateTime.now().plusDays(1).format(getFormatter());
+
+
+        List<ViewStats> viewStats = statsService.getStats(start,end,"uri/1",false);
+        assertEquals(1,viewStats.size());
+        assertEquals(5,viewStats.get(0).getHits());
+        //viewStats.stream().forEach(System.out::println);
+
+        uris = endpointHitDtoList.stream().limit(4)
+                .map(endpointHit -> statsService.addStats(endpointHit.toBuilder()
+                        .app("app")
+                        .uri("uri/2")
+                        .build()))
+                .collect(Collectors.toList());
+        viewStats = statsService.getStats(start,end,"uri/2",false);
+        assertEquals(1,viewStats.size());
+        assertEquals(4,viewStats.get(0).getHits());
+
+        viewStats = statsService.getStats(start,end,"uri/1,uri/2",false);
+        assertEquals(2,viewStats.size());
+        assertEquals(5,viewStats.get(0).getHits());
+        assertEquals(4,viewStats.get(1).getHits());
+
+        uris = endpointHitDtoList.stream()
+                .limit(3)
+                .map(endpointHit -> statsService.addStats(endpointHit.toBuilder()
+                        .app("app")
+                        .uri("uri/3")
+                        .ip("198.168.1.1")
+                        .build()))
+                .collect(Collectors.toList());
+        viewStats = statsService.getStats(start,end,"uri/3",true);
+        viewStats.stream().forEach(System.out::println);
     }
 
 }
