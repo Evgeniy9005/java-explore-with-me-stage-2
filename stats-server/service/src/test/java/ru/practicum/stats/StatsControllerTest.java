@@ -60,9 +60,9 @@ class StatsControllerTest {
                 .timestamp(formatTime)
                 .build();
 
-        viewStats1 = new ViewStats("app1","/uri1",1L);
-        viewStats2 = new ViewStats("app2","/uri2",2L);
-        viewStats3 = new ViewStats("app3","/uri3",3L);
+        viewStats1 = new ViewStats("app1","/uri1",1);
+        viewStats2 = new ViewStats("app2","/uri2",2);
+        viewStats3 = new ViewStats("app3","/uri3",3);
 
         viewStatsList = List.of(viewStats1,viewStats2,viewStats3);
 

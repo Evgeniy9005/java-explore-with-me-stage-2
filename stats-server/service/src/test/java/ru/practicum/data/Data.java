@@ -34,7 +34,7 @@ public class Data {
     private static <D> D getData(int i, Type type, Object... objects) {
 
         if (type.equals(ViewStats.class)) {
-            return (D) new ViewStats("app","uri " + i, Long.valueOf(i));
+            return (D) new ViewStats("app","uri " + i, i);
         }
 
         if (type.equals(EndpointHit.class)) {
