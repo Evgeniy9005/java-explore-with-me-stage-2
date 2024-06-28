@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>ewm-stats</artifactId>
+        <artifactId>stats-server</artifactId>
         <groupId>ru.practicum</groupId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>  <!--указывает относительный путь к файлу родительского POM-->
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>stats-server</artifactId>
+    <artifactId>service</artifactId>
     <packaging>jar</packaging>
     <name>Stats server</name>
 

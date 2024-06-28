@@ -23,7 +23,7 @@
 	</properties>
 
 	<modules>
-		<module>ewm-stats</module>
+		<module>stats-server</module>
 		<module>ewm-service</module>
         <module>exceptions</module>
     </modules>

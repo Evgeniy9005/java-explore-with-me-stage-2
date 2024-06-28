@@ -7,7 +7,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>ewm-stats</artifactId>
+    <artifactId>stats-server</artifactId>
     <packaging>pom</packaging>
     <name>EWM stats</name>
     <url>http://maven.apache.org</url>
@@ -20,7 +20,7 @@
 
     <modules>
         <module>dto</module>
-        <module>stats-server</module>
+        <module>service</module>
         <module>client</module>
     </modules>
 
