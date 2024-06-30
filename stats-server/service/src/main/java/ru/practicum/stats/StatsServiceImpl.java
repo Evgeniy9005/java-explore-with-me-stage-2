@@ -43,17 +43,22 @@ public class StatsServiceImpl implements StatsService {
         List<String> urisList =  new ArrayList<>();
         List<ViewStats> viewStatsList = null;
 
-        if (start != null || start.isBlank()) {
+        /*if (start != null || start.isBlank()) {
             timeStart = LocalDateTime.parse(start, formatter);
         } else {
             timeStart = LocalDateTime.now();
-        }
+        }*/
 
-        if (end != null || end.isBlank()) {
+        timeStart = LocalDateTime.parse(start, formatter);
+
+
+        /*if (end != null || end.isBlank()) {
             timeEnd = LocalDateTime.parse(end, formatter);
         } else {
             timeEnd = LocalDateTime.now();
-        }
+        }*/
+
+        timeEnd = LocalDateTime.parse(end, formatter);
 
         if (timeStart.compareTo(timeEnd) > 0) {
             throw new BadRequestException("Время начала # выборки не может быть больше времени конца # выборки ",timeStart, timeEnd);

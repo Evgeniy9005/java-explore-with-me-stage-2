@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.bean.DefaultDateTime;
 import java.util.List;
 
 
@@ -16,6 +17,8 @@ import java.util.List;
 public class StatsController {
     private final StatsService service;
 
+    private final DefaultDateTime defaultDateTime;
+
     @PostMapping("/hit")
     public ResponseEntity<EndpointHitDto> addStats(@RequestBody EndpointHitDto endpointHitDto) {
         return ResponseEntity.status(201).body(service.addStats(endpointHitDto));
@@ -23,11 +26,17 @@ public class StatsController {
 
     @GetMapping("/stats")
     public List<ViewStats> getStats(
-            @RequestParam String start,
-            @RequestParam String end,
+            @RequestParam (defaultValue = "#{defaultDateTime.getDate()}") String start,
+            @RequestParam (//name="end",
+                     defaultValue = "#{defaultDateTime.getDate()}")//"#{T(java.time.LocalDateTime).now()}")
+                     String end,
             @RequestParam (required = false) String uris,
             @RequestParam (defaultValue = "false") Boolean unique
     ) {
         return service.getStats(start,end,uris,unique);
     }
+
+   /* private String defaultDateTime(){
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }*/
 }

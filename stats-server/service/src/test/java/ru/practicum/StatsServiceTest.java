@@ -110,6 +110,7 @@ class StatsServiceTest {
         assertEquals(5,viewStats.get(0).getHits());
         assertEquals(4,viewStats.get(1).getHits());
         assertEquals(1,viewStats.get(2).getHits());
+
     }
 
 }

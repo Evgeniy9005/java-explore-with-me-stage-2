@@ -2,15 +2,18 @@ package dto;
 
 import lombok.*;
 
+import java.util.Objects;
 
-@Data
-@AllArgsConstructor
+
+@Getter
+@Setter
+@ToString
 public class ViewStats {
     private String app;
     private String uri;
     private int hits;
 
-    /*public ViewStats(String app, String uri, Long hits) {
+    public ViewStats(String app, String uri, Long hits) {
         this.app = app;
         this.uri = uri;
         this.hits = hits.intValue();
@@ -31,5 +34,5 @@ public class ViewStats {
     @Override
     public int hashCode() {
         return Objects.hash(app, uri, hits);
-    }*/
+    }
 }
