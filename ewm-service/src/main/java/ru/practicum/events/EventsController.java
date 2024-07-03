@@ -26,13 +26,13 @@ public class EventsController {
 
     @GetMapping("/events")
     public List<EventShortDto> getEvents(
-            @RequestParam (required = false) String text,
-            @RequestParam (required = false) Integer categories,
-            @RequestParam (required = false) Boolean paid,
-            @RequestParam (required = false) String rangeStart,
-            @RequestParam (required = false) String rangeEnd,
-            @RequestParam (required = false) Boolean onlyAvailable,
-            @RequestParam (required = false) String sort,
+            @RequestParam (required = false) String text,//текст для поиска в содержимом аннотации и подробном описании события
+            @RequestParam (required = false) Integer categories, //список идентификаторов категорий в которых будет вестись поиск
+            @RequestParam (required = false) Boolean paid, //поиск только платных/бесплатных событий
+            @RequestParam (required = false) String rangeStart, //дата и время не раньше которых должно произойти событие
+            @RequestParam (required = false) String rangeEnd, //дата и время не позже которых должно произойти событие
+            @RequestParam (required = false) Boolean onlyAvailable,//только события у которых не исчерпан лимит запросов на участие
+            @RequestParam (required = false) String sort,//Вариант сортировки: по дате события или по количеству просмотров
             @RequestParam (defaultValue = "0") Integer from,
             @RequestParam (defaultValue = "10") Integer size,
             HttpServletRequest request
