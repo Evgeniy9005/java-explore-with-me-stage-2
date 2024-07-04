@@ -6,11 +6,11 @@ import java.net.URI;
 
 public class AppTest {
 
-@Test
+    @Test
     void test() {
     URI uri = UriComponentsBuilder
             .fromUriString("https://example.com/hotels/{hotel}?q={q}")
             .build("Westin", "123");
     System.out.println(uri);
-}
+    }
 }

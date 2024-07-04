@@ -2,7 +2,11 @@ package ru.practicum.data;
 
 import dto.ViewStats;
 import ru.practicum.category.dto.CategoryDto;
+import ru.practicum.events.constants.State;
+import ru.practicum.events.dto.EventFullDto;
 import ru.practicum.events.dto.EventShortDto;
+import ru.practicum.events.dto.NewEventDto;
+import ru.practicum.events.model.Location;
 import ru.practicum.users.dto.UserShortDto;
 
 import java.lang.reflect.Type;
@@ -23,7 +27,8 @@ public class Data {
 
 
     /**
-     <p><b>- EndpointHit</b> баз параметров objects;</p>
+     <p><b>- EventShortDto</b> баз параметров objects;</p>
+     <p><b>- EventFullDto</b> баз параметров objects;</p>
      <p><b>- ViewStats</b> баз параметров objects;</p>
      */
     public static <T> List<T> generationData(Integer createObjects, Type t, Object... objects) {
@@ -45,12 +50,47 @@ public class Data {
                     .id(i)
                     .title("Заголовок " + i)
                     .category(new CategoryDto(i,"Категория " + i))
-                    .eventDate("")
+                    .eventDate(LocalDateTime.now().minusDays(1).format(formatter))
                     .initiator(new UserShortDto(i,"Пользователь" + i))
                     .annotation("Краткое описание " + i)
                     .confirmedRequests(i + 1)
                     .paid(true)
                     .views(i * 10)
+                    .build();
+        }
+
+        if (type.equals(EventFullDto.class)) {
+            return (D) EventFullDto.builder()
+                    .id(i)
+                    .title("Заголовок " + i)
+                    .category(new CategoryDto(i,"Категория " + i))
+                    .eventDate(LocalDateTime.now().plusDays(1).format(formatter))
+                    .initiator(new UserShortDto(i,"Пользователь" + i))
+                    .annotation("Краткое описание " + i)
+                    .confirmedRequests(i + 1)
+                    .paid(true)
+                    .views(i * 10)
+                    .location(new Location(52.2f,54.4f))
+                    .state(State.PUBLISHED)
+                    .description("Полное описание события " + i)
+                    .participantLimit(0)
+                    .requestModeration(false)
+                    .publishedOn(LocalDateTime.now().plusMinutes(3).format(formatter))
+                    .createdOn(LocalDateTime.now().format(formatter))
+                    .build();
+        }
+
+        if (type.equals(NewEventDto.class)) {
+            return (D) NewEventDto.builder()
+                    .title("Заголовок " + i)
+                    .category(i)
+                    .eventDate(LocalDateTime.now().plusDays(1).format(formatter))
+                    .annotation("Краткое описание " + i)
+                    .paid(true)
+                    .location(new Location(52.2f,54.4f))
+                    .description("Полное описание события " + i)
+                    .participantLimit(0)
+                    .requestModeration(false)
                     .build();
         }
 /*

@@ -59,10 +59,10 @@ public class EventsController {
     }
 
     @GetMapping("/users/{userId}/events") //Получение событий, добавленных текущим пользователем
-    public EventShortDto getEventsAddedCurrentUser(@PathVariable String userId,
-                                                   @RequestParam (defaultValue = "0") Integer from,
-                                                   @RequestParam (defaultValue = "10") Integer size,
-                                                   HttpServletRequest request
+    public List<EventShortDto> getEventsAddedCurrentUser(@PathVariable String userId,
+                                                         @RequestParam (defaultValue = "0") Integer from,
+                                                         @RequestParam (defaultValue = "10") Integer size,
+                                                         HttpServletRequest request
     ) {
         log.info("Получение событий, добавленных текущим пользователем {}, в диапазоне от {} до {}",userId, from, size);
         log.info("Отправлена статистика {}",getStatsClient().put(hit("ewm-main-service",request)));

@@ -1,5 +1,6 @@
 package ru.practicum.category.dto;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import javax.validation.constraints.Max;
@@ -8,7 +9,7 @@ import javax.validation.constraints.Min;
 
 
 
-@ToString
+@Data
 @RequiredArgsConstructor
 public class NewCategoryDto {
 
