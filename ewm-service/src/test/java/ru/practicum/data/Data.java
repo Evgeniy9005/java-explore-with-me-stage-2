@@ -93,6 +93,20 @@ public class Data {
                     .requestModeration(false)
                     .build();
         }
+
+        if (type.equals(NewEventDto.class)) {
+            return (D) NewEventDto.builder()
+                    .title("Заголовок " + i)
+                    .category(i)
+                    .eventDate(LocalDateTime.now().plusDays(1).format(formatter))
+                    .annotation("Краткое описание " + i)
+                    .paid(true)
+                    .location(new Location(52.2f,54.4f))
+                    .description("Полное описание события " + i)
+                    .participantLimit(0)
+                    .requestModeration(false)
+                    .build();
+        }
 /*
         if (type.equals(Item.class)) {
             if (objects.length == 2) {
