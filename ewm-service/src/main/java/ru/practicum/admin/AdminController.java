@@ -69,7 +69,10 @@ public class AdminController {
     }
 
     @PostMapping("/events/{eventId}")
-    public UpdateEventAdminRequest upEvents(@PathVariable Integer eventId, HttpServletRequest request) {
+    public EventFullDto upEvent(@RequestBody UpdateEventAdminRequest eventAdminRequest,
+                                           @PathVariable Integer eventId,
+                                           HttpServletRequest request
+    ) {
         log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
         return null;
     }
