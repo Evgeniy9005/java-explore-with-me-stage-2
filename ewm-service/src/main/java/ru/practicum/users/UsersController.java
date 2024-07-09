@@ -31,6 +31,8 @@ public class UsersController {
 
     private static final String APP = "ewm-main-service";
 
+    private final UserService userService;
+
    /* @PostMapping("/admin/users")
     public UserDto addNewUser(@RequestBody NewUserRequest newUserRequest, HttpServletRequest request) {
         log.info("{} запрос на добавления пользователя {} ", USERS, newUserRequest);
@@ -46,7 +48,7 @@ public class UsersController {
     ) {
         log.info("{} Получение событий, добавленных текущим пользователем {}, в диапазоне от {} до {}",USERS,userId, from, size);
         log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
-        return null;
+        return userService.getEventsAddedCurrentUser(userId,from,size);
     }
 
     @PostMapping("/users/{userId}/events") //Добавление нового события пользователем
