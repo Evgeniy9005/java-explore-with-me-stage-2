@@ -1,5 +1,7 @@
-package ru.practicum.users.model;
+package ru.practicum.admin.dto;
 
+
+import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import ru.practicum.events.model.Location;
@@ -11,7 +13,9 @@ import javax.validation.constraints.Min;
 - значит изменение этих данных не требуется.*/
 @Data
 @RequiredArgsConstructor
-public class UpdateEventUserRequest {
+@Builder(toBuilder = true)
+public class UpdateEventAdminRequest {
+
     /**Новая аннотация*/
     @Max(2000)
     @Min(20)
@@ -22,7 +26,7 @@ public class UpdateEventUserRequest {
     @Max(7000)
     @Min(20)
     private final String description;
-    /**Новые дата и время на которые намечено событие. Дата и время указываются в формате "yyyy-MM-dd HH:mm:ss"*/
+    /**Новые дата и время на которые намечено событие. Дата и время указываются в формате "yyyy-MM-dd HH:mm:ss*/
     private final String eventDate;
     /**Широта и долгота места проведения события*/
     private final Location location;
@@ -32,7 +36,7 @@ public class UpdateEventUserRequest {
     private final int participantLimit;
     /**Нужна ли пре-модерация заявок на участие*/
     private final boolean requestModeration;
-    /**Изменение состояния события*/
+    /**Новое состояние события*/
     private final String stateAction;
     /**Новый заголовок*/
     private final String title;

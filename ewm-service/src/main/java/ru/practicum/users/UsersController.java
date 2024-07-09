@@ -105,4 +105,24 @@ public class UsersController {
         log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
         return null;
     }
+
+    @PostMapping("/users/{userId}/requests") //Добавление запроса от текущего пользователя на участие в событии
+    public ParticipationRequestDto addRequestCurrentUserParticipateEvent(
+            @PathVariable Integer userId,
+            @RequestParam Integer eventId,
+            HttpServletRequest request
+    ) {
+        log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
+        return null;
+    }
+
+    @PatchMapping("/users/{userId}/requests/{requestId}/cancel") //Отмена своего запроса на участие в событии
+    public ParticipationRequestDto upEventToParticipateCancel (
+            @PathVariable Integer userId,
+            @PathVariable Integer requestId,
+            HttpServletRequest request
+    ) {
+        log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
+        return null;
+    }
 }
