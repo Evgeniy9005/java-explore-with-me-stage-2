@@ -1,5 +1,6 @@
-package ru.practicum.admin.dto;
+package ru.practicum.users.dto.request;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
@@ -9,6 +10,7 @@ import javax.validation.constraints.Min;
 
 @RequiredArgsConstructor
 @ToString
+@Getter
 public class NewUserRequest {
     @Email
     @Max(254)

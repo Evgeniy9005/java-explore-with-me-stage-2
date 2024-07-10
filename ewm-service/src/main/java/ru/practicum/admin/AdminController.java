@@ -2,12 +2,10 @@ package ru.practicum.admin;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.admin.dto.NewUserRequest;
+import ru.practicum.users.dto.request.NewUserRequest;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.compilations.dto.CompilationDto;
@@ -37,7 +35,7 @@ public class AdminController {
     @PostMapping("/categories")
     @ResponseStatus(code = HttpStatus.CREATED)
     public CategoryDto addNewCategory(@RequestBody NewCategoryDto newCategoryDto, HttpServletRequest request) {
-        log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
+
         return null;
     }
 
@@ -91,7 +89,6 @@ public class AdminController {
     @ResponseStatus(code = HttpStatus.CREATED)
     public UserDto addNewUser(@RequestBody NewUserRequest newUserRequest, HttpServletRequest request) {
         log.info("{} запрос на добавления пользователя {} ",ADMIN, newUserRequest);
-        log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
         return null;
     }
 
