@@ -35,7 +35,7 @@ public interface AdminService {
     /**Добавление нового пользователя*/
     UserDto addNewUser(NewUserRequest newUserRequest,HttpServletRequest request);
     /**Удаление пользователя*/
-    void deleteUser(Integer userId);
+    void deleteUser(Integer userId, HttpServletRequest request);
     /**Добавление новой подборки (подборка может не содержать событий)*/
     public CompilationDto addNewCompilation(NewCompilationDto newCompilationDto);
     /**Удаление подборки*/

@@ -14,6 +14,8 @@ import ru.practicum.events.dto.EventFullDto;
 import ru.practicum.events.model.UpdateEventAdminRequest;
 import ru.practicum.users.dto.UserDto;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 import static ru.practicum.stats.Stats.getStatsClient;
@@ -76,9 +78,9 @@ public class AdminController {
     }
 
     @GetMapping("/users")
-    public List<UserDto> getUsers(@RequestParam String ibs,
-                                  @RequestParam (defaultValue = "0") int from,
-                                  @RequestParam (defaultValue = "10") int size,
+    public List<UserDto> getUsers(@RequestParam @Positive String ibs,
+                                  @RequestParam (defaultValue = "0") @PositiveOrZero int from,
+                                  @RequestParam (defaultValue = "10") @Positive int size,
                                   HttpServletRequest request
     ) {
         log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
@@ -89,13 +91,14 @@ public class AdminController {
     @ResponseStatus(code = HttpStatus.CREATED)
     public UserDto addNewUser(@RequestBody NewUserRequest newUserRequest, HttpServletRequest request) {
         log.info("{} запрос на добавления пользователя {} ",ADMIN, newUserRequest);
-        return null;
+        return adminService.addNewUser(newUserRequest,request);
     }
 
     @DeleteMapping("/users/{userId}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable Integer userId, HttpServletRequest request) {
-        log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
+       // log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
+       adminService.deleteUser(userId,request);
     }
 
     @PostMapping("/compilations")

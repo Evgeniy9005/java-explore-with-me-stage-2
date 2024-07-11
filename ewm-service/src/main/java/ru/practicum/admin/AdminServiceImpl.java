@@ -2,7 +2,10 @@ package ru.practicum.admin;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.practicum.users.converter.UserMapper;
 import ru.practicum.users.dto.request.NewUserRequest;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
@@ -13,12 +16,16 @@ import ru.practicum.events.model.UpdateEventAdminRequest;
 import ru.practicum.users.dao.UserRepository;
 import ru.practicum.users.dto.UserDto;
 import ru.practicum.users.model.User;
+import ru.practicum.util.Util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static ru.practicum.stats.Stats.getStatsClient;
 import static ru.practicum.stats.Stats.hit;
+import static ru.practicum.util.Util.getNumbers;
+import static ru.practicum.util.Util.page;
 
 @Slf4j
 @Service
@@ -30,6 +37,8 @@ public class AdminServiceImpl implements AdminService {
     private static final String APP = "ewm-main-service";
 
     private final UserRepository userRepository;
+
+    private final UserMapper userMapper;
 
     /*Добавление новой категории*/
     @Override
@@ -76,8 +85,19 @@ public class AdminServiceImpl implements AdminService {
     /*Получение информации о пользователях*/
     @Override
     public List<UserDto> getUsers(String ibs, int from, int size) {
+        List<UserDto> userDtoList;
+        if(ibs == null) {
 
-        return null;
+        }
+
+        Sort sort = Sort.by(Sort.Direction.ASC,"id");
+        Pageable pageable = page(from,size,sort);
+       // log.info("_____ __> {}",userRepository.findAllById(getNumbers(ibs),pageable));
+        userDtoList = userRepository.findAll(pageable).stream()
+                .map(user -> userMapper.toUserDto(user))
+                .collect(Collectors.toList());
+        log.info("Вернулось запрошенных пользователей {}",userDtoList);
+        return userDtoList;
     }
 
     /*Добавление нового пользователя*/
@@ -88,13 +108,19 @@ public class AdminServiceImpl implements AdminService {
                 .email(newUserRequest.getEmail())
                 .build());
         log.info("Создан пользователь {}",user);
-       // log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
-        return null;
+        UserDto userDto = userMapper.toUserDto(user);
+        log.info("Преобразованный объект пользователя {}",userDto);
+        // log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
+        return userDto;
     }
 
     /*Удаление пользователя*/
     @Override
-    public void deleteUser(Integer userId) {
+    public void deleteUser(Integer userId, HttpServletRequest request) {
+        userRepository.deleteById(userId);
+        log.info("Удален пользователь {}",userId);
+      //  log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
+
     }
 
 
