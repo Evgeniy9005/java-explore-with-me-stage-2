@@ -1,12 +1,9 @@
 package ru.practicum.events.model;
 
 import lombok.*;
-import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.model.Category;
 import ru.practicum.events.constants.State;
-import ru.practicum.users.dto.UserShortDto;
 import ru.practicum.users.model.User;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 

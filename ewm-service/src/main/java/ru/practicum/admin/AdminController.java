@@ -38,20 +38,21 @@ public class AdminController {
     @ResponseStatus(code = HttpStatus.CREATED)
     public CategoryDto addNewCategory(@RequestBody NewCategoryDto newCategoryDto, HttpServletRequest request) {
 
-        return null;
+        return adminService.addNewCategory(newCategoryDto,request);
     }
 
     @DeleteMapping("/categories/{catId}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable Integer catId, HttpServletRequest request) {
-        log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
-
+        adminService.deleteUser(catId,request);
     }
 
     @PostMapping("/categories/{catId}")
-    public CategoryDto upCategory(@PathVariable Integer catId, HttpServletRequest request) {
-        log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
-        return null;
+    public CategoryDto upCategory(@RequestBody CategoryDto categoryDto,
+                                  @PathVariable Integer catId,
+                                  HttpServletRequest request
+    ) {
+        return adminService.upCategory(categoryDto,catId,request);
     }
 
     @GetMapping("/events")

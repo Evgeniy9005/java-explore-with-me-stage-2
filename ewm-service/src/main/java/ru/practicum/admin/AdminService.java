@@ -14,11 +14,11 @@ import java.util.List;
 
 public interface AdminService {
     /**Добавление новой категории*/
-    CategoryDto addNewCategory(NewCategoryDto newCategoryDto);
+    CategoryDto addNewCategory(NewCategoryDto newCategoryDto,HttpServletRequest request);
     /**Удаление категории*/
-    void deleteCategory(Integer catId);
+    void deleteCategory(Integer catId,HttpServletRequest request);
     /**Изменение категории*/
-    CategoryDto upCategory(Integer catId);
+    CategoryDto upCategory(CategoryDto categoryDto,Integer catId,HttpServletRequest request);
     /**Поиск событий*/
     List<EventFullDto> getEvents(String users,
                                         String states,

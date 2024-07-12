@@ -6,13 +6,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import ru.practicum.BadRequestException;
 
-import javax.persistence.criteria.CriteriaBuilder;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
 public class Util {
+
+    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     public static Pageable page(int from, int size) {
         validFromSize(from,size);
         PageRequest pageRequest;
@@ -88,4 +91,9 @@ public class Util {
         return list;
 
     }
+
+    public static DateTimeFormatter getFormatter() {
+        return formatter;
+    }
+
 }

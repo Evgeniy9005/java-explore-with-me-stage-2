@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.practicum.category.converter.CategoryMapper;
+import ru.practicum.category.dao.CategoryRepository;
+import ru.practicum.category.model.Category;
 import ru.practicum.users.converter.UserMapper;
 import ru.practicum.users.dto.request.NewUserRequest;
 import ru.practicum.category.dto.CategoryDto;
@@ -36,27 +39,40 @@ public class AdminServiceImpl implements AdminService {
 
     private static final String APP = "ewm-main-service";
 
+    private final CategoryRepository categoryRepository;
+
+    private final CategoryMapper categoryMapper;
+
     private final UserRepository userRepository;
 
     private final UserMapper userMapper;
 
     /*Добавление новой категории*/
     @Override
-    public CategoryDto addNewCategory(NewCategoryDto newCategoryDto) {
-
-        return null;
+    public CategoryDto addNewCategory(NewCategoryDto newCategoryDto,HttpServletRequest request) {
+        Category category = categoryRepository.save(Category.builder()
+                .name(newCategoryDto.getName())
+                .build());
+        log.info("Сохраненная категория {}",category);
+        // log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
+        return categoryMapper.toCategoryDto(category);
     }
 
     /*Удаление категории*/
     @Override
-    public void deleteCategory(Integer catId) {
-
+    public void deleteCategory(Integer catId,HttpServletRequest request) {
+        categoryRepository.deleteById(catId);
+        log.info("Категория {} удалена",catId);
+        // log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
     }
 
 
     /*Изменение категории*/
     @Override
-    public CategoryDto upCategory(Integer catId) {
+    public CategoryDto upCategory(CategoryDto categoryDto, Integer catId, HttpServletRequest request) {
+        // log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
+
+        Category category = Category.builder().name(categoryDto.getName()).build();
 
         return null;
     }
