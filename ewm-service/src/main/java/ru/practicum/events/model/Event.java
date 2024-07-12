@@ -34,7 +34,7 @@ public class Event {
     @Column(name = "confirmed_requests")
     private Integer confirmedRequests;
 
-    /**Дата и время создания события (в формате "yyyy-MM-dd HH:mm:ss")*/
+    /**Дата и время создания события*/
     @Column(name = "created_on")
     private LocalDateTime createdOn;
 
@@ -42,7 +42,7 @@ public class Event {
     @Column(name = "description")
     private String description;
 
-    /**Дата и время на которые намечено событие (в формате "yyyy-MM-dd HH:mm:ss")*/
+    /**Дата и время на которые намечено событие*/
     @Column(name = "event_date")
     private LocalDateTime eventDate;
 
@@ -67,7 +67,7 @@ public class Event {
     @Column(name = "participant_limit")
     private Integer participantLimit;
 
-    /**Дата и время публикации события (в формате "yyyy-MM-dd HH:mm:ss")*/
+    /**Дата и время публикации события*/
     @Column(name = "published_on")
     private LocalDateTime publishedOn;
 

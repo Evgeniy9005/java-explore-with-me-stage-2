@@ -23,13 +23,15 @@ public class CategoryController {
 
     private static final String APP = "ewm-main-service";
 
+    private final CategoryService categoryService;
+
     @GetMapping
     public List<CategoryDto> getCategories(@RequestParam (defaultValue = "0") int from,
                                            @RequestParam (defaultValue = "10") int size,
                                            HttpServletRequest request
     ) {
         log.info("{} запрос на получение списка категорий от {} до {}",CATEGORY,from,size);
-        log.info("{} отправлена статистика {}",CATEGORY,getStatsClient().put(hit(APP,request)));
+       // log.info("{} отправлена статистика {}",CATEGORY,getStatsClient().put(hit(APP,request)));
         return null;
     }
 
@@ -38,7 +40,7 @@ public class CategoryController {
                                            HttpServletRequest request
     ) {
         log.info("{} запрос на получение категории по id {}",CATEGORY, catId);
-        log.info("{} отправлена статистика {}",CATEGORY,getStatsClient().put(hit(APP,request)));
+      //  log.info("{} отправлена статистика {}",CATEGORY,getStatsClient().put(hit(APP,request)));
         return null;
     }
 }

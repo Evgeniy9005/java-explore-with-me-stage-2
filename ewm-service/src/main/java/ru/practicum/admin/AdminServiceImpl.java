@@ -72,9 +72,11 @@ public class AdminServiceImpl implements AdminService {
     public CategoryDto upCategory(CategoryDto categoryDto, Integer catId, HttpServletRequest request) {
         // log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
 
-        Category category = Category.builder().name(categoryDto.getName()).build();
+        Category category = Category.builder().id(catId).name(categoryDto.getName()).build();
 
-        return null;
+        log.info("Обновлена категория {}",category);
+
+        return categoryMapper.toCategoryDto(category);
     }
 
     /*Поиск событий*/
