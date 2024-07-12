@@ -78,13 +78,12 @@ public class AdminController {
     }
 
     @GetMapping("/users")
-    public List<UserDto> getUsers(@RequestParam @Positive String ibs,
+    public List<UserDto> getUsers(@RequestParam("ids") List<Integer> ids,
                                   @RequestParam (defaultValue = "0") @PositiveOrZero int from,
                                   @RequestParam (defaultValue = "10") @Positive int size,
                                   HttpServletRequest request
     ) {
-        log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
-        return null;
+        return adminService.getUsers(ids,from,size,request);
     }
 
     @PostMapping("/users")

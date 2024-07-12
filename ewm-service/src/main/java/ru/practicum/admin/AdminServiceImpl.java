@@ -84,19 +84,18 @@ public class AdminServiceImpl implements AdminService {
 
     /*Получение информации о пользователях*/
     @Override
-    public List<UserDto> getUsers(String ibs, int from, int size) {
+    public List<UserDto> getUsers(List<Integer> ids, int from, int size,HttpServletRequest request) {
+
         List<UserDto> userDtoList;
-        if(ibs == null) {
-
-        }
-
         Sort sort = Sort.by(Sort.Direction.ASC,"id");
         Pageable pageable = page(from,size,sort);
-       // log.info("_____ __> {}",userRepository.findAllById(getNumbers(ibs),pageable));
-        userDtoList = userRepository.findAll(pageable).stream()
+        log.info("Входные параметры ibs = {} from = {} size = {}",ids,from,size);
+
+        userDtoList = userRepository.findAllByIdWithPageable(ids,pageable).stream()
                 .map(user -> userMapper.toUserDto(user))
                 .collect(Collectors.toList());
         log.info("Вернулось запрошенных пользователей {}",userDtoList);
+        // log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
         return userDtoList;
     }
 

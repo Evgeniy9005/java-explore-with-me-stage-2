@@ -66,8 +66,16 @@ public class Util {
     }
 
     public static List<Integer> getNumbers(String arrayString) {
+        if(arrayString == null) {
+            throw new BadRequestException(
+                    "Не верно заданы входные параметры #, " +
+                            "Массив данных должен быть числа и разделены запятыми, без пробелов",arrayString);
+        }
+
         String [] result = arrayString.split(",");
-        return Arrays.stream(result).map(i-> {
+
+
+        List<Integer> list = Arrays.stream(result).map(i-> {
             try {
                 return Integer.parseInt(i);
             } catch (NumberFormatException e) {
@@ -76,5 +84,8 @@ public class Util {
                                 "Массив данных должен быть числа и разделены запятыми, без пробелов",arrayString);
             }
         }).collect(Collectors.toList());
+        log.info("Сформированный массив из строки - {}",list);
+        return list;
+
     }
 }

@@ -7,7 +7,54 @@ CREATE TABLE IF NOT EXISTS PUBLIC.USERS
     UNIQUE (EMAIL)
 );
 
+CREATE TABLE IF NOT EXISTS PUBLIC.CATEGORY
+(
+    ID INTEGER NOT NULL AUTO_INCREMENT,
+    NAME CHARACTER VARYING(64) NOT NULL,
+    CONSTRAINT PK_CATEGORY PRIMARY KEY (ID),
+    UNIQUE (NAME)
+);
 
+CREATE TABLE IF NOT EXISTS PUBLIC.EVENTS
+(
+--Идентификатор события
+    ID INTEGER NOT NULL AUTO_INCREMENT,
+--Краткое описание
+    ANNOTATION CHARACTER VARYING(2000) NOT NULL,
+-- id сущности Category
+    ID_CATEGORY INTEGER,
+--Количество одобренных заявок на участие в данном событии
+    CONFIRMED_REQUESTS INTEGER NOT NULL,
+--Дата и время создания события
+    CREATED_ON TIMESTAMP NOT NULL,
+--Полное описание события
+    DESCRIPTION CHARACTER VARYING(7000) NOT NULL,
+--Дата и время на которые намечено событие
+    EVENT_DATE TIMESTAMP NOT NULL,
+--id сущности типа User
+    ID_INITIATOR INTEGER NOT NULL,
+--Широта
+    LAT FLOAT NOT NULL,
+--Долгота
+    LON FLOAT NOT NULL,
+--Нужно ли оплачивать участие
+    PAID BOOLEAN DEFAULT FALSE NOT NULL,
+--Ограничение на количество участников. Значение 0 - означает отсутствие ограничения
+    PARTICIPANT_LIMIT INTEGER DEFAULT 0 NOT NULL,
+--Дата и время публикации события
+    PUBLISHED_ON TIMESTAMP NOT NULL,
+--Нужна ли пре-модерация заявок на участие
+    REQUEST_MODERATION BOOLEAN DEFAULT FALSE NOT NULL,
+--Список состояний жизненного цикла события "enum": ["PENDING", "PUBLISHED", "CANCELED"]*/
+    STATE CHARACTER VARYING(16) NOT NULL,
+--Заголовок события
+    TITLE CHARACTER VARYING(120) NOT NULL,
+--Количество просмотров события
+    VIEWS INTEGER DEFAULT 0 NOT NULL,
+    CONSTRAINT PK_EVENTS PRIMARY KEY (ID),
+    CONSTRAINT FK_CATEGORY FOREIGN KEY (ID_CATEGORY) REFERENCES PUBLIC.CATEGORY (ID) ON UPDATE CASCADE,
+    CONSTRAINT FK_INITIATOR FOREIGN KEY (ID_INITIATOR) REFERENCES PUBLIC.CATEGORY (USERS) ON DELETE CASCADE ON UPDATE CASCADE
+);
 
 
 

@@ -31,7 +31,7 @@ public interface AdminService {
     /**Редактирование данных события и его статуса (отклонение/публикация).*/
     EventFullDto upEvent(UpdateEventAdminRequest eventAdminRequest, Integer eventId);
     /**Получение информации о пользователях*/
-    List<UserDto> getUsers(String ibs, int from, int size);
+    List<UserDto> getUsers(List<Integer> ids, int from, int size,HttpServletRequest request);
     /**Добавление нового пользователя*/
     UserDto addNewUser(NewUserRequest newUserRequest,HttpServletRequest request);
     /**Удаление пользователя*/
