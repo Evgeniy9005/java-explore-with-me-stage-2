@@ -1,12 +1,12 @@
 package ru.practicum.admin;
 
+import ru.practicum.admin.dto.UpdateEventAdminRequest;
 import ru.practicum.users.dto.request.NewUserRequest;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.compilations.dto.CompilationDto;
 import ru.practicum.compilations.dto.NewCompilationDto;
 import ru.practicum.events.dto.EventFullDto;
-import ru.practicum.events.model.UpdateEventAdminRequest;
 import ru.practicum.users.dto.UserDto;
 
 import javax.servlet.http.HttpServletRequest;

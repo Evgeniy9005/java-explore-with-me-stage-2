@@ -13,6 +13,7 @@ import ru.practicum.users.dto.request.ParticipationRequestDto;
 import ru.practicum.users.model.UpdateEventUserRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Positive;
 
 import java.util.List;
 
@@ -31,12 +32,6 @@ public class UsersController {
 
     private final UserService userService;
 
-   /* @PostMapping("/admin/users")
-    public UserDto addNewUser(@RequestBody NewUserRequest newUserRequest, HttpServletRequest request) {
-        log.info("{} запрос на добавления пользователя {} ", USERS, newUserRequest);
-        log.info("{} отправлена статистика {}", USERS,getStatsClient().put(hit("ewm-main-service",request)));
-        return null;
-    }*/
 
     @GetMapping("/users/{userId}/events") //Получение событий, добавленных текущим пользователем
     public List<EventShortDto> getEventsAddedCurrentUser(@PathVariable String userId,
@@ -44,18 +39,16 @@ public class UsersController {
                                                          @RequestParam (defaultValue = "10") Integer size,
                                                          HttpServletRequest request
     ) {
-        log.info("{} Получение событий, добавленных текущим пользователем {}, в диапазоне от {} до {}",USERS,userId, from, size);
-        log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
-        return userService.getEventsAddedCurrentUser(userId,from,size);
+
+        return userService.getEventsAddedCurrentUser(userId,from,size,request);
     }
 
     @PostMapping("/users/{userId}/events") //Добавление нового события пользователем
     public EventFullDto addEventUser(@RequestBody NewEventDto newEventDto,
-                                     @PathVariable String userId,
+                                     @PathVariable @Positive int userId,
                                      HttpServletRequest request
     ) {
-        log.info("{} Добавление нового события {} пользователем {}",USERS,newEventDto,userId);
-        log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
+
         return null;
     }
 

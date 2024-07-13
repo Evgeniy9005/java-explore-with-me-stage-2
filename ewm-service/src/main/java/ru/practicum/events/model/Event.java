@@ -19,7 +19,7 @@ public class Event {
     /**Идентификатор события*/
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
 
     /**Краткое описание*/
     @Column(name = "annotation")
@@ -32,11 +32,12 @@ public class Event {
 
     /**Количество одобренных заявок на участие в данном событии*/
     @Column(name = "confirmed_requests")
-    private Integer confirmedRequests;
+    private int confirmedRequests;
 
     /**Дата и время создания события*/
     @Column(name = "created_on")
-    private LocalDateTime createdOn;
+    @Builder.Default
+    private LocalDateTime createdOn = LocalDateTime.now();
 
     /**Полное описание события*/
     @Column(name = "description")
@@ -61,11 +62,11 @@ public class Event {
 
     /**Нужно ли оплачивать участие*/
     @Column(name = "paid")
-    private Boolean paid;
+    private boolean paid;
 
     /**Ограничение на количество участников. Значение 0 - означает отсутствие ограничения*/
     @Column(name = "participant_limit")
-    private Integer participantLimit;
+    private int participantLimit;
 
     /**Дата и время публикации события*/
     @Column(name = "published_on")
@@ -73,11 +74,12 @@ public class Event {
 
     /**Нужна ли пре-модерация заявок на участие*/
     @Column(name = "request_moderation")
-    private Boolean requestModeration;
+    private boolean requestModeration;
 
     /**Список состояний жизненного цикла события "enum": ["PENDING", "PUBLISHED", "CANCELED"]*/
     @Enumerated(EnumType.STRING)
-    private State state;
+    @Builder.Default
+    private State state = State.PENDING;
 
     /**Заголовок события*/
     @Column(name = "title")
@@ -85,5 +87,5 @@ public class Event {
 
     /**Количество просмотров события*/
     @Column(name = "views")
-    private Integer views;
+    private int views;
 }

@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import ru.practicum.BadRequestException;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
@@ -94,6 +95,10 @@ public class Util {
 
     public static DateTimeFormatter getFormatter() {
         return formatter;
+    }
+
+    public static LocalDateTime getDate(String date) {
+        return LocalDateTime.parse(date,formatter);
     }
 
 }

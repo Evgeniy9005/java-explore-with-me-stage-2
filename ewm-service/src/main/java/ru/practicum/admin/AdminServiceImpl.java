@@ -5,9 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.practicum.admin.dto.UpdateEventAdminRequest;
 import ru.practicum.category.converter.CategoryMapper;
 import ru.practicum.category.dao.CategoryRepository;
 import ru.practicum.category.model.Category;
+import ru.practicum.events.coverter.EventsMapper;
+import ru.practicum.events.dao.EventsRepository;
 import ru.practicum.users.converter.UserMapper;
 import ru.practicum.users.dto.request.NewUserRequest;
 import ru.practicum.category.dto.CategoryDto;
@@ -15,7 +18,6 @@ import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.compilations.dto.CompilationDto;
 import ru.practicum.compilations.dto.NewCompilationDto;
 import ru.practicum.events.dto.EventFullDto;
-import ru.practicum.events.model.UpdateEventAdminRequest;
 import ru.practicum.users.dao.UserRepository;
 import ru.practicum.users.dto.UserDto;
 import ru.practicum.users.model.User;
@@ -46,6 +48,10 @@ public class AdminServiceImpl implements AdminService {
     private final UserRepository userRepository;
 
     private final UserMapper userMapper;
+
+    private final EventsRepository eventsRepository;
+
+    private final EventsMapper eventsMapper;
 
     /*Добавление новой категории*/
     @Override

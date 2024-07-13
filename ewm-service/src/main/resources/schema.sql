@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS PUBLIC.EVENTS
 --Ограничение на количество участников. Значение 0 - означает отсутствие ограничения
     PARTICIPANT_LIMIT INTEGER DEFAULT 0 NOT NULL,
 --Дата и время публикации события
-    PUBLISHED_ON TIMESTAMP NOT NULL,
+    PUBLISHED_ON TIMESTAMP,
 --Нужна ли пре-модерация заявок на участие
     REQUEST_MODERATION BOOLEAN DEFAULT FALSE NOT NULL,
 --Список состояний жизненного цикла события "enum": ["PENDING", "PUBLISHED", "CANCELED"]*/
