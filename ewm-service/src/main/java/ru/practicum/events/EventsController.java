@@ -41,54 +41,15 @@ public class EventsController {
             @RequestParam (defaultValue = "10") Integer size,
             HttpServletRequest request
     ) {
-        log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
+        log.info("{} Отправлена статистика {}",EVENTS,getStatsClient().put(hit(APP,request)));
         return null;
     }
 
     @GetMapping("/events/{id}")
     public EventFullDto getEvent(@PathVariable String id, HttpServletRequest request) {
 
-        log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
+        log.info("{} Отправлена статистика {}",EVENTS,getStatsClient().put(hit(APP,request)));
         return null;
     }
 
-  /*  @PostMapping("/users/{userId}/events") //Добавление нового события пользователем
-    public EventFullDto addEventUser(@RequestBody NewEventDto newEventDto,
-                                     @PathVariable String userId,
-                                     HttpServletRequest request
-    ) {
-        log.info("Добавление нового события {} пользователем {}",newEventDto,userId);
-        log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
-        return null;
-    }*/
-
-    /*@GetMapping("/users/{userId}/events") //Получение событий, добавленных текущим пользователем
-    public List<EventShortDto> getEventsAddedCurrentUser(@PathVariable String userId,
-                                                         @RequestParam (defaultValue = "0") Integer from,
-                                                         @RequestParam (defaultValue = "10") Integer size,
-                                                         HttpServletRequest request
-    ) {
-        log.info("Получение событий, добавленных текущим пользователем {}, в диапазоне от {} до {}",userId, from, size);
-        log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
-        return null;
-    }*/
-
-    /*@PatchMapping("/admin/events/{eventId}")
-    public EventFullDto updateEventAndStatus(@RequestBody UpdateEventAdminRequest eventAdminRequest,
-                                             @PathVariable String eventId,
-                                             HttpServletRequest request
-    ) {
-        log.info("Декодирована {}",decode(eventId));
-        log.info("Обновление события {}, {}",eventId,eventAdminRequest);
-        log.info("Отправлена статистика {}",getStatsClient().put(hit("ewm-main-service",request)));
-    return null;
-    }*/
-
-    /*private String decode(String value) {
-        try {
-            return URLDecoder.decode(value, StandardCharsets.UTF_8.toString());
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-    }*/
 }

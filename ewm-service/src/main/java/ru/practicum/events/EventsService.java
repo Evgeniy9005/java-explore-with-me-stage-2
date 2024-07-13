@@ -1,7 +1,10 @@
 package ru.practicum.events;
 
 
+import ru.practicum.events.dto.EventFullDto;
 import ru.practicum.events.dto.EventShortDto;
+
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface EventsService {
@@ -14,6 +17,9 @@ public interface EventsService {
              Boolean onlyAvailable,//только события у которых не исчерпан лимит запросов на участие
              String sort,//Вариант сортировки: по дате события или по количеству просмотров
              Integer from,
-             Integer size
+             Integer size,
+             HttpServletRequest request
     );
+
+    EventFullDto getEvent(String id, HttpServletRequest request);
 }

@@ -1,11 +1,13 @@
 package ru.practicum.error;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 @Data
 @RequiredArgsConstructor
+@Builder
 public class ApiError {
     /**Список стектрейсов или описания ошибок*/
     private final List<String> errors;

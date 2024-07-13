@@ -9,10 +9,9 @@ import ru.practicum.events.dto.EventFullDto;
 import ru.practicum.events.model.Event;
 import ru.practicum.events.model.Location;
 import ru.practicum.users.converter.UserMapper;
-import ru.practicum.users.dto.UserDto;
+import ru.practicum.users.dto.UserShortDto;
 import ru.practicum.util.Util;
 
-import java.time.format.DateTimeFormatter;
 
 @Mapper(componentModel = "spring")
 public interface EventsMapper {
@@ -20,7 +19,7 @@ public interface EventsMapper {
     Event toEvent(EventFullDto eventFullDto);
 
     @Mapping(target = "category",expression = "java(categoryToCategoryDto(event))")
-    @Mapping(target = "initiator",expression = "java(userToUserDto(event))")
+    @Mapping(target = "initiator",expression = "java(userToUserShortDto(event))")
     @Mapping(target = "location",expression = "java(toLocation(event))")
     @Mapping(target = "createdOn",expression = "java(getConvertDateCreateOn(event))")
     @Mapping(target = "eventDate",expression = "java(getConvertDateEventDate(event))")
@@ -32,9 +31,9 @@ public interface EventsMapper {
         return Mappers.getMapper(CategoryMapper.class).toCategoryDto(event.getCategory());
     }
 
-    /*Задействует UserMapper*/
-    default UserDto userToUserDto(Event event) {
-        return Mappers.getMapper(UserMapper.class).toUserDto(event.getInitiator());
+    /*Задействует UserMapper для преобразования User в UserShortDto*/
+    default UserShortDto userToUserShortDto(Event event) {
+        return Mappers.getMapper(UserMapper.class).toUserShortDto(event.getInitiator());
     }
 
     default Location toLocation(Event event) {

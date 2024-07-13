@@ -22,7 +22,8 @@ class EventsServiceImplTest {
                 false,
                 "asc",
                 0,
-                10
+                10,
+                null
         );
         assertNull(eventShortDtoList);
     }

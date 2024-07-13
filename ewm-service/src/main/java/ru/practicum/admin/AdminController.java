@@ -44,10 +44,10 @@ public class AdminController {
     @DeleteMapping("/categories/{catId}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable Integer catId, HttpServletRequest request) {
-        adminService.deleteUser(catId,request);
+        adminService.deleteCategory(catId,request);
     }
 
-    @PostMapping("/categories/{catId}")
+    @PatchMapping("/categories/{catId}")
     public CategoryDto upCategory(@RequestBody CategoryDto categoryDto,
                                   @PathVariable Integer catId,
                                   HttpServletRequest request

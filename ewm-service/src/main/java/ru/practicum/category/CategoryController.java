@@ -30,17 +30,14 @@ public class CategoryController {
                                            @RequestParam (defaultValue = "10") int size,
                                            HttpServletRequest request
     ) {
-        log.info("{} запрос на получение списка категорий от {} до {}",CATEGORY,from,size);
-       // log.info("{} отправлена статистика {}",CATEGORY,getStatsClient().put(hit(APP,request)));
-        return null;
+        return categoryService.getCategories(from,size,request);
     }
 
     @GetMapping("{catId}")
     public CategoryDto getCategory(@PathVariable Integer catId,
                                            HttpServletRequest request
     ) {
-        log.info("{} запрос на получение категории по id {}",CATEGORY, catId);
-      //  log.info("{} отправлена статистика {}",CATEGORY,getStatsClient().put(hit(APP,request)));
-        return null;
+
+        return categoryService.getCategory(catId,request);
     }
 }
