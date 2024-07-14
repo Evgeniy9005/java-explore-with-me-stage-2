@@ -2,6 +2,7 @@ package ru.practicum.users;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.events.dto.EventFullDto;
@@ -44,12 +45,13 @@ public class UsersController {
     }
 
     @PostMapping("/users/{userId}/events") //Добавление нового события пользователем
+    @ResponseStatus(code = HttpStatus.CREATED)
     public EventFullDto addEventUser(@RequestBody NewEventDto newEventDto,
                                      @PathVariable @Positive int userId,
                                      HttpServletRequest request
     ) {
 
-        return null;
+        return userService.addEventUser(newEventDto,userId,request);
     }
 
     @GetMapping("/users/{userId}/events/{eventId}") //Получение полной информации о событии добавленном текущим пользователем
@@ -100,12 +102,13 @@ public class UsersController {
     }
 
     @PostMapping("/users/{userId}/requests") //Добавление запроса от текущего пользователя на участие в событии
+    @ResponseStatus(code = HttpStatus.CREATED)
     public ParticipationRequestDto addRequestCurrentUserParticipateEvent(
             @PathVariable Integer userId,
             @RequestParam Integer eventId,
             HttpServletRequest request
     ) {
-        log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
+       // log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
         return null;
     }
 

@@ -3,7 +3,7 @@ package ru.practicum.users.dto.request;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import ru.practicum.events.constants.State;
+import ru.practicum.constants.State;
 
 import java.util.List;
 

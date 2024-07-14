@@ -2,10 +2,11 @@ package ru.practicum.events.model;
 
 import lombok.*;
 import ru.practicum.category.model.Category;
-import ru.practicum.events.constants.State;
+import ru.practicum.constants.State;
 import ru.practicum.users.model.User;
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -88,4 +89,33 @@ public class Event {
     /**Количество просмотров события*/
     @Column(name = "views")
     private int views;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Event event = (Event) o;
+        return id == event.id &&
+                confirmedRequests == event.confirmedRequests &&
+                Float.compare(event.lat, lat) == 0 &&
+                Float.compare(event.lon, lon) == 0 &&
+                paid == event.paid &&
+                participantLimit == event.participantLimit &&
+                requestModeration == event.requestModeration &&
+                views == event.views &&
+                Objects.equals(annotation, event.annotation) &&
+                Objects.equals(category, event.category) &&
+                Objects.equals(createdOn, event.createdOn) &&
+                Objects.equals(description, event.description) &&
+                Objects.equals(eventDate, event.eventDate) &&
+                Objects.equals(initiator, event.initiator) &&
+                Objects.equals(publishedOn, event.publishedOn) &&
+                state == event.state &&
+                Objects.equals(title, event.title);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, annotation, category, confirmedRequests, createdOn, description, eventDate, initiator, lat, lon, paid, participantLimit, publishedOn, requestModeration, state, title, views);
+    }
 }

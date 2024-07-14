@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.data.Data;
-import ru.practicum.events.constants.State;
+import ru.practicum.constants.State;
 import ru.practicum.events.model.Location;
 import ru.practicum.users.dto.UserShortDto;
 

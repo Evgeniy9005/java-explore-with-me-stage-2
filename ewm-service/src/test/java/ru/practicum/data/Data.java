@@ -2,7 +2,7 @@ package ru.practicum.data;
 
 import dto.ViewStats;
 import ru.practicum.category.dto.CategoryDto;
-import ru.practicum.events.constants.State;
+import ru.practicum.constants.State;
 import ru.practicum.events.dto.EventFullDto;
 import ru.practicum.events.dto.EventShortDto;
 import ru.practicum.events.dto.NewEventDto;

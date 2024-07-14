@@ -83,8 +83,8 @@ public class UserServiceImpl implements UserService {
         log.info( "Создано событие {}",newEvent);
 
         EventFullDto eventFullDto = eventsMapper.toEventFullDto(event);
-        log.info("");
-        return
+        log.info("Конвертированное событие {}",eventFullDto);
+        return eventFullDto;
     }
 
     //Получение полной информации о событии добавленном текущим пользователем
@@ -134,6 +134,8 @@ public class UserServiceImpl implements UserService {
                                                                          Integer eventId,
                                                                          HttpServletRequest request
     ) {
+
+
         return null;
     }
 

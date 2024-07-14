@@ -12,6 +12,8 @@ import ru.practicum.users.converter.UserMapper;
 import ru.practicum.users.dto.UserShortDto;
 import ru.practicum.util.Util;
 
+import java.time.LocalDateTime;
+
 
 @Mapper(componentModel = "spring")
 public interface EventsMapper {
@@ -52,6 +54,10 @@ public interface EventsMapper {
 
     /*Преобразование даты публикации события в строку для DTO*/
     default String getConvertDatePublishedOn(Event event) {
-        return event.getPublishedOn().format(Util.getFormatter());
+        LocalDateTime publishedOn = event.getPublishedOn();
+        if(publishedOn == null) {
+            return "";
+        }
+        return publishedOn.format(Util.getFormatter());
     }
 }
