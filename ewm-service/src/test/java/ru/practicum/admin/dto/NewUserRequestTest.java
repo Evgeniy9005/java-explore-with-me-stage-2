@@ -1,7 +1,7 @@
 package ru.practicum.admin.dto;
 
 import org.junit.jupiter.api.Test;
-import ru.practicum.users.dto.request.NewUserRequest;
+import ru.practicum.users.request.NewUserRequest;
 
 
 import static org.junit.jupiter.api.Assertions.*;

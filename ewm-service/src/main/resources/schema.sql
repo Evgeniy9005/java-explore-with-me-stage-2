@@ -15,41 +15,42 @@ CREATE TABLE IF NOT EXISTS PUBLIC.CATEGORY
     UNIQUE (NAME)
 );
 
+
 CREATE TABLE IF NOT EXISTS PUBLIC.EVENTS
 (
---Идентификатор события
+    --Идентификатор события
     ID INTEGER NOT NULL AUTO_INCREMENT,
---Краткое описание
+    --Краткое описание
     ANNOTATION CHARACTER VARYING(2000) NOT NULL,
--- id сущности Category
+    -- id сущности Category
     ID_CATEGORY INTEGER,
---Количество одобренных заявок на участие в данном событии
+    --Количество одобренных заявок на участие в данном событии
     CONFIRMED_REQUESTS INTEGER NOT NULL,
---Дата и время создания события
+    --Дата и время создания события
     CREATED_ON TIMESTAMP NOT NULL,
---Полное описание события
+    --Полное описание события
     DESCRIPTION CHARACTER VARYING(7000) NOT NULL,
---Дата и время на которые намечено событие
+    --Дата и время на которые намечено событие
     EVENT_DATE TIMESTAMP NOT NULL,
---id сущности типа User
+    --id сущности типа User
     ID_INITIATOR INTEGER NOT NULL,
---Широта
+    --Широта
     LAT FLOAT NOT NULL,
---Долгота
+    --Долгота
     LON FLOAT NOT NULL,
---Нужно ли оплачивать участие
+    --Нужно ли оплачивать участие
     PAID BOOLEAN DEFAULT FALSE NOT NULL,
---Ограничение на количество участников. Значение 0 - означает отсутствие ограничения
+    --Ограничение на количество участников. Значение 0 - означает отсутствие ограничения
     PARTICIPANT_LIMIT INTEGER DEFAULT 0 NOT NULL,
---Дата и время публикации события
+    --Дата и время публикации события
     PUBLISHED_ON TIMESTAMP,
---Нужна ли пре-модерация заявок на участие
+    --Нужна ли пре-модерация заявок на участие
     REQUEST_MODERATION BOOLEAN DEFAULT FALSE NOT NULL,
---Список состояний жизненного цикла события "enum": ["PENDING", "PUBLISHED", "CANCELED"]*/
+    --Список состояний жизненного цикла события "enum": ["PENDING", "PUBLISHED", "CANCELED"]*/
     STATE CHARACTER VARYING(16) NOT NULL,
---Заголовок события
+    --Заголовок события
     TITLE CHARACTER VARYING(120) NOT NULL,
---Количество просмотров события
+    --Количество просмотров события
     VIEWS INTEGER DEFAULT 0 NOT NULL,
     CONSTRAINT PK_EVENTS PRIMARY KEY (ID),
     CONSTRAINT FK_CATEGORY FOREIGN KEY (ID_CATEGORY) REFERENCES PUBLIC.CATEGORY (ID) ON UPDATE CASCADE,
@@ -57,5 +58,19 @@ CREATE TABLE IF NOT EXISTS PUBLIC.EVENTS
 );
 
 
-
+CREATE TABLE IF NOT EXISTS PUBLIC.PARTICIPATION_REQUEST
+(
+    ID INTEGER NOT NULL AUTO_INCREMENT,
+    --Дата и время создания заявки.
+    CREATED TIMESTAMP NOT NULL,
+    --Идентификатор события
+    ID_EVENT INTEGER NOT NULL,
+    --Идентификатор пользователя, отправившего заявку
+    ID_REQUESTER INTEGER NOT NULL,
+    --Статус заявки
+    STATUS CHARACTER VARYING(16) NOT NULL,
+    CONSTRAINT PK_PARTICIPATION_REQUEST PRIMARY KEY (ID),
+    CONSTRAINT FK_EVENT_PARTICIPATION_REQUEST FOREIGN KEY (ID_EVENT) REFERENCES PUBLIC.EVENTS (ID) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT FK_REQUESTER_PARTICIPATION_REQUEST FOREIGN KEY (ID_REQUESTER) REFERENCES PUBLIC.USERS (ID) ON DELETE CASCADE ON UPDATE CASCADE
+);
 

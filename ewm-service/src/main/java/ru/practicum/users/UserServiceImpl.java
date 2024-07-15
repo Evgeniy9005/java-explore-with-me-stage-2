@@ -4,9 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.NotFoundException;
-import ru.practicum.category.CategoryService;
-import ru.practicum.category.converter.CategoryMapper;
 import ru.practicum.category.dao.CategoryRepository;
+import ru.practicum.constants.StatusRequest;
 import ru.practicum.events.coverter.EventsMapper;
 import ru.practicum.events.dao.EventsRepository;
 import ru.practicum.events.dto.EventFullDto;
@@ -15,17 +14,17 @@ import ru.practicum.events.dto.NewEventDto;
 import ru.practicum.events.model.Event;
 import ru.practicum.events.model.Location;
 import ru.practicum.users.dao.UserRepository;
-import ru.practicum.users.dto.request.EventRequestStatusUpdateRequest;
-import ru.practicum.users.dto.request.EventRequestStatusUpdateResult;
-import ru.practicum.users.dto.request.ParticipationRequestDto;
+import ru.practicum.users.request.EventRequestStatusUpdateRequest;
+import ru.practicum.users.request.EventRequestStatusUpdateResult;
+import ru.practicum.users.request.ParticipationRequestDto;
 import ru.practicum.users.model.UpdateEventUserRequest;
+import ru.practicum.users.request.dao.RequestRepository;
+import ru.practicum.users.request.model.ParticipationRequest;
 import ru.practicum.util.Util;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.List;
-
-import static ru.practicum.stats.Stats.getStatsClient;
-import static ru.practicum.stats.Stats.hit;
 
 
 @Slf4j
@@ -44,6 +43,8 @@ public class UserServiceImpl implements UserService {
     private final EventsMapper eventsMapper;
 
     private final CategoryRepository categoryRepository;
+
+    private final RequestRepository requestRepository;
 
     //Получение событий, добавленных текущим пользователем
     public List<EventShortDto> getEventsAddedCurrentUser(String userId,
@@ -134,8 +135,16 @@ public class UserServiceImpl implements UserService {
                                                                          Integer eventId,
                                                                          HttpServletRequest request
     ) {
-
-
+        ParticipationRequest pr = ParticipationRequest.builder()
+                .requester(userRepository.findById(userId)
+                        .orElseThrow(()->new NotFoundException("Не найден пользователь # при добавлении участия в событии!",userId)))
+                .created(LocalDateTime.now())
+                .event(eventsRepository.findById(eventId)
+                        .orElseThrow(()-> new NotFoundException("Не найдено событие # при добавлении участия в событии!",eventId)))
+                .status(StatusRequest.PENDING)
+                .build();
+        ParticipationRequest newPr = requestRepository.save(pr);
+        log.info("Добавлен запрос {} от текущего пользователя {} на участие в событии {}",newPr,userId,eventId);
         return null;
     }
 

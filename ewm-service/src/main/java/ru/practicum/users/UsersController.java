@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.events.dto.EventFullDto;
 import ru.practicum.events.dto.EventShortDto;
 import ru.practicum.events.dto.NewEventDto;
-import ru.practicum.users.dto.request.EventRequestStatusUpdateRequest;
-import ru.practicum.users.dto.request.EventRequestStatusUpdateResult;
-import ru.practicum.users.dto.request.ParticipationRequestDto;
+import ru.practicum.users.request.EventRequestStatusUpdateRequest;
+import ru.practicum.users.request.EventRequestStatusUpdateResult;
+import ru.practicum.users.request.ParticipationRequestDto;
 import ru.practicum.users.model.UpdateEventUserRequest;
 
 import javax.servlet.http.HttpServletRequest;
@@ -108,8 +108,8 @@ public class UsersController {
             @RequestParam Integer eventId,
             HttpServletRequest request
     ) {
-       // log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
-        return null;
+
+        return userService.addRequestCurrentUserParticipateEvent(userId,eventId,request);
     }
 
     @PatchMapping("/users/{userId}/requests/{requestId}/cancel") //Отмена своего запроса на участие в событии
@@ -118,7 +118,7 @@ public class UsersController {
             @PathVariable Integer requestId,
             HttpServletRequest request
     ) {
-        log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
+
         return null;
     }
 }

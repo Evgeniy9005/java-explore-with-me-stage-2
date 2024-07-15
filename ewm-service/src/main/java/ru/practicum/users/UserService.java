@@ -3,9 +3,9 @@ package ru.practicum.users;
 import ru.practicum.events.dto.EventFullDto;
 import ru.practicum.events.dto.EventShortDto;
 import ru.practicum.events.dto.NewEventDto;
-import ru.practicum.users.dto.request.EventRequestStatusUpdateRequest;
-import ru.practicum.users.dto.request.EventRequestStatusUpdateResult;
-import ru.practicum.users.dto.request.ParticipationRequestDto;
+import ru.practicum.users.request.EventRequestStatusUpdateRequest;
+import ru.practicum.users.request.EventRequestStatusUpdateResult;
+import ru.practicum.users.request.ParticipationRequestDto;
 import ru.practicum.users.model.UpdateEventUserRequest;
 
 import javax.servlet.http.HttpServletRequest;

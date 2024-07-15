@@ -12,7 +12,7 @@ import ru.practicum.category.model.Category;
 import ru.practicum.events.coverter.EventsMapper;
 import ru.practicum.events.dao.EventsRepository;
 import ru.practicum.users.converter.UserMapper;
-import ru.practicum.users.dto.request.NewUserRequest;
+import ru.practicum.users.request.NewUserRequest;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.compilations.dto.CompilationDto;
@@ -21,15 +21,11 @@ import ru.practicum.events.dto.EventFullDto;
 import ru.practicum.users.dao.UserRepository;
 import ru.practicum.users.dto.UserDto;
 import ru.practicum.users.model.User;
-import ru.practicum.util.Util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.practicum.stats.Stats.getStatsClient;
-import static ru.practicum.stats.Stats.hit;
-import static ru.practicum.util.Util.getNumbers;
 import static ru.practicum.util.Util.page;
 
 @Slf4j
