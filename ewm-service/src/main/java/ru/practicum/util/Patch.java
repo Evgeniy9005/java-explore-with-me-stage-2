@@ -39,7 +39,7 @@ public class Patch {
             throw new ConflictException("Событие можно публиковать, только если оно в состоянии ожидания публикации!");
         }
         String title = patch.getTitle();
-        return updated.builder()
+        return updated.toBuilder()
                 .annotation(annotation == null ? updated.getAnnotation() : annotation)
                 .category(category == null ? updated.getCategory() : preСhecked)
                 .description(description == null ? updated.getDescription() : description)
@@ -90,7 +90,7 @@ public class Patch {
         }
 
         String title = patch.getTitle();
-        return updated.builder()
+        return updated.toBuilder()
                 .annotation(annotation == null ? updated.getAnnotation() : annotation)
                 .category(category == null ? updated.getCategory() : preСhecked)
                 .description(description == null ? updated.getDescription() : description)

@@ -29,7 +29,7 @@ public interface AdminService {
                                         int size
     );
     /**Редактирование данных события и его статуса (отклонение/публикация).*/
-    EventFullDto upEvent(UpdateEventAdminRequest eventAdminRequest, Integer eventId);
+    EventFullDto upEvent(UpdateEventAdminRequest eventAdminRequest, int eventId,HttpServletRequest request);
     /**Получение информации о пользователях*/
     List<UserDto> getUsers(List<Integer> ids, int from, int size,HttpServletRequest request);
     /**Добавление нового пользователя*/

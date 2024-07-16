@@ -5,12 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.practicum.NotFoundException;
 import ru.practicum.admin.dto.UpdateEventAdminRequest;
 import ru.practicum.category.converter.CategoryMapper;
 import ru.practicum.category.dao.CategoryRepository;
 import ru.practicum.category.model.Category;
 import ru.practicum.events.coverter.EventsMapper;
 import ru.practicum.events.dao.EventsRepository;
+import ru.practicum.events.model.Event;
 import ru.practicum.users.converter.UserMapper;
 import ru.practicum.users.request.NewUserRequest;
 import ru.practicum.category.dto.CategoryDto;
@@ -22,11 +24,13 @@ import ru.practicum.users.dao.UserRepository;
 import ru.practicum.users.dto.UserDto;
 import ru.practicum.users.model.User;
 
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static ru.practicum.util.Util.page;
+import static ru.practicum.util.Patch.patchEventAdmin;
 
 @Slf4j
 @Service
@@ -96,9 +100,20 @@ public class AdminServiceImpl implements AdminService {
 
     /*Редактирование данных события и его статуса (отклонение/публикация).*/
     @Override
-    public EventFullDto upEvent(UpdateEventAdminRequest eventAdminRequest, Integer eventId) {
+    public EventFullDto upEvent(UpdateEventAdminRequest eventAdminRequest, int eventId,HttpServletRequest request) {
+        int categoryId = eventAdminRequest.getCategory();
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new NotFoundException("Не найдена категория # при обновлении события!",categoryId));
 
-        return null;
+        Event event = eventsRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Не найдено событие # при обновлении события!",eventId));
+
+        Event upEvent = patchEventAdmin(event,eventAdminRequest,category,eventId);
+        log.info("Обновленное событие после патча {}",upEvent);
+        Event newEvent = eventsRepository.save(upEvent);
+        log.info("Новое, сохраненное событие {}",newEvent);
+
+        return eventsMapper.toEventFullDto(newEvent);
     }
 
 

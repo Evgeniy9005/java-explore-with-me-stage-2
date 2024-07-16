@@ -69,13 +69,13 @@ public class AdminController {
         return null;
     }
 
-    @PostMapping("/events/{eventId}")
+    @PatchMapping("/events/{eventId}")
     public EventFullDto upEvent(@RequestBody UpdateEventAdminRequest eventAdminRequest,
-                                           @PathVariable Integer eventId,
+                                           @PathVariable @Positive int eventId,
                                            HttpServletRequest request
     ) {
-        log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
-        return null;
+
+        return adminService.upEvent(eventAdminRequest,eventId,request);
     }
 
     @GetMapping("/users")
