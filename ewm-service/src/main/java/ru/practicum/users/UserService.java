@@ -39,13 +39,13 @@ public interface UserService {
     List<ParticipationRequestDto> getInfoCurrentUserRequestsParticipateOtherPeopleEvents(Integer userId,
                                                                                          HttpServletRequest request);
     /**Добавление запроса от текущего пользователя на участие в событии*/
-    ParticipationRequestDto addRequestCurrentUserParticipateEvent(Integer userId,
-                                                                  Integer eventId,
+    ParticipationRequestDto addRequestCurrentUserParticipateEvent(int userId,
+                                                                  int eventId,
                                                                   HttpServletRequest request
     );
     /**Отмена своего запроса на участие в событии*/
-    ParticipationRequestDto upEventToParticipateCancel (Integer userId,
-                                                        Integer requestId,
+    ParticipationRequestDto upEventToParticipateCancel (int userId,
+                                                        int requestId,
                                                         HttpServletRequest request
     );
 }

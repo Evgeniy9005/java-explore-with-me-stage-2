@@ -104,8 +104,8 @@ public class UsersController {
     @PostMapping("/users/{userId}/requests") //Добавление запроса от текущего пользователя на участие в событии
     @ResponseStatus(code = HttpStatus.CREATED)
     public ParticipationRequestDto addRequestCurrentUserParticipateEvent(
-            @PathVariable Integer userId,
-            @RequestParam Integer eventId,
+            @PathVariable @Positive int userId,
+            @RequestParam @Positive int eventId,
             HttpServletRequest request
     ) {
 
@@ -114,11 +114,11 @@ public class UsersController {
 
     @PatchMapping("/users/{userId}/requests/{requestId}/cancel") //Отмена своего запроса на участие в событии
     public ParticipationRequestDto upEventToParticipateCancel (
-            @PathVariable Integer userId,
-            @PathVariable Integer requestId,
+            @PathVariable @Positive int userId,
+            @PathVariable @Positive int requestId,
             HttpServletRequest request
     ) {
 
-        return null;
+        return userService.upEventToParticipateCancel(userId,requestId,request);
     }
 }

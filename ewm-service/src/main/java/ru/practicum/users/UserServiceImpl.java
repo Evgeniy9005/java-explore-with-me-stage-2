@@ -134,8 +134,8 @@ public class UserServiceImpl implements UserService {
     }
 
     //Добавление запроса от текущего пользователя на участие в событии
-    public ParticipationRequestDto addRequestCurrentUserParticipateEvent(Integer userId,
-                                                                         Integer eventId,
+    public ParticipationRequestDto addRequestCurrentUserParticipateEvent(int userId,
+                                                                         int eventId,
                                                                          HttpServletRequest request
     ) {
         ParticipationRequest pr = ParticipationRequest.builder()
@@ -152,11 +152,20 @@ public class UserServiceImpl implements UserService {
     }
 
     //Отмена своего запроса на участие в событии
-    public ParticipationRequestDto upEventToParticipateCancel (Integer userId,
-                                                               Integer requestId,
+    public ParticipationRequestDto upEventToParticipateCancel (int userId,
+                                                               int requestId,
                                                                HttpServletRequest request
     ) {
-        return null;
+        ParticipationRequest pr = requestRepository.findById(requestId)
+                .orElseThrow(()-> new NotFoundException("Не найден запрос # на событие!",requestId));
+
+        if (pr.getRequester().getId() != userId) {
+            throw new NotFoundException("Пользователь # не создавал запрос # на событие",userId,requestId);
+        }
+
+        log.info("Получен запрос {} на событие!",pr);
+
+        return requestMapper.toDto(pr.toBuilder().status(StatusRequest.CANCELED).build());
     }
 
 }
