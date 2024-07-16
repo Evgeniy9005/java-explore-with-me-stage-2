@@ -4,14 +4,9 @@ import ru.practicum.ConflictException;
 import ru.practicum.admin.dto.UpdateEventAdminRequest;
 import ru.practicum.category.model.Category;
 import ru.practicum.constants.State;
-import ru.practicum.constants.StateAction;
-import ru.practicum.events.dto.EventFullDto;
 import ru.practicum.events.model.Event;
 import ru.practicum.events.model.Location;
-import ru.practicum.stats.Stats;
-import ru.practicum.users.model.UpdateEventUserRequest;
-
-import java.time.LocalDateTime;
+import ru.practicum.users.dto.UpdateEventUserRequest;
 
 public class Patch {
     public static Event patchEventAdmin(Event updated,
@@ -34,7 +29,7 @@ public class Patch {
         Boolean paid = patch.getPaid();
         Integer participantLimit = patch.getParticipantLimit();
         Boolean requestModeration = patch.getRequestModeration();
-        State state = getState(patch.getStateAction(),eventId);
+        State state = getStateAdmin(patch.getStateAction(),eventId);
         if(!updated.getState().equals(State.PENDING)) {
             throw new ConflictException("Событие можно публиковать, только если оно в состоянии ожидания публикации!");
         }
@@ -54,13 +49,15 @@ public class Patch {
                 .build();
     }
 
-    private static State getState(String stateAction, int eventId ) {
+    private static State getStateAdmin(String stateAction, int eventId ) {
         switch (stateAction.toString()) {
             case "PUBLISH_EVENT": return State.PUBLISHED;
             case "REJECT_EVENT": return State.CANCELED;
+           // case "SEND_TO_REVIEW": return State.PENDING;
+           // case "CANCEL_REVIEW": return State.PENDING;
             default:
                 throw  new ConflictException("Не удается определить значение # " +
-                        "статуса на изменение статуса события #",stateAction,eventId);
+                        "статуса, на изменение статуса события #",stateAction,eventId);
         }
     }
 
@@ -84,7 +81,7 @@ public class Patch {
         Boolean paid = patch.getPaid();
         Integer participantLimit = patch.getParticipantLimit();
         Boolean requestModeration = patch.getRequestModeration();
-        State state = getState(patch.getStateAction(),eventId);
+        State state = getStateUser(patch.getStateAction(),eventId);
         if(!updated.getState().equals(State.PENDING)) {
             throw new ConflictException("Событие можно публиковать, только если оно в состоянии ожидания публикации!");
         }
@@ -103,6 +100,16 @@ public class Patch {
                 .state(state)
                 .title(title == null ? updated.getTitle() : title)
                 .build();
+    }
+
+    private static State getStateUser(String stateAction, int eventId ) {
+        switch (stateAction.toString()) {
+            case "SEND_TO_REVIEW": return State.PENDING;
+            case "CANCEL_REVIEW": return State.CANCELED;
+            default:
+                throw  new ConflictException("Не удается определить значение # " +
+                        "статуса, на изменение статуса события #",stateAction,eventId);
+        }
     }
 
 }

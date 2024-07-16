@@ -1,4 +1,4 @@
-package ru.practicum.users.model;
+package ru.practicum.users.dto;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ public class UpdateEventUserRequest {
     @Min(20)
     private final String annotation;
     /**Новая категория*/
-    private final int category;
+    private final Integer category;
     /**Новое описание*/
     @Max(7000)
     @Min(20)

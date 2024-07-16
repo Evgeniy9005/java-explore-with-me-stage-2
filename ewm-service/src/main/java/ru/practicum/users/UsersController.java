@@ -11,7 +11,7 @@ import ru.practicum.events.dto.NewEventDto;
 import ru.practicum.users.request.EventRequestStatusUpdateRequest;
 import ru.practicum.users.request.EventRequestStatusUpdateResult;
 import ru.practicum.users.request.ParticipationRequestDto;
-import ru.practicum.users.model.UpdateEventUserRequest;
+import ru.practicum.users.dto.UpdateEventUserRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;
@@ -64,12 +64,13 @@ public class UsersController {
     }
 
     @PatchMapping("/users/{userId}/events/{eventId}") //Изменение события добавленного текущим пользователем
-    public UpdateEventUserRequest upEventAddedByCurrentUser(@PathVariable Integer userId,
-                                                            @PathVariable Integer eventId,
-                                                            HttpServletRequest request
+    public EventFullDto upEventAddedByCurrentUser(@RequestBody UpdateEventUserRequest eventUserRequest,
+                                                  @PathVariable @Positive int userId,
+                                                  @PathVariable @Positive int eventId,
+                                                  HttpServletRequest request
     ) {
-        log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
-        return null;
+
+        return userService.upEventAddedByCurrentUser(eventUserRequest,userId,eventId,request);
     }
 
     @GetMapping("/users/{userId}/events/{eventId}/requests") //Получение информации о запросах на участие в событии текущего пользователя

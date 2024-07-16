@@ -6,7 +6,7 @@ import ru.practicum.events.dto.NewEventDto;
 import ru.practicum.users.request.EventRequestStatusUpdateRequest;
 import ru.practicum.users.request.EventRequestStatusUpdateResult;
 import ru.practicum.users.request.ParticipationRequestDto;
-import ru.practicum.users.model.UpdateEventUserRequest;
+import ru.practicum.users.dto.UpdateEventUserRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -22,7 +22,10 @@ public interface UserService {
     /**Получение полной информации о событии добавленном текущим пользователем*/
     EventFullDto getFullInfoAboutEventAddedByCurrentUser(Integer userId, Integer eventId, HttpServletRequest request);
     /**Изменение события добавленного текущим пользователем*/
-    UpdateEventUserRequest upEventAddedByCurrentUser(Integer userId, Integer eventId, HttpServletRequest request);
+    EventFullDto upEventAddedByCurrentUser(UpdateEventUserRequest eventUserRequest,
+                                           int userId,
+                                           int eventId,
+                                           HttpServletRequest request);
    /**Получение информации о запросах на участие в событии текущего пользователя*/
     List<ParticipationRequestDto> getInformationRequestsToParticipateCurrentUserEvent(Integer userId,
                                                                                       Integer eventId,

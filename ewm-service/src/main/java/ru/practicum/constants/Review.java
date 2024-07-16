@@ -1,6 +1,9 @@
 package ru.practicum.constants;
 
 public enum Review {
-    SEND_TO_REVIEW, //ОТПРАВИТЬ НА ПРОСМОТР,
-    CANCEL_REVIEW //ОТМЕНИТЬ ПРОСМОТР
+    /**Событие отправить на просмотр*/
+    SEND_TO_REVIEW,
+
+    /**Отменить просмотр события*/
+    CANCEL_REVIEW
 }

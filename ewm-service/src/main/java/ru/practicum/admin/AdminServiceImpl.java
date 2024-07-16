@@ -101,10 +101,12 @@ public class AdminServiceImpl implements AdminService {
     /*Редактирование данных события и его статуса (отклонение/публикация).*/
     @Override
     public EventFullDto upEvent(UpdateEventAdminRequest eventAdminRequest, int eventId,HttpServletRequest request) {
-        int categoryId = eventAdminRequest.getCategory();
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new NotFoundException("Не найдена категория # при обновлении события!",categoryId));
-
+        Integer categoryId = eventAdminRequest.getCategory();
+        Category category = null;
+        if(categoryId != null) {
+            category = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new NotFoundException("Не найдена категория # при обновлении события!", categoryId));
+        }
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Не найдено событие # при обновлении события!",eventId));
 

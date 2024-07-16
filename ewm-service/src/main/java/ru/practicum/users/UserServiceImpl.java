@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.NotFoundException;
 import ru.practicum.category.dao.CategoryRepository;
+import ru.practicum.category.model.Category;
 import ru.practicum.constants.StatusRequest;
 import ru.practicum.events.coverter.EventsMapper;
 import ru.practicum.events.dao.EventsRepository;
@@ -14,10 +15,11 @@ import ru.practicum.events.dto.NewEventDto;
 import ru.practicum.events.model.Event;
 import ru.practicum.events.model.Location;
 import ru.practicum.users.dao.UserRepository;
+import ru.practicum.users.model.User;
 import ru.practicum.users.request.EventRequestStatusUpdateRequest;
 import ru.practicum.users.request.EventRequestStatusUpdateResult;
 import ru.practicum.users.request.ParticipationRequestDto;
-import ru.practicum.users.model.UpdateEventUserRequest;
+import ru.practicum.users.dto.UpdateEventUserRequest;
 import ru.practicum.users.request.converter.RequestMapper;
 import ru.practicum.users.request.dao.RequestRepository;
 import ru.practicum.users.request.model.ParticipationRequest;
@@ -26,6 +28,8 @@ import ru.practicum.util.Util;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static ru.practicum.util.Patch.patchEventUser;
 
 
 @Slf4j
@@ -50,6 +54,7 @@ public class UserServiceImpl implements UserService {
     private final RequestMapper requestMapper;
 
     //Получение событий, добавленных текущим пользователем
+    @Override
     public List<EventShortDto> getEventsAddedCurrentUser(String userId,
                                                          Integer from,
                                                          Integer size,
@@ -61,6 +66,7 @@ public class UserServiceImpl implements UserService {
     }
 
      //Добавление нового события пользователем
+    @Override
     public EventFullDto addEventUser(NewEventDto newEventDto, int userId, HttpServletRequest request) {
         log.info("{} Добавление нового события {} пользователем {}",USERS,newEventDto,userId);
        // log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
@@ -92,6 +98,7 @@ public class UserServiceImpl implements UserService {
     }
 
     //Получение полной информации о событии добавленном текущим пользователем
+    @Override
     public EventFullDto getFullInfoAboutEventAddedByCurrentUser(Integer userId,
                                                                 Integer eventId,
                                                                 HttpServletRequest request
@@ -100,14 +107,34 @@ public class UserServiceImpl implements UserService {
     }
 
     //Изменение события добавленного текущим пользователем
-    public UpdateEventUserRequest upEventAddedByCurrentUser(Integer userId,
-                                                            Integer eventId,
+    @Override
+    public EventFullDto upEventAddedByCurrentUser(UpdateEventUserRequest eventUserRequest,
+                                                            int userId,
+                                                            int eventId,
                                                             HttpServletRequest request
     ) {
-        return null;
+        log.info("Входные параметры userid = {}, eventId = {}, body = {}",userId,eventId,eventUserRequest);
+        Integer categoryId = eventUserRequest.getCategory();
+        Category category = null;
+        if(categoryId != null) {
+            category = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new NotFoundException("Не найдена категория # при обновлении события!",categoryId));
+        }
+        Event event = eventsRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Не найдено событие # при обновлении события!",eventId));
+        User user = userRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Не найден пользователь # при обновлении события!",eventId));
+
+        Event upEvent = patchEventUser(event,eventUserRequest,category,eventId);
+        log.info("Обновленное событие после патча {}",upEvent);
+        Event newEvent = eventsRepository.save(upEvent);
+        log.info("Новое, сохраненное событие {}",newEvent);
+
+        return eventsMapper.toEventFullDto(newEvent);
     }
 
     //Получение информации о запросах на участие в событии текущего пользователя
+    @Override
     public List<ParticipationRequestDto> getInformationRequestsToParticipateCurrentUserEvent(Integer userId,
                                                                                              Integer eventId,
                                                                                              HttpServletRequest request
@@ -116,6 +143,7 @@ public class UserServiceImpl implements UserService {
     }
 
     //Изменение статуса (подтверждена, отменена) заявок на участие в событии текущего пользователя
+    @Override
     public EventRequestStatusUpdateResult upStatusApplicationsParticipationEventCurrentUser(
             EventRequestStatusUpdateRequest updateRequest,
             Integer userId,
@@ -126,6 +154,7 @@ public class UserServiceImpl implements UserService {
     }
 
     //Получение информации о заявках текущего пользователя на участие в чужих событиях
+    @Override
     public List<ParticipationRequestDto> getInfoCurrentUserRequestsParticipateOtherPeopleEvents(
             Integer userId,
             HttpServletRequest request
@@ -134,6 +163,7 @@ public class UserServiceImpl implements UserService {
     }
 
     //Добавление запроса от текущего пользователя на участие в событии
+    @Override
     public ParticipationRequestDto addRequestCurrentUserParticipateEvent(int userId,
                                                                          int eventId,
                                                                          HttpServletRequest request
@@ -152,6 +182,7 @@ public class UserServiceImpl implements UserService {
     }
 
     //Отмена своего запроса на участие в событии
+    @Override
     public ParticipationRequestDto upEventToParticipateCancel (int userId,
                                                                int requestId,
                                                                HttpServletRequest request
