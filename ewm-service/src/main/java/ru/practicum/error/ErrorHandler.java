@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.BadRequestException;
+import ru.practicum.ConflictException;
 import ru.practicum.NotFoundException;
 import ru.practicum.util.Util;
 
@@ -39,7 +40,17 @@ public class ErrorHandler {
                 .build();
     }
 
-
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handle(final ConflictException e) {
+        log.debug("Получен статус 409 conflict {}",e.getMessage(),e);
+        return ApiError.builder()
+                .status(HttpStatus.BAD_REQUEST.toString())
+                .reason(e.toString())
+                .message(e.getMessage())
+                .timestamp(LocalDateTime.now().format(Util.getFormatter()))
+                .build();
+    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

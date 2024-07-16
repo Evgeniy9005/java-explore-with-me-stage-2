@@ -21,7 +21,7 @@ public class UpdateEventAdminRequest {
     @Min(20)
     private final String annotation;
     /**Новая категория*/
-    private final int category;
+    private final Integer category;
     /**Новое описание*/
     @Max(7000)
     @Min(20)
@@ -31,11 +31,11 @@ public class UpdateEventAdminRequest {
     /**Широта и долгота места проведения события*/
     private final Location location;
     /**Новое значение флага о платности мероприятия*/
-    private final boolean paid;
+    private final Boolean paid;
     /**Новый лимит пользователей*/
-    private final int participantLimit;
+    private final Integer participantLimit;
     /**Нужна ли пре-модерация заявок на участие*/
-    private final boolean requestModeration;
+    private final Boolean requestModeration;
     /**Новое состояние события*/
     private final String stateAction;
     /**Новый заголовок*/

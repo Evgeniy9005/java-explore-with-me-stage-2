@@ -18,6 +18,7 @@ import ru.practicum.users.request.EventRequestStatusUpdateRequest;
 import ru.practicum.users.request.EventRequestStatusUpdateResult;
 import ru.practicum.users.request.ParticipationRequestDto;
 import ru.practicum.users.model.UpdateEventUserRequest;
+import ru.practicum.users.request.converter.RequestMapper;
 import ru.practicum.users.request.dao.RequestRepository;
 import ru.practicum.users.request.model.ParticipationRequest;
 import ru.practicum.util.Util;
@@ -45,6 +46,8 @@ public class UserServiceImpl implements UserService {
     private final CategoryRepository categoryRepository;
 
     private final RequestRepository requestRepository;
+
+    private final RequestMapper requestMapper;
 
     //Получение событий, добавленных текущим пользователем
     public List<EventShortDto> getEventsAddedCurrentUser(String userId,
@@ -145,7 +148,7 @@ public class UserServiceImpl implements UserService {
                 .build();
         ParticipationRequest newPr = requestRepository.save(pr);
         log.info("Добавлен запрос {} от текущего пользователя {} на участие в событии {}",newPr,userId,eventId);
-        return null;
+        return requestMapper.toDto(newPr);
     }
 
     //Отмена своего запроса на участие в событии
