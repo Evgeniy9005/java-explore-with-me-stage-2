@@ -34,8 +34,8 @@ public interface UserService {
     /**Изменение статуса (подтверждена, отменена) заявок на участие в событии текущего пользователя*/
     EventRequestStatusUpdateResult upStatusApplicationsParticipationEventCurrentUser(
             EventRequestStatusUpdateRequest updateRequest,
-            Integer userId,
-            Integer eventId,
+            int userId,
+            int eventId,
             HttpServletRequest request
     );
     /**Получение информации о заявках текущего пользователя на участие в чужих событиях*/

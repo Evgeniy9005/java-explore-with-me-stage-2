@@ -1,8 +1,15 @@
 package ru.practicum.constants;
 
 public enum StatusRequest {
-    /**РАССМАТРИВАЕМЫЙ*/
+    /**Рассматриваемый*/
     PENDING,
-    /**ОТМЕНЕННЫЙ*/
-    CANCELED
+
+    /**Отмененный*/
+    CANCELED,
+
+    /**Подтвержденный*/
+    CONFIRMED,
+
+    /**Отклоненный*/
+    REJECTED
 }

@@ -85,12 +85,11 @@ public class UsersController {
     @PatchMapping("/users/{userId}/events/{eventId}/requests") //Изменение статуса (подтверждена, отменена) заявок на участие в событии текущего пользователя
     public EventRequestStatusUpdateResult upStatusApplicationsParticipationEventCurrentUser(
             @RequestBody EventRequestStatusUpdateRequest updateRequest,
-            @PathVariable Integer userId,
-            @PathVariable Integer eventId,
+            @PathVariable @Positive int userId,
+            @PathVariable @Positive int eventId,
             HttpServletRequest request
     ) {
-        log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
-        return null;
+        return userService.upStatusApplicationsParticipationEventCurrentUser(updateRequest,userId,eventId,request);
     }
 
     @GetMapping("/users/{userId}/requests") //Получение информации о заявках текущего пользователя на участие в чужих событиях

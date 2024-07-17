@@ -27,7 +27,9 @@ import ru.practicum.util.Util;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static ru.practicum.util.Patch.patchEventUser;
 
@@ -146,10 +148,30 @@ public class UserServiceImpl implements UserService {
     @Override
     public EventRequestStatusUpdateResult upStatusApplicationsParticipationEventCurrentUser(
             EventRequestStatusUpdateRequest updateRequest,
-            Integer userId,
-            Integer eventId,
+            int userId,
+            int eventId,
             HttpServletRequest request
     ) {
+        log.info("Изменение статуса (подтверждена, отменена) заявок на участие в событии текущего пользователя");
+        log.info("Входные параметры dody = {}, userId = {} eventId = {}",updateRequest,userId,eventId);
+        List<Integer> requestIds = updateRequest.getRequestIds();
+
+        StatusRequest s = updateRequest.getStatus();
+        List<ParticipationRequestDto> prl = null;
+        if(requestIds != null && !requestIds.isEmpty()) {
+            prl = requestRepository.findAllById(requestIds).stream()
+                    .map(pr -> requestRepository.save(pr.toBuilder().status(s).build()))
+                    .map(prDto -> requestMapper.toDto(prDto))
+                    .collect(Collectors.toList());
+        }
+
+        switch (s) {
+            case CONFIRMED:
+                return new EventRequestStatusUpdateResult(prl,new ArrayList<>());
+            case REJECTED:
+                return new EventRequestStatusUpdateResult(new ArrayList<>(),prl);
+        }
+
         return null;
     }
 
