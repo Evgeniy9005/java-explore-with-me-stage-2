@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.admin.dto.UpdateEventAdminRequest;
+import ru.practicum.constants.State;
 import ru.practicum.users.request.NewUserRequest;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
@@ -56,23 +57,23 @@ public class AdminController {
     }
 
     @GetMapping("/events")
-    public List<EventFullDto> getEvents(@RequestParam String users,
-                                        @RequestParam String states,
-                                        @RequestParam String categories,
+    public List<EventFullDto> getEvents(@RequestParam List<Integer> users,
+                                        @RequestParam List<State> states,
+                                        @RequestParam List<Integer> categories,
                                         @RequestParam String rangeStart,
                                         @RequestParam String rangeEnd,
                                         @RequestParam (defaultValue = "0") int from,
                                         @RequestParam (defaultValue = "10") int size,
                                         HttpServletRequest request
     ) {
-        log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
-        return null;
+
+        return adminService.getEvents(users,states,categories,rangeStart,rangeEnd,from,size,request);
     }
 
     @PatchMapping("/events/{eventId}")
     public EventFullDto upEvent(@RequestBody UpdateEventAdminRequest eventAdminRequest,
-                                           @PathVariable @Positive int eventId,
-                                           HttpServletRequest request
+                                @PathVariable @Positive int eventId,
+                                HttpServletRequest request
     ) {
 
         return adminService.upEvent(eventAdminRequest,eventId,request);
@@ -97,7 +98,7 @@ public class AdminController {
     @DeleteMapping("/users/{userId}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable Integer userId, HttpServletRequest request) {
-       // log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
+
        adminService.deleteUser(userId,request);
     }
 
@@ -105,7 +106,7 @@ public class AdminController {
     @ResponseStatus(code = HttpStatus.CREATED)
     public CompilationDto addNewCompilation(@RequestBody NewCompilationDto newCompilationDto, HttpServletRequest request) {
 
-        log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
+      //  log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
         return null;
     }
 
@@ -117,7 +118,7 @@ public class AdminController {
 
     @PatchMapping("/compilations/{compId}")
     public CompilationDto upCompilation(@PathVariable Integer compId, HttpServletRequest request) {
-        log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
+       // log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
     return null;
     }
 }

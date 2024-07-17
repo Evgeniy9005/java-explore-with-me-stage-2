@@ -10,6 +10,7 @@ import ru.practicum.admin.dto.UpdateEventAdminRequest;
 import ru.practicum.category.converter.CategoryMapper;
 import ru.practicum.category.dao.CategoryRepository;
 import ru.practicum.category.model.Category;
+import ru.practicum.constants.State;
 import ru.practicum.events.coverter.EventsMapper;
 import ru.practicum.events.dao.EventsRepository;
 import ru.practicum.events.model.Event;
@@ -23,9 +24,11 @@ import ru.practicum.events.dto.EventFullDto;
 import ru.practicum.users.dao.UserRepository;
 import ru.practicum.users.dto.UserDto;
 import ru.practicum.users.model.User;
+import ru.practicum.util.Util;
 
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -87,15 +90,36 @@ public class AdminServiceImpl implements AdminService {
 
     /*Поиск событий*/
     @Override
-    public List<EventFullDto> getEvents(String users,
-                                        String states,
-                                        String categories,
+    public List<EventFullDto> getEvents(List<Integer> users,
+                                        List<State> states,
+                                        List<Integer> categories,
                                         String rangeStart,
                                         String rangeEnd,
                                         int from,
-                                        int size
+                                        int size,
+                                        HttpServletRequest request
     ) {
-        return null;
+
+        log.info("Поиск событий. Входные параметры users = {}, " +
+                "states = {}, categories = {}, rangeStart = {}, " +
+                "rangeEnd = {}, from = {}, size = {}",users,states,categories,rangeStart,rangeEnd,from,size);
+
+        // log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
+
+        Sort sort = Sort.by(Sort.Direction.ASC,"id");
+        List<Event> events = eventsRepository.getEvents(users,
+                states,
+                categories,
+                Util.getDate(rangeStart),
+                Util.getDate(rangeEnd),
+                Util.page(from,size,sort)
+        );
+
+        log.info("Полученные события в количестве {}:",events.size());
+        List<EventFullDto> eventFullDtos = events.stream().map(event -> eventsMapper.toEventFullDto(event)).collect(Collectors.toList());
+        eventFullDtos.stream().forEach(eventfullDto -> log.info(eventfullDto.toString()));
+
+        return eventFullDtos;
     }
 
     /*Редактирование данных события и его статуса (отклонение/публикация).*/

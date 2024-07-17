@@ -13,9 +13,9 @@ import java.util.List;
 
 public interface UserService {
     /**Получение событий, добавленных текущим пользователем*/
-    List<EventShortDto> getEventsAddedCurrentUser(String userId,
-                                                  Integer from,
-                                                  Integer size,
+    List<EventShortDto> getEventsAddedCurrentUser(int userId,
+                                                  int from,
+                                                  int size,
                                                   HttpServletRequest request);
     /**Добавление нового события пользователем*/
     EventFullDto addEventUser(NewEventDto newEventDto, int userId, HttpServletRequest request);

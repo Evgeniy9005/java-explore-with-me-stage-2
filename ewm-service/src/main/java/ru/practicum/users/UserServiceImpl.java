@@ -2,6 +2,7 @@ package ru.practicum.users;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.NotFoundException;
 import ru.practicum.category.dao.CategoryRepository;
@@ -57,14 +58,22 @@ public class UserServiceImpl implements UserService {
 
     //Получение событий, добавленных текущим пользователем
     @Override
-    public List<EventShortDto> getEventsAddedCurrentUser(String userId,
-                                                         Integer from,
-                                                         Integer size,
+    public List<EventShortDto> getEventsAddedCurrentUser(int userId,
+                                                         int from,
+                                                         int size,
                                                          HttpServletRequest request
     ) {
         log.info("{} Получение событий, добавленных текущим пользователем {}, в диапазоне от {} до {}",USERS,userId, from, size);
         //log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
-        return null;
+        Sort sort = Sort.by(Sort.Direction.ASC,"id");
+        List<Event> events = eventsRepository.findByInitiatorId(userId,Util.page(from,size,sort));
+        List<EventShortDto> eventShortDtoList = events.stream()
+                .map(event -> eventsMapper.toEventShortDto(event))
+                .collect(Collectors.toList());
+        log.info("Получены события в размере {}",eventShortDtoList.size());
+        eventShortDtoList.stream().forEach(e -> log.info(e.toString()));
+
+        return eventShortDtoList;
     }
 
      //Добавление нового события пользователем

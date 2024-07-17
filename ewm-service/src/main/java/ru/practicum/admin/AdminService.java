@@ -1,6 +1,7 @@
 package ru.practicum.admin;
 
 import ru.practicum.admin.dto.UpdateEventAdminRequest;
+import ru.practicum.constants.State;
 import ru.practicum.users.request.NewUserRequest;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
@@ -20,13 +21,14 @@ public interface AdminService {
     /**Изменение категории*/
     CategoryDto upCategory(CategoryDto categoryDto,Integer catId,HttpServletRequest request);
     /**Поиск событий*/
-    List<EventFullDto> getEvents(String users,
-                                        String states,
-                                        String categories,
+    List<EventFullDto> getEvents(List<Integer> users,
+                                 List<State> states,
+                                 List<Integer> categories,
                                         String rangeStart,
                                         String rangeEnd,
                                         int from,
-                                        int size
+                                        int size,
+                                 HttpServletRequest request
     );
     /**Редактирование данных события и его статуса (отклонение/публикация).*/
     EventFullDto upEvent(UpdateEventAdminRequest eventAdminRequest, int eventId,HttpServletRequest request);

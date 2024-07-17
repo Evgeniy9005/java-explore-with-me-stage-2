@@ -6,6 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import ru.practicum.BadRequestException;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -99,6 +102,16 @@ public class Util {
 
     public static LocalDateTime getDate(String date) {
         return LocalDateTime.parse(date,formatter);
+    }
+
+    public static String encodeValue(String value) {
+        String result = "";
+        try {
+            URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            log.debug("Ошибка расшифровки данных {}",value);
+        }
+        return result;
     }
 
 }

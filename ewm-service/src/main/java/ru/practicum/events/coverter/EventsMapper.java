@@ -6,6 +6,7 @@ import org.mapstruct.factory.Mappers;
 import ru.practicum.category.converter.CategoryMapper;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.events.dto.EventFullDto;
+import ru.practicum.events.dto.EventShortDto;
 import ru.practicum.events.model.Event;
 import ru.practicum.events.model.Location;
 import ru.practicum.users.converter.UserMapper;
@@ -18,7 +19,14 @@ import java.time.LocalDateTime;
 @Mapper(componentModel = "spring")
 public interface EventsMapper {
 
-    Event toEvent(EventFullDto eventFullDto);
+   // Event toEvent(EventFullDto eventFullDto);
+
+    @Mapping(target = "category",expression = "java(categoryToCategoryDto(event))")
+    @Mapping(target = "initiator",expression = "java(userToUserShortDto(event))")
+    @Mapping(target = "eventDate",expression = "java(getConvertDateEventDate(event))")
+    EventShortDto toEventShortDto(Event event);
+
+
 
     @Mapping(target = "category",expression = "java(categoryToCategoryDto(event))")
     @Mapping(target = "initiator",expression = "java(userToUserShortDto(event))")

@@ -3,7 +3,6 @@ package ru.practicum.model;
 import dto.EndpointHitDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -19,9 +18,8 @@ public interface EndpointHitMapper {
 
 
        default LocalDateTime parsingTimestamp(EndpointHitDto hitDto) {
-
-              LocalDateTime timestamp = LocalDateTime.parse(hitDto.getTimestamp(), formatter);
-              return timestamp;
+          LocalDateTime timestamp = LocalDateTime.parse(hitDto.getTimestamp(), formatter);
+          return timestamp;
        }
 
        default String formatDateTime(EndpointHit hit) {

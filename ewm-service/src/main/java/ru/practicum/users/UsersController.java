@@ -35,9 +35,9 @@ public class UsersController {
 
 
     @GetMapping("/users/{userId}/events") //Получение событий, добавленных текущим пользователем
-    public List<EventShortDto> getEventsAddedCurrentUser(@PathVariable String userId,
-                                                         @RequestParam (defaultValue = "0") Integer from,
-                                                         @RequestParam (defaultValue = "10") Integer size,
+    public List<EventShortDto> getEventsAddedCurrentUser(@PathVariable int userId,
+                                                         @RequestParam (defaultValue = "0") int from,
+                                                         @RequestParam (defaultValue = "10") int size,
                                                          HttpServletRequest request
     ) {
 
