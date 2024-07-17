@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import ru.practicum.events.coverter.EventsMapper;
+import ru.practicum.events.dao.EventsRepository;
 import ru.practicum.events.dto.EventFullDto;
 import ru.practicum.events.dto.EventShortDto;
 
@@ -23,6 +25,10 @@ public class EventsServiceImpl implements EventsService {
 
     private static final String APP = "ewm-main-service";
 
+    private final EventsRepository eventsRepository;
+
+    private final EventsMapper eventsMapper;
+
     public List<EventShortDto> getEvents(
             String text,//текст для поиска в содержимом аннотации и подробном описании события
             Integer categories, //список идентификаторов категорий в которых будет вестись поиск
@@ -36,6 +42,8 @@ public class EventsServiceImpl implements EventsService {
             HttpServletRequest request
     ) {
         //log.info("{} Отправлена статистика {}",EVENTS,getStatsClient().put(hit(APP,request)));
+
+
         return null;
     }
 

@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
                                                          HttpServletRequest request
     ) {
         log.info("{} Получение событий, добавленных текущим пользователем {}, в диапазоне от {} до {}",USERS,userId, from, size);
-        //log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
+
         Sort sort = Sort.by(Sort.Direction.ASC,"id");
         List<Event> events = eventsRepository.findByInitiatorId(userId,Util.page(from,size,sort));
         List<EventShortDto> eventShortDtoList = events.stream()
@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
         log.info("Получены события в размере {}",eventShortDtoList.size());
         eventShortDtoList.stream().forEach(e -> log.info(e.toString()));
-
+        //log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
         return eventShortDtoList;
     }
 

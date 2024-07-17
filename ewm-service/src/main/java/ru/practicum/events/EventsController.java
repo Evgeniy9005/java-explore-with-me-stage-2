@@ -37,7 +37,7 @@ public class EventsController {
             @RequestParam (defaultValue = "10") Integer size,
             HttpServletRequest request
     ) {
-        log.info("{} Отправлена статистика {}",EVENTS,getStatsClient().put(hit(APP,request)));
+       // log.info("{} Отправлена статистика {}",EVENTS,getStatsClient().put(hit(APP,request)));
         return null;
     }
 
