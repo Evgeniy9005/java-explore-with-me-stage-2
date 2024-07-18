@@ -25,4 +25,32 @@ public interface EventsRepository extends JpaRepository<Event,Integer> {
                          Pageable pageable);
 
    List<Event> findByInitiatorId(int userId,Pageable pageable);
+
+   @Query("select e from Event e where UPPER(e.annotation) like UPPER(:text) " +
+           "and e.category.id in(:categories) " +
+           "and e.paid = :paid " +
+           "and e.eventDate >= :rangeStart " +
+           "and e.eventDate <= :rangeEnd")
+   List<Event> searchEvents(@Param("text") String text,
+                            @Param("categories") List<Integer> categories,
+                            @Param("paid") boolean paid,
+                            @Param("rangeStart") LocalDateTime rangeStart,
+                            @Param("rangeEnd") LocalDateTime rangeEnd,
+                            Pageable pageable);
+
+   @Query("select e from Event e " +
+           "join ParticipationRequest pr on e.id = pr.event.id " +
+           "group by pr.id " +
+           "having UPPER(e.annotation) like UPPER(:text) " +
+           "and e.category.id in(:categories) " +
+           "and e.paid = :paid " +
+           "and e.eventDate >= :rangeStart " +
+           "and e.eventDate <= :rangeEnd " +
+           "and (count(pr.id) < e.participantLimit or e.participantLimit = 0)")
+   List<Event> searchEventsLimitNumberRequests(@Param("text") String text,
+                               @Param("categories") List<Integer> categories,
+                               @Param("paid") boolean paid,
+                               @Param("rangeStart") LocalDateTime rangeStart,
+                               @Param("rangeEnd") LocalDateTime rangeEnd,
+                               Pageable pageable);
 }
