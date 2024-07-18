@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.practicum.NotFoundException;
 import ru.practicum.constants.SortEvents;
 import ru.practicum.events.coverter.EventsMapper;
 import ru.practicum.events.dao.EventsRepository;
@@ -30,7 +31,7 @@ public class EventsServiceImpl implements EventsService {
 
     private final EventsMapper eventsMapper;
 
-    @Override  //Метод не доделан !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    @Override
     public List<EventShortDto> getEvents(
             String text,//текст для поиска в содержимом аннотации и подробном описании события
             List<Integer> categories, //список идентификаторов категорий в которых будет вестись поиск
@@ -87,15 +88,18 @@ public class EventsServiceImpl implements EventsService {
                     Util.page(from,size,sortEvents));
         }
 
-
-        eventList.stream().forEach(event -> log.info(event.toString()));
-
-
-        return eventList.stream().map(event -> eventsMapper.toEventShortDto(event)).collect(Collectors.toList());
+        List<EventShortDto> eventShortDtoList = eventList.stream()
+                .map(event -> eventsMapper.toEventShortDto(event))
+                .collect(Collectors.toList());
+        log.info("Получено событий в размере {}",eventShortDtoList.size());
+        eventShortDtoList.stream().forEach(event -> log.info(event.toString()));
+        return eventShortDtoList;
     }
 
     @Override
-    public EventFullDto getEvent(String id, HttpServletRequest request) {
+    public EventFullDto getEvent(int id, HttpServletRequest request) {
+        eventsRepository.findById(id)
+                .orElseThrow(()-> new NotFoundException("Не найдено событие под id = {}",id));
 
        // log.info("{} Отправлена статистика {}",EVENTS,getStatsClient().put(hit(APP,request)));
         return null;

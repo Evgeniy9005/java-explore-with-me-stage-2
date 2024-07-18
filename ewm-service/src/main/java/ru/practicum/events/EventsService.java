@@ -23,5 +23,5 @@ public interface EventsService {
             HttpServletRequest request
     );
 
-    EventFullDto getEvent(String id, HttpServletRequest request);
+    EventFullDto getEvent(int id, HttpServletRequest request);
 }

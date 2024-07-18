@@ -10,6 +10,7 @@ import ru.practicum.events.dto.EventFullDto;
 import ru.practicum.events.dto.EventShortDto;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Positive;
 import java.util.List;
 
 @Slf4j
@@ -38,16 +39,14 @@ public class EventsController {
             @RequestParam (defaultValue = "10") int size,
             HttpServletRequest request
     ) {
-       // log.info("{} Отправлена статистика {}",EVENTS,getStatsClient().put(hit(APP,request)));
 
         return eventsService.getEvents(text,categories,paid,rangeStart,rangeEnd,onlyAvailable, sort,from,size,request);
     }
 
     @GetMapping("/events/{id}")
-    public EventFullDto getEvent(@PathVariable String id, HttpServletRequest request) {
+    public EventFullDto getEvent(@PathVariable @Positive int id, HttpServletRequest request) {
 
-        //log.info("{} Отправлена статистика {}",EVENTS,getStatsClient().put(hit(APP,request)));
-        return null;
+        return eventsService.getEvent(id,request);
     }
 
 }
