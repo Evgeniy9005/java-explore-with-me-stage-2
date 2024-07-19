@@ -27,8 +27,8 @@ public interface UserService {
                                            int eventId,
                                            HttpServletRequest request);
    /**Получение информации о запросах на участие в событии текущего пользователя*/
-    List<ParticipationRequestDto> getInformationRequestsToParticipateCurrentUserEvent(Integer userId,
-                                                                                      Integer eventId,
+    List<ParticipationRequestDto> getInformationRequestsToParticipateCurrentUserEvent(int userId,
+                                                                                      int eventId,
                                                                                       HttpServletRequest request
     );
     /**Изменение статуса (подтверждена, отменена) заявок на участие в событии текущего пользователя*/
@@ -47,7 +47,7 @@ public interface UserService {
                                                                   HttpServletRequest request
     );
     /**Отмена своего запроса на участие в событии*/
-    ParticipationRequestDto upEventToParticipateCancel (int userId,
+    ParticipationRequestDto upEventToParticipateCancel(int userId,
                                                         int requestId,
                                                         HttpServletRequest request
     );

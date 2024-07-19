@@ -155,11 +155,19 @@ public class UserServiceImpl implements UserService {
 
     //Получение информации о запросах на участие в событии текущего пользователя
     @Override
-    public List<ParticipationRequestDto> getInformationRequestsToParticipateCurrentUserEvent(Integer userId,
-                                                                                             Integer eventId,
+    public List<ParticipationRequestDto> getInformationRequestsToParticipateCurrentUserEvent(int userId,
+                                                                                             int eventId,
                                                                                              HttpServletRequest request
     ) {
-        return null;
+        List<ParticipationRequest> prList = requestRepository.findByEventInitiatorIdAndEventId(userId,eventId);
+        List<ParticipationRequestDto> prDtoList = prList.stream()
+                .map(pr -> requestMapper.toDto(pr))
+                .collect(Collectors.toList());
+
+        log.info("Получена информация о запросах на участие в событии текущего пользователя! Всего {}",prDtoList.size());
+        prDtoList.stream().forEach(prDto -> log.info(prDto.toString()));
+
+        return prDtoList;
     }
 
     //Изменение статуса (подтверждена, отменена) заявок на участие в событии текущего пользователя

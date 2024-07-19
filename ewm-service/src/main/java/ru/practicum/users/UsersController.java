@@ -75,12 +75,12 @@ public class UsersController {
     }
 
     @GetMapping("/users/{userId}/events/{eventId}/requests") //Получение информации о запросах на участие в событии текущего пользователя
-    public List<ParticipationRequestDto> getInformationRequestsToParticipateCurrentUserEvent(@PathVariable Integer userId,
-                                                                                       @PathVariable Integer eventId,
+    public List<ParticipationRequestDto> getInformationRequestsToParticipateCurrentUserEvent(@PathVariable int userId,
+                                                                                       @PathVariable int eventId,
                                                                                        HttpServletRequest request
     ) {
-        log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
-        return null;
+        //log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
+        return userService.getInformationRequestsToParticipateCurrentUserEvent(userId,eventId,request);
     }
 
     @PatchMapping("/users/{userId}/events/{eventId}/requests") //Изменение статуса (подтверждена, отменена) заявок на участие в событии текущего пользователя
