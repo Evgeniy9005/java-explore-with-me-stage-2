@@ -20,7 +20,7 @@ public interface UserService {
     /**Добавление нового события пользователем*/
     EventFullDto addEventUser(NewEventDto newEventDto, int userId, HttpServletRequest request);
     /**Получение полной информации о событии добавленном текущим пользователем*/
-    EventFullDto getFullInfoAboutEventAddedByCurrentUser(Integer userId, Integer eventId, HttpServletRequest request);
+    EventFullDto getFullInfoAboutEventAddedByCurrentUser(int userId, int eventId, HttpServletRequest request);
     /**Изменение события добавленного текущим пользователем*/
     EventFullDto upEventAddedByCurrentUser(UpdateEventUserRequest eventUserRequest,
                                            int userId,

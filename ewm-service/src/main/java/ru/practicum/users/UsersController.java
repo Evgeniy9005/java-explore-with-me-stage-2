@@ -55,12 +55,13 @@ public class UsersController {
     }
 
     @GetMapping("/users/{userId}/events/{eventId}") //Получение полной информации о событии добавленном текущим пользователем
-    public EventFullDto getFullInfoAboutEventAddedByCurrentUser(@PathVariable Integer userId,
-                                                                @PathVariable Integer eventId,
+    public EventFullDto getFullInfoAboutEventAddedByCurrentUser(@PathVariable @Positive int userId,
+                                                                @PathVariable @Positive int eventId,
                                                                 HttpServletRequest request
     ) {
-        log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
-        return null;
+
+       // log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
+        return userService.getFullInfoAboutEventAddedByCurrentUser(userId,eventId,request);
     }
 
     @PatchMapping("/users/{userId}/events/{eventId}") //Изменение события добавленного текущим пользователем

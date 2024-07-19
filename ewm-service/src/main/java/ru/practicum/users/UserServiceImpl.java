@@ -110,11 +110,20 @@ public class UserServiceImpl implements UserService {
 
     //Получение полной информации о событии добавленном текущим пользователем
     @Override
-    public EventFullDto getFullInfoAboutEventAddedByCurrentUser(Integer userId,
-                                                                Integer eventId,
+    public EventFullDto getFullInfoAboutEventAddedByCurrentUser(int userId,
+                                                                int eventId,
                                                                 HttpServletRequest request
     ) {
-        return null;
+        Event event = eventsRepository.findByInitiatorIdAndId(userId,eventId)
+                .orElseThrow(()-> new NotFoundException("Не найдено события # " +
+                        "добавленном текущим пользователем #",userId,eventId));
+
+        EventFullDto eventFullDto = eventsMapper.toEventFullDto(event);
+
+        log.info("Получено событие добавленном текущим пользователем!",eventFullDto);
+        log.info(eventFullDto.toString());
+
+        return eventFullDto;
     }
 
     //Изменение события добавленного текущим пользователем
