@@ -196,10 +196,18 @@ public class UserServiceImpl implements UserService {
     //Получение информации о заявках текущего пользователя на участие в чужих событиях
     @Override
     public List<ParticipationRequestDto> getInfoCurrentUserRequestsParticipateOtherPeopleEvents(
-            Integer userId,
+            int userId,
             HttpServletRequest request
     ) {
-        return null;
+        List<ParticipationRequest> prList = requestRepository.findByRequesterId(userId);
+        List<ParticipationRequestDto> prDtoList = prList.stream()
+                .map(pr -> requestMapper.toDto(pr))
+                .collect(Collectors.toList());
+        log.info("Получена информация о заявках текущего пользователя на участие в чужих событиях! " +
+                "Всего {}",prDtoList.size());
+        prDtoList.stream().forEach(prDto -> log.info(prDto.toString()));
+
+        return prDtoList;
     }
 
     //Добавление запроса от текущего пользователя на участие в событии

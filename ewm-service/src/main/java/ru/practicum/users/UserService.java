@@ -39,7 +39,7 @@ public interface UserService {
             HttpServletRequest request
     );
     /**Получение информации о заявках текущего пользователя на участие в чужих событиях*/
-    List<ParticipationRequestDto> getInfoCurrentUserRequestsParticipateOtherPeopleEvents(Integer userId,
+    List<ParticipationRequestDto> getInfoCurrentUserRequestsParticipateOtherPeopleEvents(int userId,
                                                                                          HttpServletRequest request);
     /**Добавление запроса от текущего пользователя на участие в событии*/
     ParticipationRequestDto addRequestCurrentUserParticipateEvent(int userId,

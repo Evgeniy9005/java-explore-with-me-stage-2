@@ -95,11 +95,11 @@ public class UsersController {
 
     @GetMapping("/users/{userId}/requests") //Получение информации о заявках текущего пользователя на участие в чужих событиях
     public List<ParticipationRequestDto> getInfoCurrentUserRequestsParticipateOtherPeopleEvents(
-            @PathVariable Integer userId,
+            @PathVariable @Positive int userId,
             HttpServletRequest request
     ) {
-        log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
-        return null;
+      //  log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
+        return userService.getInfoCurrentUserRequestsParticipateOtherPeopleEvents(userId,request);
     }
 
     @PostMapping("/users/{userId}/requests") //Добавление запроса от текущего пользователя на участие в событии
