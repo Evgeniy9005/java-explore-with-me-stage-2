@@ -98,10 +98,14 @@ public class EventsServiceImpl implements EventsService {
 
     @Override
     public EventFullDto getEvent(int id, HttpServletRequest request) {
-        eventsRepository.findById(id)
+        Event event = eventsRepository.findById(id)
                 .orElseThrow(()-> new NotFoundException("Не найдено событие под id = {}",id));
 
+        EventFullDto eventFullDto = eventsMapper.toEventFullDto(event);
+
+        log.info("Получено событие {}",eventFullDto);
+
        // log.info("{} Отправлена статистика {}",EVENTS,getStatsClient().put(hit(APP,request)));
-        return null;
+        return eventFullDto;
     }
 }
