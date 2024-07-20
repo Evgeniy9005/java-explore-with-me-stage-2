@@ -6,6 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.compilations.dto.CompilationDto;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Positive;
 import java.util.List;
 
 import static ru.practicum.stats.Stats.getStatsClient;
@@ -22,7 +23,7 @@ public class CompilationController {
 
     private static final String APP = "ewm-main-service";
 
-    @GetMapping()
+    @GetMapping
     public List<CompilationDto> getCompilations(@RequestParam Boolean pinned, //искать только закрепленные/не закрепленные подборки
                                                 @RequestParam (defaultValue = "0") int from,
                                                 @RequestParam (defaultValue = "10") int size,
@@ -33,7 +34,7 @@ public class CompilationController {
     }
 
     @GetMapping("/{compId}")
-    public CompilationDto getCompilation(@PathVariable Integer compId, HttpServletRequest request) {
+    public CompilationDto getCompilation(@PathVariable @Positive int compId, HttpServletRequest request) {
         log.info("{} отправлена статистика {}",COMPILATION,getStatsClient().put(hit(APP,request)));
         return null;
     }

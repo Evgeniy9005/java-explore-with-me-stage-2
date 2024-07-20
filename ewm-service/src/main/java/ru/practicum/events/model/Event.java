@@ -90,6 +90,10 @@ public class Event {
     @Column(name = "views")
     private int views;
 
+    /**Подборка*/
+    @Column(name = "id_compilation")
+    private int сompilation;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -116,6 +120,21 @@ public class Event {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, annotation, category, confirmedRequests, createdOn, description, eventDate, initiator, lat, lon, paid, participantLimit, publishedOn, requestModeration, state, title, views);
+        return Objects.hash(id,
+                annotation,
+                category,
+                confirmedRequests,
+                createdOn,
+                description,
+                eventDate,
+                initiator,
+                lat, lon,
+                paid,
+                participantLimit,
+                publishedOn,
+                requestModeration,
+                state,
+                title,
+                views);
     }
 }

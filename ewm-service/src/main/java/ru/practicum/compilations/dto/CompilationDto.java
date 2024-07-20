@@ -11,10 +11,10 @@ import java.util.List;
 @Builder(toBuilder = true)
 @RequiredArgsConstructor
 public class CompilationDto {
+    /**Идентификатор подборки*/
+    private final int id;
     /**Список событий входящих в подборку*/
     private final List<EventShortDto> events;
-    /**Идентификатор подборки*/
-    private final Integer id;
     /**Закреплена ли подборка на главной странице сайта*/
     private final boolean pinned;
     /**Заголовок подборки*/
