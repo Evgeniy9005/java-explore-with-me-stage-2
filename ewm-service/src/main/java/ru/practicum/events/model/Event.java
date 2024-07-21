@@ -115,7 +115,8 @@ public class Event {
                 Objects.equals(initiator, event.initiator) &&
                 Objects.equals(publishedOn, event.publishedOn) &&
                 state == event.state &&
-                Objects.equals(title, event.title);
+                Objects.equals(title, event.title) &&
+                сompilation == event.сompilation;
     }
 
     @Override
@@ -135,6 +136,7 @@ public class Event {
                 requestModeration,
                 state,
                 title,
-                views);
+                views,
+                сompilation);
     }
 }

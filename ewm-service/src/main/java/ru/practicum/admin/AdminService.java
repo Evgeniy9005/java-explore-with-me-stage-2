@@ -1,6 +1,7 @@
 package ru.practicum.admin;
 
 import ru.practicum.admin.dto.UpdateEventAdminRequest;
+import ru.practicum.compilations.dto.UpdateCompilationRequest;
 import ru.practicum.constants.State;
 import ru.practicum.users.request.NewUserRequest;
 import ru.practicum.category.dto.CategoryDto;
@@ -39,9 +40,9 @@ public interface AdminService {
     /**Удаление пользователя*/
     void deleteUser(Integer userId, HttpServletRequest request);
     /**Добавление новой подборки (подборка может не содержать событий)*/
-    public CompilationDto addNewCompilation(NewCompilationDto newCompilationDto);
+    public CompilationDto addNewCompilation(NewCompilationDto newCompilationDto,HttpServletRequest request);
     /**Удаление подборки*/
-    void deleteCompilation(Integer compId);
+    void deleteCompilation(int compId,HttpServletRequest request);
     /**Обновить информацию о подборке*/
-    CompilationDto upCompilation( Integer compId);
+    CompilationDto upCompilation(UpdateCompilationRequest ucr, int compId, HttpServletRequest request);
 }

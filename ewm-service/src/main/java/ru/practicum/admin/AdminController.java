@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.admin.dto.UpdateEventAdminRequest;
+import ru.practicum.compilations.dto.UpdateCompilationRequest;
 import ru.practicum.constants.State;
 import ru.practicum.users.request.NewUserRequest;
 import ru.practicum.category.dto.CategoryDto;
@@ -91,34 +92,32 @@ public class AdminController {
     @PostMapping("/users")
     @ResponseStatus(code = HttpStatus.CREATED)
     public UserDto addNewUser(@RequestBody NewUserRequest newUserRequest, HttpServletRequest request) {
-        log.info("{} запрос на добавления пользователя {} ",ADMIN, newUserRequest);
         return adminService.addNewUser(newUserRequest,request);
     }
 
     @DeleteMapping("/users/{userId}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable Integer userId, HttpServletRequest request) {
-
        adminService.deleteUser(userId,request);
     }
 
     @PostMapping("/compilations")
     @ResponseStatus(code = HttpStatus.CREATED)
     public CompilationDto addNewCompilation(@RequestBody NewCompilationDto newCompilationDto, HttpServletRequest request) {
-
-      //  log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
-        return null;
+        return adminService.addNewCompilation(newCompilationDto,request);
     }
 
     @DeleteMapping("/compilations/{compId}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public void deleteCompilation(@PathVariable Integer compId, HttpServletRequest request) {
-
+    public void deleteCompilation(@PathVariable @Positive int compId, HttpServletRequest request) {
+        adminService.deleteCompilation(compId,request);
     }
 
     @PatchMapping("/compilations/{compId}")
-    public CompilationDto upCompilation(@PathVariable Integer compId, HttpServletRequest request) {
-       // log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
-    return null;
+    public CompilationDto upCompilation(@RequestBody UpdateCompilationRequest ucr,
+                                        @PathVariable @Positive int compId,
+                                        HttpServletRequest request
+    ) {
+    return adminService.upCompilation(ucr,compId,request);
     }
 }

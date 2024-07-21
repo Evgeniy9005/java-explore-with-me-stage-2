@@ -1,9 +1,7 @@
 package ru.practicum.compilations.model;
 
 import lombok.*;
-import ru.practicum.events.dto.EventShortDto;
 import ru.practicum.events.model.Event;
-
 import javax.persistence.*;
 import java.util.List;
 
@@ -14,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-@Table(name = "Compilation", schema = "public")
+@Table(name = "compilation", schema = "public")
 public class Compilation {
 
     /**Идентификатор подборки*/
@@ -22,7 +20,10 @@ public class Compilation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     /**Список событий входящих в подборку*/
-    private List<Event> events;
+    //@OneToMany
+    //@JoinColumn(name = "id_compilation")
+    @Column(name = "list_events_json")
+    private String events;
     /**Закреплена ли подборка на главной странице сайта*/
     @Column(name = "pinned")
     private boolean pinned;

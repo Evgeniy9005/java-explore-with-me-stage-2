@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.compilations.dto.CompilationDto;
+import ru.practicum.compilations.dto.UpdateCompilationRequest;
+import ru.practicum.compilations.model.Compilation;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;
 import java.util.List;
@@ -29,13 +32,16 @@ public class CompilationController {
                                                 @RequestParam (defaultValue = "10") int size,
                                                 HttpServletRequest request
     ) {
-        log.info("{} отправлена статистика {}",COMPILATION,getStatsClient().put(hit(APP,request)));
+       // log.info("{} отправлена статистика {}",COMPILATION,getStatsClient().put(hit(APP,request)));
+
         return null;
     }
 
     @GetMapping("/{compId}")
-    public CompilationDto getCompilation(@PathVariable @Positive int compId, HttpServletRequest request) {
-        log.info("{} отправлена статистика {}",COMPILATION,getStatsClient().put(hit(APP,request)));
+    public CompilationDto getCompilation(@RequestBody UpdateCompilationRequest ucr,
+                                         @PathVariable@Positive int compId,
+                                         HttpServletRequest request) {
+       // log.info("{} отправлена статистика {}",COMPILATION,getStatsClient().put(hit(APP,request)));
         return null;
     }
 }

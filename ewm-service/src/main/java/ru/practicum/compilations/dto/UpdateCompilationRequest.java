@@ -14,7 +14,7 @@ public class UpdateCompilationRequest {
     /**Список id событий подборки для полной замены текущего списка*/
     private final List<Integer> events;
     /**Закреплена ли подборка на главной странице сайта*/
-    private final boolean pinned;
+    private final Boolean pinned;
     /**Заголовок подборки*/
     @Max(50)
     @Min(1)

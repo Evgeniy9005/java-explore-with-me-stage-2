@@ -1,12 +1,20 @@
 package ru.practicum.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ru.practicum.ConflictException;
 import ru.practicum.admin.dto.UpdateEventAdminRequest;
 import ru.practicum.category.model.Category;
+import ru.practicum.compilations.dto.UpdateCompilationRequest;
+import ru.practicum.compilations.model.Compilation;
 import ru.practicum.constants.State;
 import ru.practicum.events.model.Event;
 import ru.practicum.events.model.Location;
 import ru.practicum.users.dto.UpdateEventUserRequest;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Patch {
     public static Event patchEventAdmin(Event updated,
@@ -100,6 +108,33 @@ public class Patch {
                 .state(state)
                 .title(title == null ? updated.getTitle() : title)
                 .build();
+    }
+
+    public static Map<Compilation, List<Integer>> patchCompilation(Compilation updated,
+                                                                    UpdateCompilationRequest patch
+
+    ) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = null;
+        List<Integer> eventIds = patch.getEvents();
+        if(eventIds != null) {
+            try {
+                json = objectMapper.writeValueAsString(eventIds);
+            } catch (JsonProcessingException e) {
+                throw new ConflictException("Ошибка преобразования данных при обновлении подборки # событий # ",updated,eventIds);
+            }
+        } else {
+            json = updated.getEvents();
+        }
+        String title = patch.getTitle();
+        Boolean pinned = patch.getPinned();
+        Map<Compilation,List<Integer>> result = new HashMap<>();
+        result.put(updated.toBuilder()
+                .pinned(pinned == null ? updated.isPinned() : pinned)
+                .events(json)
+                .title(title == null ? updated.getTitle() : title)
+                .build(),eventIds);
+    return result;
     }
 
     private static State getStateUser(String stateAction, int eventId ) {

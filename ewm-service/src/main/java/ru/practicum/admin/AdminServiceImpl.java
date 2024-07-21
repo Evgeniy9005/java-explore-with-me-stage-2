@@ -1,18 +1,26 @@
 package ru.practicum.admin;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.practicum.ConflictException;
 import ru.practicum.NotFoundException;
 import ru.practicum.admin.dto.UpdateEventAdminRequest;
 import ru.practicum.category.converter.CategoryMapper;
 import ru.practicum.category.dao.CategoryRepository;
 import ru.practicum.category.model.Category;
+import ru.practicum.compilations.converter.CompilationMapper;
+import ru.practicum.compilations.dao.CompilationRepository;
+import ru.practicum.compilations.dto.UpdateCompilationRequest;
+import ru.practicum.compilations.model.Compilation;
 import ru.practicum.constants.State;
 import ru.practicum.events.coverter.EventsMapper;
 import ru.practicum.events.dao.EventsRepository;
+import ru.practicum.events.dto.EventShortDto;
 import ru.practicum.events.model.Event;
 import ru.practicum.users.converter.UserMapper;
 import ru.practicum.users.request.NewUserRequest;
@@ -24,12 +32,14 @@ import ru.practicum.events.dto.EventFullDto;
 import ru.practicum.users.dao.UserRepository;
 import ru.practicum.users.dto.UserDto;
 import ru.practicum.users.model.User;
+import ru.practicum.util.Patch;
 import ru.practicum.util.Util;
 
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static ru.practicum.util.Util.page;
@@ -55,6 +65,12 @@ public class AdminServiceImpl implements AdminService {
     private final EventsRepository eventsRepository;
 
     private final EventsMapper eventsMapper;
+
+    private final CompilationRepository compilationRepository;
+
+    private final CompilationMapper compilationMapper;
+
+    private final ObjectMapper objectMapper;
 
     /*Добавление новой категории*/
     @Override
@@ -163,6 +179,7 @@ public class AdminServiceImpl implements AdminService {
     /*Добавление нового пользователя*/
     @Override
     public UserDto addNewUser(NewUserRequest newUserRequest, HttpServletRequest request) {
+        log.info("{} Запрос на добавления пользователя {} ",ADMIN, newUserRequest);
         User user = userRepository.save(User.builder()
                 .name(newUserRequest.getName())
                 .email(newUserRequest.getEmail())
@@ -186,20 +203,50 @@ public class AdminServiceImpl implements AdminService {
 
     /*Добавление новой подборки (подборка может не содержать событий)*/
     @Override
-    public CompilationDto addNewCompilation(NewCompilationDto newCompilationDto) {
+    public CompilationDto addNewCompilation(NewCompilationDto newCompilationDto,HttpServletRequest request) {
+        log.info("Входные параметры при добавлении подборки событий newCompilationDto = {}",newCompilationDto);
+        List<Integer> eventIds = newCompilationDto.getEvents();
+        List<Event> eventList = eventsRepository.findAllById(eventIds);
+        String json;
+        try {
+            json = objectMapper.writeValueAsString(eventIds);
+        } catch (JsonProcessingException e) {
+            throw new ConflictException("Ошибка преобразования данных #",eventIds);
+        }
 
-        return null;
+        Compilation compilation = Compilation.builder()
+                .events(json)
+                .pinned(newCompilationDto.isPinned())
+                .title(newCompilationDto.getTitle())
+                .build();
+
+        Compilation newCompilation = compilationRepository.save(compilation);
+        /*List<EventShortDto> eventShortDtoList = eventList.stream()
+                .map(event -> eventsMapper.toEventShortDto(event))
+                .collect(Collectors.toList());*/
+        CompilationDto compilationDto = compilationMapper.toCompilationDto(newCompilation,eventList);
+        log.info("Добавлена подборка событий {}",compilationDto);
+        return compilationDto;
     }
 
     /*Удаление подборки*/
     @Override
-    public void deleteCompilation(Integer compId) {
-
+    public void deleteCompilation(int compId,HttpServletRequest request) {
+        compilationRepository.deleteById(compId);
+        log.info("Подборка событий под id = {} удалена!",compId);
     }
 
     /*Обновить информацию о подборке*/
     @Override
-    public CompilationDto upCompilation( Integer compId) {
-        return null;
+    public CompilationDto upCompilation(UpdateCompilationRequest ucr, int compId, HttpServletRequest request) {
+        log.info("Входные параметры при обновлении подборки compId = {}, ucr {}",compId,ucr);
+        Compilation compilation = compilationRepository.findById(compId)
+                .orElseThrow(() -> new NotFoundException("Не найдена подборка # при обновлении!",compId));
+        Map<Compilation,List<Integer>> result = Patch.patchCompilation(compilation,ucr);
+        CompilationDto compilationDto = result.keySet().stream()
+                .map(c -> compilationMapper.toCompilationDto(c,eventsRepository.findAllById(result.get(c))))
+                .findFirst().get();
+        log.info("Обновлена подборка {}, {}",compId,compilationDto);
+        return compilationDto;
     }
 }
