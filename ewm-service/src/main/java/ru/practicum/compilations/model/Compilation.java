@@ -4,6 +4,7 @@ import lombok.*;
 import ru.practicum.events.model.Event;
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -30,4 +31,17 @@ public class Compilation {
     /**Заголовок подборки*/
     @Column(name = "title")
     private String title;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Compilation that = (Compilation) o;
+        return id == that.id && pinned == that.pinned && Objects.equals(events, that.events) && Objects.equals(title, that.title);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, events, pinned, title);
+    }
 }
