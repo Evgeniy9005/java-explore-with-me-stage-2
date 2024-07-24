@@ -110,13 +110,15 @@ public class Patch {
                 .build();
     }
 
-    public static Map<Compilation, List<Integer>> patchCompilation(Compilation updated,
+    public static Object[] patchCompilation(Compilation updated,
                                                                     UpdateCompilationRequest patch
 
     ) {
         ObjectMapper objectMapper = new ObjectMapper();
-        String json = null;
+        String json;
         List<Integer> eventIds = patch.getEvents();
+        Object [] result = new Object[2];
+
         if(eventIds != null) {
             try {
                 json = objectMapper.writeValueAsString(eventIds);
@@ -128,12 +130,13 @@ public class Patch {
         }
         String title = patch.getTitle();
         Boolean pinned = patch.getPinned();
-        Map<Compilation,List<Integer>> result = new HashMap<>();
-        result.put(updated.toBuilder()
+
+        result[0] = updated.toBuilder()
                 .pinned(pinned == null ? updated.isPinned() : pinned)
                 .events(json)
                 .title(title == null ? updated.getTitle() : title)
-                .build(),eventIds);
+                .build();
+        result[1] = eventIds;
     return result;
     }
 

@@ -26,22 +26,23 @@ public class CompilationController {
 
     private static final String APP = "ewm-main-service";
 
+    private final CompilationService compilationService;
+
     @GetMapping
-    public List<CompilationDto> getCompilations(@RequestParam Boolean pinned, //искать только закрепленные/не закрепленные подборки
+    public List<CompilationDto> getCompilations(@RequestParam (required = false) Boolean pinned, //искать только закрепленные/не закрепленные подборки
                                                 @RequestParam (defaultValue = "0") int from,
                                                 @RequestParam (defaultValue = "10") int size,
                                                 HttpServletRequest request
     ) {
        // log.info("{} отправлена статистика {}",COMPILATION,getStatsClient().put(hit(APP,request)));
 
-        return null;
+        return compilationService.getCompilations(pinned,from,size,request);
     }
 
     @GetMapping("/{compId}")
-    public CompilationDto getCompilation(@RequestBody UpdateCompilationRequest ucr,
-                                         @PathVariable@Positive int compId,
+    public CompilationDto getCompilation(@PathVariable @Positive int compId,
                                          HttpServletRequest request) {
        // log.info("{} отправлена статистика {}",COMPILATION,getStatsClient().put(hit(APP,request)));
-        return null;
+        return compilationService.getCompilation(compId,request);
     }
 }

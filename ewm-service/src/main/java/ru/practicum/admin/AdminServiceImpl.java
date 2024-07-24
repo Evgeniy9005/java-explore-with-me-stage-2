@@ -240,12 +240,18 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public CompilationDto upCompilation(UpdateCompilationRequest ucr, int compId, HttpServletRequest request) {
         log.info("Входные параметры при обновлении подборки compId = {}, ucr {}",compId,ucr);
+
         Compilation compilation = compilationRepository.findById(compId)
                 .orElseThrow(() -> new NotFoundException("Не найдена подборка # при обновлении!",compId));
-        Map<Compilation,List<Integer>> result = Patch.patchCompilation(compilation,ucr);
-        CompilationDto compilationDto = result.keySet().stream()
-                .map(c -> compilationMapper.toCompilationDto(c,eventsRepository.findAllById(result.get(c))))
-                .findFirst().get();
+
+        Object[] result = Patch.patchCompilation(compilation,ucr);
+        Compilation patchCompilation = (Compilation) result[0];
+        List<Integer> eventIds = (List<Integer>) result[1];
+        log.info("Обновленная подборка после patchCompilation! patchCompilation = {}, eventIds = {}",patchCompilation,eventIds);
+
+        Compilation upCompilation = compilationRepository.save(patchCompilation);
+
+        CompilationDto compilationDto = compilationMapper.toCompilationDto(upCompilation,eventsRepository.findAllById(eventIds));
         log.info("Обновлена подборка {}, {}",compId,compilationDto);
         return compilationDto;
     }
