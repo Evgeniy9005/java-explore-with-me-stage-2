@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -34,12 +36,8 @@ import ru.practicum.users.dto.UserDto;
 import ru.practicum.users.model.User;
 import ru.practicum.util.Patch;
 import ru.practicum.util.Util;
-
-
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static ru.practicum.util.Util.page;
@@ -75,18 +73,33 @@ public class AdminServiceImpl implements AdminService {
     /*Добавление новой категории*/
     @Override
     public CategoryDto addNewCategory(NewCategoryDto newCategoryDto,HttpServletRequest request) {
-        Category category = categoryRepository.save(Category.builder()
-                .name(newCategoryDto.getName())
-                .build());
-        log.info("Сохраненная категория {}",category);
+        Category category;
+        log.info("Входные параметры при добавлении категории! newCategoryDto = {}",newCategoryDto);
+        //try {
+            category = categoryRepository.save(Category.builder()
+                    .name(newCategoryDto.getName())
+                    .build());
+        /*} catch (DataIntegrityViolationException e) {
+            throw new ConflictException("Добавление новой категории с занятым именем #!",newCategoryDto.getName());
+        }*/
+
         // log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
-        return categoryMapper.toCategoryDto(category);
+        CategoryDto categoryDto = categoryMapper.toCategoryDto(category);
+
+        log.info("Сохраненная категория {}",categoryDto);
+
+        return categoryDto;
     }
 
     /*Удаление категории*/
     @Override
-    public void deleteCategory(Integer catId,HttpServletRequest request) {
-        categoryRepository.deleteById(catId);
+    public void deleteCategory(int catId,HttpServletRequest request) {
+       // try {
+            categoryRepository.deleteById(catId);
+       /* } catch (DataIntegrityViolationException e) {
+            throw new ConflictException("Удаление категории # с привязанными событиями !",catId);
+        }*/
+
         log.info("Категория {} удалена",catId);
         // log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
     }
@@ -96,12 +109,20 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public CategoryDto upCategory(CategoryDto categoryDto, Integer catId, HttpServletRequest request) {
         // log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
-
+        Category upCategory;
         Category category = Category.builder().id(catId).name(categoryDto.getName()).build();
 
-        log.info("Обновлена категория {}",category);
+       // try {
+            upCategory = categoryRepository.save(category);
+       /* } catch (DataIntegrityViolationException e) {
+            throw new ConflictException("Попытка изменения имени # категории на уже существующее!",category.getName());
+        }*/
 
-        return categoryMapper.toCategoryDto(category);
+        CategoryDto newCategoryDto = categoryMapper.toCategoryDto(upCategory);
+
+        log.info("Обновлена категория {}",newCategoryDto);
+
+        return newCategoryDto;
     }
 
     /*Поиск событий*/

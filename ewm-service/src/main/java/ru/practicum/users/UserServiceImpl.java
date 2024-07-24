@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.practicum.ConflictException;
 import ru.practicum.NotFoundException;
 import ru.practicum.category.dao.CategoryRepository;
 import ru.practicum.category.model.Category;
+import ru.practicum.constants.State;
 import ru.practicum.constants.StatusRequest;
 import ru.practicum.events.coverter.EventsMapper;
 import ru.practicum.events.dao.EventsRepository;
@@ -224,12 +226,25 @@ public class UserServiceImpl implements UserService {
                                                                          int eventId,
                                                                          HttpServletRequest request
     ) {
+        int participantLimit;
+        Event event = eventsRepository.findById(eventId)
+                .orElseThrow(()-> new NotFoundException("Не найдено событие # при добавлении участия в событии!",eventId));
+        participantLimit = event.getParticipantLimit();
+        if(event.getInitiator().getId() == userId) {
+            throw new ConflictException("Добавление запроса от инициатора # события на участие в нём!",userId);
+        }
+        if(!event.getState().equals(State.PUBLISHED)) {
+            throw new ConflictException("Добавление запроса на участие в неопубликованном событии #!",eventId);
+        }
+        if(participantLimit != 0 && participantLimit < participantLimit + 1) {
+            throw new ConflictException("Добавление запроса на участие в событии, у которого заполнен лимит участников = #!",participantLimit);
+        }
+
         ParticipationRequest pr = ParticipationRequest.builder()
                 .requester(userRepository.findById(userId)
                         .orElseThrow(()->new NotFoundException("Не найден пользователь # при добавлении участия в событии!",userId)))
                 .created(LocalDateTime.now())
-                .event(eventsRepository.findById(eventId)
-                        .orElseThrow(()-> new NotFoundException("Не найдено событие # при добавлении участия в событии!",eventId)))
+                .event(event)
                 .status(StatusRequest.PENDING)
                 .build();
         ParticipationRequest newPr = requestRepository.save(pr);

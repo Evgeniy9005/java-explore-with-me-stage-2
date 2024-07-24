@@ -99,7 +99,7 @@ public class CompilationServiceImpl implements CompilationService {
     public CompilationDto getCompilation(int compId, HttpServletRequest request) {
         //log.info("{} отправлена статистика {}",COMPILATION,getStatsClient().put(hit(APP,request)));
         Compilation compilation = compilationRepository.findById(compId)
-                .orElseThrow(() -> new NotFoundException("Не надена подборка под id = {}!",compId));
+                .orElseThrow(() -> new NotFoundException("Не найдена подборка под id = {}!",compId));
         log.info("Получена подборка {}!",compilation);
         
         List<Integer> eventIds = parsingJsonIdEvents(compilation.getEvents());
@@ -116,7 +116,7 @@ public class CompilationServiceImpl implements CompilationService {
     private List<Integer> parsingJsonIdEvents(String json){
         List<Integer> eventIds;
 
-        log.info("json для дисериализации = {}",json);
+        log.info("json для десериализации = {}",json);
 
         try {
             eventIds = objectMapper.readValue(json,new TypeReference<List<Integer>>(){});

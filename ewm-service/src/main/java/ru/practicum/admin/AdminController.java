@@ -45,7 +45,7 @@ public class AdminController {
 
     @DeleteMapping("/categories/{catId}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public void deleteCategory(@PathVariable Integer catId, HttpServletRequest request) {
+    public void deleteCategory(@PathVariable @Positive int catId, HttpServletRequest request) {
         adminService.deleteCategory(catId,request);
     }
 

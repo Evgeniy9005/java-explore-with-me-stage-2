@@ -1,6 +1,7 @@
 package ru.practicum.error;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -49,6 +50,20 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handle(final ConflictException e) {
+        log.debug("Получен статус 409 conflict {}",e.getMessage(),e);
+        return ApiError.builder()
+                /*.errors(Arrays.stream(e.getStackTrace()).map(stackTraceElement -> stackTraceElement.toString())
+                        .collect(Collectors.toList()))*/
+                .status(HttpStatus.CONFLICT.toString())
+                .reason(e.toString())
+                .message(e.getMessage())
+                .timestamp(LocalDateTime.now().format(Util.getFormatter()))
+                .build();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handle(final DataIntegrityViolationException e) {
         log.debug("Получен статус 409 conflict {}",e.getMessage(),e);
         return ApiError.builder()
                 /*.errors(Arrays.stream(e.getStackTrace()).map(stackTraceElement -> stackTraceElement.toString())
