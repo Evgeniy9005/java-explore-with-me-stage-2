@@ -138,19 +138,25 @@ public class UserServiceImpl implements UserService {
         log.info("Входные параметры userid = {}, eventId = {}, body = {}",userId,eventId,eventUserRequest);
         Integer categoryId = eventUserRequest.getCategory();
         Category category = null;
-        if(categoryId != null) {
+        if (categoryId != null) {
             category = categoryRepository.findById(categoryId)
                     .orElseThrow(() -> new NotFoundException("Не найдена категория # при обновлении события!",categoryId));
         }
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Не найдено событие # при обновлении события!",eventId));
+
+        if (event.getState().equals(State.PUBLISHED)) {
+            throw new ConflictException("Запрещено изменение опубликованного события от имени пользователя!");
+        }
+
         User user = userRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь # при обновлении события!",eventId));
 
         Event upEvent = patchEventUser(event,eventUserRequest,category,eventId);
         log.info("Обновленное событие после патча {}",upEvent);
+
         Event newEvent = eventsRepository.save(upEvent);
-        log.info("Новое, сохраненное событие {}",newEvent);
+        log.info("Новое, сохраненное событие {} пользователем {}",newEvent,user);
 
         return eventsMapper.toEventFullDto(newEvent);
     }
@@ -185,19 +191,34 @@ public class UserServiceImpl implements UserService {
         List<Integer> requestIds = updateRequest.getRequestIds();
 
         StatusRequest s = updateRequest.getStatus();
-        List<ParticipationRequestDto> prl = null;
-        if(requestIds != null && !requestIds.isEmpty()) {
-            prl = requestRepository.findAllById(requestIds).stream()
+        List<ParticipationRequest> prlist = null;
+
+
+
+        if (requestIds != null && !requestIds.isEmpty()) {
+            prlist = requestRepository.findAllById(requestIds);
+            prlist.stream()
+                    .map(pr -> pr.getEvent().getParticipantLimit())
+                    .filter(pl -> pl !=0 && pl < pl + 1)
+                    .findFirst()
+                    .ifPresentOrElse(pl -> new ConflictException(
+                            "Попытка принять заявку на участие в событии, когда лимит уже достигнут!",
+                            throw () -> System.out.println("")
+                         //   log.info("Лимиты на участия в событиях не достигнуты.")
+                    ));
+
+                    /*.stream()
                     .map(pr -> requestRepository.save(pr.toBuilder().status(s).build()))
                     .map(prDto -> requestMapper.toDto(prDto))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList());*/
+
         }
 
         switch (s) {
             case CONFIRMED:
-                return new EventRequestStatusUpdateResult(prl,new ArrayList<>());
+                return new EventRequestStatusUpdateResult(prl,new ArrayList<>()); //подтвержденные заявки
             case REJECTED:
-                return new EventRequestStatusUpdateResult(new ArrayList<>(),prl);
+                return new EventRequestStatusUpdateResult(new ArrayList<>(),prl); //Отклоненные заявки
         }
 
         return null;
@@ -230,13 +251,15 @@ public class UserServiceImpl implements UserService {
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(()-> new NotFoundException("Не найдено событие # при добавлении участия в событии!",eventId));
         participantLimit = event.getParticipantLimit();
-        if(event.getInitiator().getId() == userId) {
+        if (event.getInitiator().getId() == userId) {
             throw new ConflictException("Добавление запроса от инициатора # события на участие в нём!",userId);
         }
-        if(!event.getState().equals(State.PUBLISHED)) {
+
+        if (!event.getState().equals(State.PUBLISHED)) {
             throw new ConflictException("Добавление запроса на участие в неопубликованном событии #!",eventId);
         }
-        if(participantLimit != 0 && participantLimit < participantLimit + 1) {
+
+        if (participantLimit != 0 && participantLimit < participantLimit + 1) {
             throw new ConflictException("Добавление запроса на участие в событии, у которого заполнен лимит участников = #!",participantLimit);
         }
 
@@ -252,7 +275,7 @@ public class UserServiceImpl implements UserService {
         return requestMapper.toDto(newPr);
     }
 
-    //Отмена своего запроса на участие в событии
+    //Отмена своего запроса на участие в событии ("/users/{userId}/requests/{requestId}/cancel")
     @Override
     public ParticipationRequestDto upEventToParticipateCancel (int userId,
                                                                int requestId,
@@ -262,12 +285,16 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(()-> new NotFoundException("Не найден запрос # на событие!",requestId));
 
         if (pr.getRequester().getId() != userId) {
-            throw new NotFoundException("Пользователь # не создавал запрос # на событие",userId,requestId);
+            throw new NotFoundException("Пользователь # не создавал запрос # на событие!",userId,requestId);
         }
 
-        log.info("Получен запрос {} на событие!",pr);
+        ParticipationRequest newPr = requestRepository.save(pr.toBuilder().status(StatusRequest.CANCELED).build());
 
-        return requestMapper.toDto(pr.toBuilder().status(StatusRequest.CANCELED).build());
+        ParticipationRequestDto newPrDto = requestMapper.toDto(newPr);
+
+        log.info("Получен запрос {} на событие!",newPrDto);
+
+        return newPrDto;
     }
 
 }
