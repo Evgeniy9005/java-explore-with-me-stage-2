@@ -24,7 +24,7 @@ public interface RequestRepository extends JpaRepository<ParticipationRequest,In
     int numberParticipants(int eventId);
 
     @Query("select e.id, count(pr.id) from ParticipationRequest pr " +
-            "left join Event e on e.id = pr.id " +
+            "join Event e on e.id = pr.event.id " +
             "group by e.id " +
             "having pr.event.id in(:participationRequestIds)")
     Map<Integer,Integer> numberEventsAndNumberParticipants(

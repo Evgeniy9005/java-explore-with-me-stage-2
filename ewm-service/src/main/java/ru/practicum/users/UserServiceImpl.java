@@ -198,7 +198,7 @@ public class UserServiceImpl implements UserService {
 
         if (requestIds != null && !requestIds.isEmpty()) {
             List<ParticipationRequest> prList = requestRepository.findAllById(requestIds);
-            log.info("Получены из БД в количестве {}!",prList);
+            log.info("Получены из БД в количестве {}!",prList.size());
 
             List<Integer> prIds = prList.stream().map(ParticipationRequest::getId).collect(Collectors.toList());
 
