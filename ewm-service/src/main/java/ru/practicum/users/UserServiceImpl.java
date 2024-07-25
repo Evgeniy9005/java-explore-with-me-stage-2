@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static ru.practicum.util.Patch.patchEventUser;
@@ -57,6 +58,7 @@ public class UserServiceImpl implements UserService {
     private final RequestRepository requestRepository;
 
     private final RequestMapper requestMapper;
+
 
     //Получение событий, добавленных текущим пользователем
     @Override
@@ -187,41 +189,68 @@ public class UserServiceImpl implements UserService {
             HttpServletRequest request
     ) {
         log.info("Изменение статуса (подтверждена, отменена) заявок на участие в событии текущего пользователя");
-        log.info("Входные параметры dody = {}, userId = {} eventId = {}",updateRequest,userId,eventId);
+        log.info("Входные параметры body = {}, userId = {} eventId = {}",updateRequest,userId,eventId);
+
+        EventRequestStatusUpdateResult result;
         List<Integer> requestIds = updateRequest.getRequestIds();
-
         StatusRequest s = updateRequest.getStatus();
-        List<ParticipationRequest> prlist = null;
-
-
+        List<ParticipationRequestDto> newPrListDto = new ArrayList<>();
 
         if (requestIds != null && !requestIds.isEmpty()) {
-            prlist = requestRepository.findAllById(requestIds);
-            prlist.stream()
-                    .map(pr -> pr.getEvent().getParticipantLimit())
-                    .filter(pl -> pl !=0 && pl < pl + 1)
-                    .findFirst()
-                    .ifPresentOrElse(pl -> new ConflictException(
-                            "Попытка принять заявку на участие в событии, когда лимит уже достигнут!",
-                            throw () -> System.out.println("")
-                         //   log.info("Лимиты на участия в событиях не достигнуты.")
-                    ));
+            List<ParticipationRequest> prList = requestRepository.findAllById(requestIds);
+            log.info("Получены из БД в количестве {}!",prList);
 
-                    /*.stream()
-                    .map(pr -> requestRepository.save(pr.toBuilder().status(s).build()))
+            List<Integer> prIds = prList.stream().map(ParticipationRequest::getId).collect(Collectors.toList());
+
+            Map<Integer,Integer> map = requestRepository.numberEventsAndNumberParticipants(prIds);
+
+            log.info("Получение количества заявок на каждое событие что будет обновлено!");
+            log.info("keySet= {}",map.keySet());
+            log.info("values= {}",map.values());
+
+            List<ParticipationRequest> upStatusPrList = prList.stream()
+                    .map(pr -> {
+                        int pl = pr.getEvent().getParticipantLimit();
+                        if (pl != 0 && pl < pl + 1) {
+                            throw new ConflictException(
+                                    "Попытка принять заявку на участие в событии, когда лимит # уже достигнут!",pl
+                            );
+                        }
+
+                        if (pr.getStatus().equals(StatusRequest.CONFIRMED)) {
+                            throw new ConflictException("Попытка отменить уже принятую заявку # на участие в событии!",pr);
+                        }
+
+                    return pr.toBuilder().status(s).build();
+                    }).collect(Collectors.toList());
+
+            log.info("Подготовлены для обновления заявки с измененным статусом в количестве {}",upStatusPrList.size());
+
+            List<ParticipationRequest> newPrList = requestRepository.saveAll(upStatusPrList);
+            log.info("Получены заявки на события после обновления в количестве {}",newPrList.size());
+
+            newPrListDto = newPrList.stream()
                     .map(prDto -> requestMapper.toDto(prDto))
-                    .collect(Collectors.toList());*/
+                    .collect(Collectors.toList());
 
         }
 
         switch (s) {
             case CONFIRMED:
-                return new EventRequestStatusUpdateResult(prl,new ArrayList<>()); //подтвержденные заявки
+                result = new EventRequestStatusUpdateResult(newPrListDto,new ArrayList<>()); //подтвержденные заявки
+                log.info("Обновлены заявки на статус подтверждения - CONFIRMED!");
+                log.info(result.toString());
+                return result;
             case REJECTED:
-                return new EventRequestStatusUpdateResult(new ArrayList<>(),prl); //Отклоненные заявки
+                result = new EventRequestStatusUpdateResult(new ArrayList<>(),newPrListDto); //Отклоненные заявки
+                log.info("Обновлены заявки на статус отклоненные - REJECTED!");
+                log.info(result.toString());
+                return result;
+            default:
+                throw new ConflictException("Ошибка обновления заявок на учатие в событиях! " +
+                        "Не известное значение статуса {}",s);
         }
 
-        return null;
     }
 
     //Получение информации о заявках текущего пользователя на участие в чужих событиях
@@ -248,9 +277,17 @@ public class UserServiceImpl implements UserService {
                                                                          HttpServletRequest request
     ) {
         int participantLimit;
+        int numberParticipants;
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(()-> new NotFoundException("Не найдено событие # при добавлении участия в событии!",eventId));
+
+        numberParticipants = requestRepository.numberParticipants(eventId);
+
+        log.info("Количество учатников {} в событии {}",numberParticipants,eventId);
+
         participantLimit = event.getParticipantLimit();
+
+
         if (event.getInitiator().getId() == userId) {
             throw new ConflictException("Добавление запроса от инициатора # события на участие в нём!",userId);
         }
@@ -259,8 +296,9 @@ public class UserServiceImpl implements UserService {
             throw new ConflictException("Добавление запроса на участие в неопубликованном событии #!",eventId);
         }
 
-        if (participantLimit != 0 && participantLimit < participantLimit + 1) {
-            throw new ConflictException("Добавление запроса на участие в событии, у которого заполнен лимит участников = #!",participantLimit);
+        if (participantLimit != 0 && participantLimit < numberParticipants) {
+            throw new ConflictException("Добавление запроса на участие в событии #," +
+                    " у которого заполнен лимит участников = #!",eventId,participantLimit);
         }
 
         ParticipationRequest pr = ParticipationRequest.builder()
