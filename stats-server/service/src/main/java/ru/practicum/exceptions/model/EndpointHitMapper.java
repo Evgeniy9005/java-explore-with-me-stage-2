@@ -1,4 +1,4 @@
-package ru.practicum.model;
+package ru.practicum.exceptions.model;
 
 import dto.EndpointHitDto;
 import org.mapstruct.Mapper;

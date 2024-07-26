@@ -1,7 +1,7 @@
 package ru.practicum.data;
 
 import dto.ViewStats;
-import ru.practicum.model.EndpointHit;
+import ru.practicum.exceptions.model.EndpointHit;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

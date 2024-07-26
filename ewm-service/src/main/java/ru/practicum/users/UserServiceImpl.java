@@ -25,12 +25,14 @@ import ru.practicum.users.request.ParticipationRequestDto;
 import ru.practicum.users.dto.UpdateEventUserRequest;
 import ru.practicum.users.request.converter.RequestMapper;
 import ru.practicum.users.request.dao.RequestRepository;
+import ru.practicum.users.request.model.EventIdAndParticipantId;
 import ru.practicum.users.request.model.ParticipationRequest;
 import ru.practicum.util.Util;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -195,39 +197,43 @@ public class UserServiceImpl implements UserService {
         List<Integer> requestIds = updateRequest.getRequestIds();
         StatusRequest s = updateRequest.getStatus();
         List<ParticipationRequestDto> newPrListDto = new ArrayList<>();
+        List<EventIdAndParticipantId> eventIdAndParticipantIdList;
 
         if (requestIds != null && !requestIds.isEmpty()) {
             List<ParticipationRequest> prList = requestRepository.findAllById(requestIds);
             log.info("Получены из БД в количестве {}!",prList.size());
 
-            List<Integer> prIds = prList.stream().map(ParticipationRequest::getId).collect(Collectors.toList());
-
-            Map<Integer,Integer> map = requestRepository.numberEventsAndNumberParticipants(prIds);
+           // eventIdAndParticipantIdList = ;
+            Map<Integer,Long> map = requestRepository.numberEventsAndNumberParticipants(requestIds).stream()
+                    .collect(Collectors.toMap(ePrId -> ePrId.getEventId(),ePrId -> ePrId.getCountParticipant()));
 
             log.info("Получение количества заявок на каждое событие что будет обновлено!");
-            log.info("keySet= {}",map.keySet());
-            log.info("values= {}",map.values());
+            log.info("       ID событий: {}",map.keySet());
+            log.info("Количество заявок: {}",map.values());
+
 
             List<ParticipationRequest> upStatusPrList = prList.stream()
                     .map(pr -> {
                         int pl = pr.getEvent().getParticipantLimit();
-                        if (pl != 0 && pl < pl + 1) {
+                        if (pl != 0 && pl < map.get(pr.getEvent().getId())) {
                             throw new ConflictException(
                                     "Попытка принять заявку на участие в событии, когда лимит # уже достигнут!",pl
                             );
                         }
 
                         if (pr.getStatus().equals(StatusRequest.CONFIRMED)) {
-                            throw new ConflictException("Попытка отменить уже принятую заявку # на участие в событии!",pr);
+                            throw new ConflictException(
+                                    "Попытка отменить уже принятую заявку # на участие в событии!",pr.getId()
+                            );
                         }
 
                     return pr.toBuilder().status(s).build();
                     }).collect(Collectors.toList());
 
-            log.info("Подготовлены для обновления заявки с измененным статусом в количестве {}",upStatusPrList.size());
+            log.info("Подготовлены для обновления заявки с измененным статусом в количестве {}!",upStatusPrList.size());
 
             List<ParticipationRequest> newPrList = requestRepository.saveAll(upStatusPrList);
-            log.info("Получены заявки на события после обновления в количестве {}",newPrList.size());
+            log.info("Получены заявки на события после обновления в количестве {}!",newPrList.size());
 
             newPrListDto = newPrList.stream()
                     .map(prDto -> requestMapper.toDto(prDto))
@@ -260,11 +266,14 @@ public class UserServiceImpl implements UserService {
             HttpServletRequest request
     ) {
         List<ParticipationRequest> prList = requestRepository.findByRequesterId(userId);
+
         List<ParticipationRequestDto> prDtoList = prList.stream()
                 .map(pr -> requestMapper.toDto(pr))
                 .collect(Collectors.toList());
+
         log.info("Получена информация о заявках текущего пользователя на участие в чужих событиях! " +
                 "Всего {}",prDtoList.size());
+
         prDtoList.stream().forEach(prDto -> log.info(prDto.toString()));
 
         return prDtoList;
@@ -278,14 +287,16 @@ public class UserServiceImpl implements UserService {
     ) {
         int participantLimit;
         int numberParticipants;
+
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(()-> new NotFoundException("Не найдено событие # при добавлении участия в событии!",eventId));
 
+        participantLimit = event.getParticipantLimit();
+
         numberParticipants = requestRepository.numberParticipants(eventId);
 
-        log.info("Количество учатников {} в событии {}",numberParticipants,eventId);
-
-        participantLimit = event.getParticipantLimit();
+        log.info("Количество учатников = {}, лимит участников = {}, событие {} ",
+                numberParticipants,participantLimit,eventId);
 
 
         if (event.getInitiator().getId() == userId) {
@@ -296,14 +307,16 @@ public class UserServiceImpl implements UserService {
             throw new ConflictException("Добавление запроса на участие в неопубликованном событии #!",eventId);
         }
 
-        if (participantLimit != 0 && participantLimit < numberParticipants) {
+        if (participantLimit != 0 && participantLimit <= numberParticipants) {
             throw new ConflictException("Добавление запроса на участие в событии #," +
-                    " у которого заполнен лимит участников = #!",eventId,participantLimit);
+                    " у которого заполнен лимит участников = #, всего оставшихся мест # на участие в событии!",
+                    eventId,participantLimit,participantLimit - numberParticipants);
         }
 
         ParticipationRequest pr = ParticipationRequest.builder()
                 .requester(userRepository.findById(userId)
-                        .orElseThrow(()->new NotFoundException("Не найден пользователь # при добавлении участия в событии!",userId)))
+                        .orElseThrow(()->new NotFoundException(
+                                "Не найден пользователь # при добавлении участия в событии!",userId)))
                 .created(LocalDateTime.now())
                 .event(event)
                 .status(StatusRequest.PENDING)
