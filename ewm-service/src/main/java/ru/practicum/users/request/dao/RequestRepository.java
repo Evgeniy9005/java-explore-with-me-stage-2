@@ -43,7 +43,7 @@ public interface RequestRepository extends JpaRepository<ParticipationRequest,In
     );*/
 
 
-    @Query("select new ru.practicum.users.request.model.EventIdAndParticipantId(e.id, count(pr.id)) " +
+    @Query("select new ru.practicum.users.request.model.EventIdAndParticipantId(e.id, count(pr.id), e.requestModeration) " +
             "from ParticipationRequest pr " +
             "join Event e on e.id = pr.event.id " +
             "where pr.id in(:participationRequestIds) "+

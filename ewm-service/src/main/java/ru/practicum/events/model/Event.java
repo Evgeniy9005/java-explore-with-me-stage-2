@@ -73,9 +73,12 @@ public class Event {
     @Column(name = "published_on")
     private LocalDateTime publishedOn;
 
-    /**Нужна ли пре-модерация заявок на участие*/
+    /**Нужна ли пре-модерация заявок на участие. Если true,
+     то все заявки будут ожидать подтверждения инициатором события.
+     Если false - то будут подтверждаться автоматически*/
+    @Builder.Default
     @Column(name = "request_moderation")
-    private boolean requestModeration;
+    private boolean requestModeration = true;
 
     /**Список состояний жизненного цикла события "enum": ["PENDING", "PUBLISHED", "CANCELED"]*/
     @Enumerated(EnumType.STRING)

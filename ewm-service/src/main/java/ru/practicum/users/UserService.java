@@ -5,7 +5,7 @@ import ru.practicum.events.dto.EventShortDto;
 import ru.practicum.events.dto.NewEventDto;
 import ru.practicum.users.request.EventRequestStatusUpdateRequest;
 import ru.practicum.users.request.EventRequestStatusUpdateResult;
-import ru.practicum.users.request.ParticipationRequestDto;
+import ru.practicum.users.request.dto.ParticipationRequestDto;
 import ru.practicum.users.dto.UpdateEventUserRequest;
 
 import javax.servlet.http.HttpServletRequest;

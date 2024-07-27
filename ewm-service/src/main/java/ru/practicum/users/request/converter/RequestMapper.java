@@ -2,7 +2,7 @@ package ru.practicum.users.request.converter;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import ru.practicum.users.request.ParticipationRequestDto;
+import ru.practicum.users.request.dto.ParticipationRequestDto;
 import ru.practicum.users.request.model.ParticipationRequest;
 import ru.practicum.util.Util;
 

@@ -2,6 +2,7 @@ package ru.practicum.users.request;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import ru.practicum.users.request.dto.ParticipationRequestDto;
 
 import java.util.List;
 

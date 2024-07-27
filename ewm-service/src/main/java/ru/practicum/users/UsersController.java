@@ -10,16 +10,13 @@ import ru.practicum.events.dto.EventShortDto;
 import ru.practicum.events.dto.NewEventDto;
 import ru.practicum.users.request.EventRequestStatusUpdateRequest;
 import ru.practicum.users.request.EventRequestStatusUpdateResult;
-import ru.practicum.users.request.ParticipationRequestDto;
+import ru.practicum.users.request.dto.ParticipationRequestDto;
 import ru.practicum.users.dto.UpdateEventUserRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;
 
 import java.util.List;
-
-import static ru.practicum.stats.Stats.getStatsClient;
-import static ru.practicum.stats.Stats.hit;
 
 @Slf4j
 @RestController

@@ -9,4 +9,5 @@ import lombok.*;
 public class EventIdAndParticipantId {
     private final int eventId;
     private final long countParticipant;
+    private final boolean requestModeration;
 }
