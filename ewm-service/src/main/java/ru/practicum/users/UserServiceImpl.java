@@ -195,26 +195,55 @@ public class UserServiceImpl implements UserService {
         EventRequestStatusUpdateResult result;
         List<Integer> requestIds = updateRequest.getRequestIds();
         StatusRequest status = updateRequest.getStatus();
-        List<ParticipationRequestDto> newPrListDto = new ArrayList<>();
+        List<ParticipationRequestDto> newPrConfirmedListDto = new ArrayList<>();
+        List<ParticipationRequestDto> newPrRejectedListDto = new ArrayList<>();
+        EventIdAndParticipantId ep;
+        int pl;
+        long countParticipant;
+        boolean flag = false;
+        String exceptionMessage = "";
 
-        if (requestIds != null && !requestIds.isEmpty()) {
-            List<ParticipationRequest> prList = requestRepository.findAllById(requestIds);
-            log.info("Получены из БД в количестве {}!",prList.size());
+        List<ParticipationRequest> prList = requestRepository.findAllById(requestIds);
+        log.info("Получены затребованные заявки {} !",requestIds);
 
-            Map<Integer,EventIdAndParticipantId> map = requestRepository.numberEventsAndNumberParticipants(requestIds).stream()
-                    .collect(Collectors.toMap(EventIdAndParticipantId::getEventId,ep -> ep));
+        pl = prList.get(0).getEvent().getParticipantLimit();
 
-            log.info("Получение количества заявок на каждое событие что будет обновлено!");
-            log.info("       ID событий: {}",map.keySet());
-            log.info("Количество заявок: {}",map.values());
+        ep = requestRepository.numberEventsAndNumberParticipants(eventId,requestIds,StatusRequest.CONFIRMED);
+            /*Map<Integer,EventIdAndParticipantId> map = requestRepository.numberEventsAndNumberParticipants(requestIds).stream()
+                    .collect(Collectors.toMap(EventIdAndParticipantId::getEventId,ep -> ep));*/
+        countParticipant = ep.getCountParticipant();
+            log.info("Получение количества подтвержденных заявок {} на событие {}!",ep.getCountParticipant(),eventId);
+           // log.info("       ID событий: {}",map.keySet());
+           // log.info("Количество заявок: {}",map.values());
 
+
+
+        for (ParticipationRequest pr : prList) {
+            if (pr.getStatus().equals(StatusRequest.CONFIRMED)) {
+                throw new ConflictException(
+                        "Попытка отменить уже принятую заявку # на участие в событии!",pr.getId()
+                );
+            }
+
+            if (pl != 0 && pl <= countParticipant) {
+                flag = true;
+
+                exceptionMessage = String.format(
+                        "Попытка принять заявку на участие в событии, когда лимит %s уже достигнут!",pl);
+
+               /* throw new ConflictException(
+                        "Попытка принять заявку на участие в событии, когда лимит # уже достигнут!",pl
+                );*/
+            }
+
+            countParticipant += 1;
+
+
+
+        }
 
             List<ParticipationRequest> upStatusPrList = prList.stream()
                     .map(pr -> {
-                        int eId = pr.getEvent().getId();
-                        int pl = pr.getEvent().getParticipantLimit();
-                        long countParticipant = map.get(eId).getCountParticipant();
-                        boolean m = map.get(eId).isRequestModeration();
 
                         if (pr.getStatus().equals(StatusRequest.CONFIRMED)) {
                             throw new ConflictException(
@@ -227,7 +256,7 @@ public class UserServiceImpl implements UserService {
                                     "Попытка принять заявку на участие в событии, когда лимит # уже достигнут!",pl
                             );
                         }
-
+                    countParticipant = countParticipant + 1;
                     return pr.toBuilder().status(status).build();
                     }).collect(Collectors.toList());
 
@@ -240,7 +269,6 @@ public class UserServiceImpl implements UserService {
                     .map(prDto -> requestMapper.toDto(prDto))
                     .collect(Collectors.toList());
 
-        }
 
         switch (status) {
             case CONFIRMED:

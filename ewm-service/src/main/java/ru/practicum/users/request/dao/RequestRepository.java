@@ -4,6 +4,7 @@ package ru.practicum.users.request.dao;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import ru.practicum.constants.StatusRequest;
 import ru.practicum.users.request.model.EventIdAndParticipantId;
 import ru.practicum.users.request.model.ParticipationRequest;
 import java.util.List;
@@ -42,15 +43,25 @@ public interface RequestRepository extends JpaRepository<ParticipationRequest,In
             @Param("participationRequestIds") List<Integer> participationRequestIds
     );*/
 
-
     @Query("select new ru.practicum.users.request.model.EventIdAndParticipantId(e.id, count(pr.id), e.requestModeration) " +
+            "from ParticipationRequest pr " +
+            "join Event e on e.id = pr.event.id " +
+            "where e.id = :eventId and pr.id in(:participationRequestIds) and pr.status = :status " +
+            "group by e.id ")
+    EventIdAndParticipantId numberEventsAndNumberParticipants(
+            @Param("eventId") int eventId,
+            @Param("participationRequestIds") List<Integer> participationRequestIds,
+            @Param("status") StatusRequest status
+            );
+
+    /*@Query("select new ru.practicum.users.request.model.EventIdAndParticipantId(e.id, count(pr.id), e.requestModeration) " +
             "from ParticipationRequest pr " +
             "join Event e on e.id = pr.event.id " +
             "where pr.id in(:participationRequestIds) "+
             "group by e.id ")
     List<EventIdAndParticipantId> numberEventsAndNumberParticipants(
             @Param("participationRequestIds") List<Integer> participationRequestIds
-    );
+    );*/
 
     /*@Query("select e.id, count(pr.id) from ParticipationRequest pr " +
             "join Event e on e.id = pr.event.id " +
