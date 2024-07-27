@@ -46,7 +46,7 @@ public interface RequestRepository extends JpaRepository<ParticipationRequest,In
     @Query("select new ru.practicum.users.request.model.EventIdAndParticipantId(e.id, count(pr.id), e.requestModeration) " +
             "from ParticipationRequest pr " +
             "join Event e on e.id = pr.event.id " +
-            "where e.id = :eventId and pr.id in(:participationRequestIds) and pr.status = :status " +
+            "where e.id = :eventId and pr.status = :status and pr.id in(:participationRequestIds) " +
             "group by e.id ")
     EventIdAndParticipantId numberEventsAndNumberParticipants(
             @Param("eventId") int eventId,

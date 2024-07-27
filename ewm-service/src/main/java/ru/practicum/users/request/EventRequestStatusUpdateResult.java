@@ -15,4 +15,11 @@ public class EventRequestStatusUpdateResult {
     /**Отклоненные заявки на участие в событии*/
     private final List<ParticipationRequestDto> rejectedRequests;
 
+    public void addConfirmedRequests(ParticipationRequestDto prDto) {
+        confirmedRequests.add(prDto);
+    }
+
+    public void addRejectedRequests(ParticipationRequestDto prDto) {
+        rejectedRequests.add(prDto);
+    }
 }

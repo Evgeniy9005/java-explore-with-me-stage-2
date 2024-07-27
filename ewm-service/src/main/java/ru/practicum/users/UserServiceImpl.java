@@ -31,9 +31,7 @@ import ru.practicum.util.Util;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static ru.practicum.util.Patch.patchEventUser;
@@ -192,31 +190,38 @@ public class UserServiceImpl implements UserService {
         log.info("Изменение статуса (подтверждена, отменена) заявок на участие в событии текущего пользователя");
         log.info("Входные параметры body = {}, userId = {} eventId = {}",updateRequest,userId,eventId);
 
-        EventRequestStatusUpdateResult result;
+        EventRequestStatusUpdateResult result = new EventRequestStatusUpdateResult(new ArrayList<>(),new ArrayList<>());
         List<Integer> requestIds = updateRequest.getRequestIds();
         StatusRequest status = updateRequest.getStatus();
-        List<ParticipationRequestDto> newPrConfirmedListDto = new ArrayList<>();
-        List<ParticipationRequestDto> newPrRejectedListDto = new ArrayList<>();
+        List<ParticipationRequest> newPrConfirmedList = new ArrayList<>();
+        List<ParticipationRequest> newPrRejectedList = new ArrayList<>();
+        List<ParticipationRequest> newPrUnitedList = new ArrayList<>();
+       // List<ParticipationRequestDto> newPrListDto = new ArrayList<>();
         EventIdAndParticipantId ep;
         int pl;
         long countParticipant;
         boolean flag = false;
-        String exceptionMessage = "";
+        String exceptionMessage = null;
 
         List<ParticipationRequest> prList = requestRepository.findAllById(requestIds);
         log.info("Получены затребованные заявки {} !",requestIds);
 
-        pl = prList.get(0).getEvent().getParticipantLimit();
+        if(prList.isEmpty()) {
+            throw new ConflictException(
+                    "Пустой список заявок при (подтверждена, отменена) заявок на участие в событии # ",eventId
+            );
+        } else {
+            pl = prList.get(0).getEvent().getParticipantLimit();
+        }
 
         ep = requestRepository.numberEventsAndNumberParticipants(eventId,requestIds,StatusRequest.CONFIRMED);
             /*Map<Integer,EventIdAndParticipantId> map = requestRepository.numberEventsAndNumberParticipants(requestIds).stream()
                     .collect(Collectors.toMap(EventIdAndParticipantId::getEventId,ep -> ep));*/
+
         countParticipant = ep.getCountParticipant();
             log.info("Получение количества подтвержденных заявок {} на событие {}!",ep.getCountParticipant(),eventId);
            // log.info("       ID событий: {}",map.keySet());
            // log.info("Количество заявок: {}",map.values());
-
-
 
         for (ParticipationRequest pr : prList) {
             if (pr.getStatus().equals(StatusRequest.CONFIRMED)) {
@@ -228,21 +233,29 @@ public class UserServiceImpl implements UserService {
             if (pl != 0 && pl <= countParticipant) {
                 flag = true;
 
-                exceptionMessage = String.format(
-                        "Попытка принять заявку на участие в событии, когда лимит %s уже достигнут!",pl);
+                if (exceptionMessage == null) {
+                    exceptionMessage = String.format(
+                            "Попытка принять заявку на участие в событии, когда лимит %s уже достигнут!",pl);
+                }
+                //если лимит превыщен то отменить все следующие заявки
+                newPrRejectedList.add(pr.toBuilder().status(StatusRequest.REJECTED).build());
 
-               /* throw new ConflictException(
-                        "Попытка принять заявку на участие в событии, когда лимит # уже достигнут!",pl
-                );*/
             }
 
             countParticipant += 1;
 
-
-
+            switch (status) {
+                case CONFIRMED:
+                    newPrConfirmedList.add(pr.toBuilder().status(status).build());
+                case REJECTED:
+                    newPrRejectedList.add(pr.toBuilder().status(status).build());
+                default:
+                    throw new ConflictException("Ошибка обновления заявок на учатие в событиях! " +
+                            "Не известное значение статуса {}",status);
+            }
         }
 
-            List<ParticipationRequest> upStatusPrList = prList.stream()
+           /* List<ParticipationRequest> upStatusPrList = prList.stream()
                     .map(pr -> {
 
                         if (pr.getStatus().equals(StatusRequest.CONFIRMED)) {
@@ -258,19 +271,34 @@ public class UserServiceImpl implements UserService {
                         }
                     countParticipant = countParticipant + 1;
                     return pr.toBuilder().status(status).build();
-                    }).collect(Collectors.toList());
+                    }).collect(Collectors.toList());*/
 
-            log.info("Подготовлены для обновления заявки с измененным статусом в количестве {}!",upStatusPrList.size());
+            log.info("Подготовлены для обновления заявки с измененным статусом на {} в количестве {}!",
+                    StatusRequest.REJECTED,newPrRejectedList.size());
+            log.info("Подготовлены для обновления заявки с измененным статусом на {} в количестве {}!",
+                    StatusRequest.CONFIRMED,newPrConfirmedList.size());
 
-            List<ParticipationRequest> newPrList = requestRepository.saveAll(upStatusPrList);
+            newPrUnitedList.addAll(newPrConfirmedList);
+            newPrUnitedList.addAll(newPrRejectedList);
+            log.info("Объединеный список заявок для сохранения в количестве {}!", newPrUnitedList.size());
+
+            List<ParticipationRequest> newPrList = requestRepository.saveAll(newPrUnitedList);
             log.info("Получены заявки на события после обновления в количестве {}!",newPrList.size());
 
-            newPrListDto = newPrList.stream()
-                    .map(prDto -> requestMapper.toDto(prDto))
-                    .collect(Collectors.toList());
+            newPrList.stream()
+                    .peek(pr -> {
+                     ParticipationRequestDto prDto = requestMapper.toDto(pr);
+                                switch (prDto.getStatus()) {
+                                    case "CONFIRMED":
+                                        result.addConfirmedRequests(prDto);
+                                    case "REJECTED":
+                                        result.addRejectedRequests(prDto);
+                                }
+
+                    });
 
 
-        switch (status) {
+        /*switch (status) {
             case CONFIRMED:
                 result = new EventRequestStatusUpdateResult(newPrListDto,new ArrayList<>()); //подтвержденные заявки
                 log.info("Обновлены заявки на статус подтверждения - CONFIRMED!");
@@ -284,8 +312,13 @@ public class UserServiceImpl implements UserService {
             default:
                 throw new ConflictException("Ошибка обновления заявок на учатие в событиях! " +
                         "Не известное значение статуса {}",status);
+        }*/
+
+        if(flag) {
+             throw new ConflictException(exceptionMessage);
         }
 
+        return result;
     }
 
     //Получение информации о заявках текущего пользователя на участие в чужих событиях
