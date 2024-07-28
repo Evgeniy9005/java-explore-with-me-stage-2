@@ -196,10 +196,9 @@ public class UserServiceImpl implements UserService {
         List<ParticipationRequest> newPrConfirmedList = new ArrayList<>();
         List<ParticipationRequest> newPrRejectedList = new ArrayList<>();
         List<ParticipationRequest> newPrUnitedList = new ArrayList<>();
-       // List<ParticipationRequestDto> newPrListDto = new ArrayList<>();
         EventIdAndParticipantId ep;
         int pl;
-        long countParticipant;
+        long countParticipant = 0;
         boolean flag = false;
         String exceptionMessage = null;
 
@@ -215,13 +214,12 @@ public class UserServiceImpl implements UserService {
         }
 
         ep = requestRepository.numberEventsAndNumberParticipants(eventId,StatusRequest.CONFIRMED);
-            /*Map<Integer,EventIdAndParticipantId> map = requestRepository.numberEventsAndNumberParticipants(requestIds).stream()
-                    .collect(Collectors.toMap(EventIdAndParticipantId::getEventId,ep -> ep));*/
 
-        countParticipant = ep.getCountParticipant();
-            log.info("Получение количества подтвержденных заявок {} на событие {}!",ep.getCountParticipant(),eventId);
-           // log.info("       ID событий: {}",map.keySet());
-           // log.info("Количество заявок: {}",map.values());
+        if (ep != null) {//значит подтвержденные заявки есть
+            countParticipant = ep.getCountParticipant();
+        }
+
+        log.info("Получение количества подтвержденных заявок {} на событие {}!",countParticipant,eventId);
 
         for (ParticipationRequest pr : prList) {
             if (pr.getStatus().equals(StatusRequest.CONFIRMED)) {
@@ -237,41 +235,23 @@ public class UserServiceImpl implements UserService {
                     exceptionMessage = String.format(
                             "Попытка принять заявку на участие в событии, когда лимит %s уже достигнут!",pl);
                 }
-                //если лимит превыщен то отменить все следующие заявки
+                //если лимит превышен, то отменить все следующие заявки
                 newPrRejectedList.add(pr.toBuilder().status(StatusRequest.REJECTED).build());
 
             }
 
             countParticipant += 1;
 
-            switch (status) {
-                case CONFIRMED:
-                    newPrConfirmedList.add(pr.toBuilder().status(status).build());
-                case REJECTED:
-                    newPrRejectedList.add(pr.toBuilder().status(status).build());
-                default:
-                    throw new ConflictException("Ошибка обновления заявок на учатие в событиях! " +
-                            "Не известное значение статуса {}",status);
+            if (status.equals(StatusRequest.CONFIRMED)) {
+                newPrRejectedList.add(pr.toBuilder().status(status).build());
+            } else if (status.equals(StatusRequest.REJECTED)) {
+                newPrRejectedList.add(pr.toBuilder().status(status).build());
+            } else {
+                throw new ConflictException("Ошибка обновления заявок на участие в событиях! " +
+                        "Не известное значение статуса #",status);
             }
+
         }
-
-           /* List<ParticipationRequest> upStatusPrList = prList.stream()
-                    .map(pr -> {
-
-                        if (pr.getStatus().equals(StatusRequest.CONFIRMED)) {
-                            throw new ConflictException(
-                                    "Попытка отменить уже принятую заявку # на участие в событии!",pr.getId()
-                            );
-                        }
-
-                        if (pl != 0 && pl <= countParticipant) {
-                            throw new ConflictException(
-                                    "Попытка принять заявку на участие в событии, когда лимит # уже достигнут!",pl
-                            );
-                        }
-                    countParticipant = countParticipant + 1;
-                    return pr.toBuilder().status(status).build();
-                    }).collect(Collectors.toList());*/
 
             log.info("Подготовлены для обновления заявки с измененным статусом на {} в количестве {}!",
                     StatusRequest.REJECTED,newPrRejectedList.size());
@@ -280,7 +260,7 @@ public class UserServiceImpl implements UserService {
 
             newPrUnitedList.addAll(newPrConfirmedList);
             newPrUnitedList.addAll(newPrRejectedList);
-            log.info("Объединеный список заявок для сохранения в количестве {}!", newPrUnitedList.size());
+            log.info("Объединенный список заявок для сохранения в количестве {}!", newPrUnitedList.size());
 
             List<ParticipationRequest> newPrList = requestRepository.saveAll(newPrUnitedList);
             log.info("Получены заявки на события после обновления в количестве {}!",newPrList.size());
@@ -297,22 +277,6 @@ public class UserServiceImpl implements UserService {
 
                     });
 
-
-        /*switch (status) {
-            case CONFIRMED:
-                result = new EventRequestStatusUpdateResult(newPrListDto,new ArrayList<>()); //подтвержденные заявки
-                log.info("Обновлены заявки на статус подтверждения - CONFIRMED!");
-                log.info(result.toString());
-                return result;
-            case REJECTED:
-                result = new EventRequestStatusUpdateResult(new ArrayList<>(),newPrListDto); //Отклоненные заявки
-                log.info("Обновлены заявки на статус отклоненные - REJECTED!");
-                log.info(result.toString());
-                return result;
-            default:
-                throw new ConflictException("Ошибка обновления заявок на учатие в событиях! " +
-                        "Не известное значение статуса {}",status);
-        }*/
 
         if(flag) {
              throw new ConflictException(exceptionMessage);
