@@ -214,7 +214,7 @@ public class UserServiceImpl implements UserService {
             pl = prList.get(0).getEvent().getParticipantLimit();
         }
 
-        ep = requestRepository.numberEventsAndNumberParticipants(eventId,requestIds,StatusRequest.CONFIRMED);
+        ep = requestRepository.numberEventsAndNumberParticipants(eventId,StatusRequest.CONFIRMED);
             /*Map<Integer,EventIdAndParticipantId> map = requestRepository.numberEventsAndNumberParticipants(requestIds).stream()
                     .collect(Collectors.toMap(EventIdAndParticipantId::getEventId,ep -> ep));*/
 
@@ -361,7 +361,7 @@ public class UserServiceImpl implements UserService {
 
         moderation = event.isRequestModeration();
 
-        numberParticipants = requestRepository.numberParticipants(eventId);
+        numberParticipants = requestRepository.numberParticipants(eventId,StatusRequest.CONFIRMED);
 
         log.info("Количество участников = {}, лимит участников = {}, событие {} ",
                 numberParticipants,participantLimit,eventId);

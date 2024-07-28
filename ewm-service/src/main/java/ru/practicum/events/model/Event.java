@@ -95,51 +95,19 @@ public class Event {
 
     /**Подборка*/
     @Column(name = "id_compilation")
-    private int сompilation;
+    private int compilation;
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Event event = (Event) o;
-        return id == event.id &&
-                confirmedRequests == event.confirmedRequests &&
-                Float.compare(event.lat, lat) == 0 &&
-                Float.compare(event.lon, lon) == 0 &&
-                paid == event.paid &&
-                participantLimit == event.participantLimit &&
-                requestModeration == event.requestModeration &&
-                views == event.views &&
-                Objects.equals(annotation, event.annotation) &&
-                Objects.equals(category, event.category) &&
-                Objects.equals(createdOn, event.createdOn) &&
-                Objects.equals(description, event.description) &&
-                Objects.equals(eventDate, event.eventDate) &&
-                Objects.equals(initiator, event.initiator) &&
-                Objects.equals(publishedOn, event.publishedOn) &&
-                state == event.state &&
-                Objects.equals(title, event.title) &&
-                сompilation == event.сompilation;
+        return id == event.id && confirmedRequests == event.confirmedRequests && Float.compare(event.lat, lat) == 0 && Float.compare(event.lon, lon) == 0 && paid == event.paid && participantLimit == event.participantLimit && requestModeration == event.requestModeration && views == event.views && compilation == event.compilation && Objects.equals(annotation, event.annotation) && Objects.equals(category, event.category) && Objects.equals(createdOn, event.createdOn) && Objects.equals(description, event.description) && Objects.equals(eventDate, event.eventDate) && Objects.equals(initiator, event.initiator) && Objects.equals(publishedOn, event.publishedOn) && state == event.state && Objects.equals(title, event.title);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id,
-                annotation,
-                category,
-                confirmedRequests,
-                createdOn,
-                description,
-                eventDate,
-                initiator,
-                lat, lon,
-                paid,
-                participantLimit,
-                publishedOn,
-                requestModeration,
-                state,
-                title,
-                views,
-                сompilation);
+        return Objects.hash(id, annotation, category, confirmedRequests, createdOn, description, eventDate, initiator, lat, lon, paid, participantLimit, publishedOn, requestModeration, state, title, views, compilation);
     }
 }

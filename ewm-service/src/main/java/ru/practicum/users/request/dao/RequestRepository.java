@@ -22,8 +22,8 @@ public interface RequestRepository extends JpaRepository<ParticipationRequest,In
     /*@Modifying
     @Query("update ParticipationRequest set where ParticipationRequest.id")
     void upStatus(@Param("prIds") List<Integer> prIds);*/
-    @Query("select count(pr.id) from ParticipationRequest pr where pr.event.id = ?1")
-    int numberParticipants(int eventId);
+    @Query("select count(pr.id) from ParticipationRequest pr where pr.event.id = ?1 and pr.status = ?2")
+    int numberParticipants(int eventId,StatusRequest status);
 
     /*@Query("select new ru.practicum.users.request.model.EventIdAndParticipantId(e.id, count(pr.id)) " +
             "from ParticipationRequest pr " +
@@ -46,11 +46,11 @@ public interface RequestRepository extends JpaRepository<ParticipationRequest,In
     @Query("select new ru.practicum.users.request.model.EventIdAndParticipantId(e.id, count(pr.id), e.requestModeration) " +
             "from ParticipationRequest pr " +
             "join Event e on e.id = pr.event.id " +
-            "where e.id = :eventId and pr.status = :status and pr.id in(:participationRequestIds) " +
+            "where e.id = :eventId and pr.status = :status " + //and pr.id in(:participationRequestIds) " +
             "group by e.id ")
     EventIdAndParticipantId numberEventsAndNumberParticipants(
             @Param("eventId") int eventId,
-            @Param("participationRequestIds") List<Integer> participationRequestIds,
+            //@Param("participationRequestIds") List<Integer> participationRequestIds,
             @Param("status") StatusRequest status
             );
 

@@ -41,7 +41,7 @@ class UsersControllerTest {
                                 request.setRemoteAddr("192.168.0.1");
                                 return request;
                             })
-                            .content(objectMapper.writeValueAsString(new UserDto("e",1,"name")))
+                            .content(objectMapper.writeValueAsString(new UserDto(1,"name","e")))
                             .characterEncoding(StandardCharsets.UTF_8)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))

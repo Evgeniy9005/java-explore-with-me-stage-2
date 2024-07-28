@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserDtoTest {
 
-    private UserDto userDto = new UserDto("email@email.ru",1,"User");
+    private UserDto userDto = new UserDto(1,"User","email@email.ru");
 
     @Test
     void testUserDto() {
