@@ -37,6 +37,7 @@ import ru.practicum.users.model.User;
 import ru.practicum.util.Patch;
 import ru.practicum.util.Util;
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -142,6 +143,14 @@ public class AdminServiceImpl implements AdminService {
                 "rangeEnd = {}, from = {}, size = {}",users,states,categories,rangeStart,rangeEnd,from,size);
 
         // log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
+        LocalDateTime start;
+        LocalDateTime end;
+
+        if(rangeStart == null) {
+            start = LocalDateTime.now();
+        } else {
+            start =
+        }
 
         Sort sort = Sort.by(Sort.Direction.ASC,"id");
         List<Event> events = eventsRepository.getEvents(users,
@@ -153,7 +162,10 @@ public class AdminServiceImpl implements AdminService {
         );
 
         log.info("Полученные события в количестве {}:",events.size());
-        List<EventFullDto> eventFullDtos = events.stream().map(event -> eventsMapper.toEventFullDto(event)).collect(Collectors.toList());
+        List<EventFullDto> eventFullDtos = events.stream()
+                .map(event -> eventsMapper.toEventFullDto(event))
+                .collect(Collectors.toList());
+
         eventFullDtos.stream().forEach(eventfullDto -> log.info(eventfullDto.toString()));
 
         return eventFullDtos;
@@ -189,9 +201,16 @@ public class AdminServiceImpl implements AdminService {
         Pageable pageable = page(from,size,sort);
         log.info("Входные параметры ibs = {} from = {} size = {}",ids,from,size);
 
-        userDtoList = userRepository.findAllByIdWithPageable(ids,pageable).stream()
-                .map(user -> userMapper.toUserDto(user))
-                .collect(Collectors.toList());
+        if(ids != null) {
+            userDtoList = userRepository.findAllByIdWithPageable(ids,pageable).stream()
+                    .map(user -> userMapper.toUserDto(user))
+                    .collect(Collectors.toList());
+        } else {
+            userDtoList = userRepository.findAll(pageable).stream()
+                    .map(user -> userMapper.toUserDto(user))
+                    .collect(Collectors.toList());
+        }
+
         log.info("Вернулось запрошенных пользователей {}",userDtoList);
         // log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
         return userDtoList;

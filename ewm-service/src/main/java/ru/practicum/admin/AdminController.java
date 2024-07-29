@@ -81,9 +81,9 @@ public class AdminController {
     }
 
     @GetMapping("/users")
-    public List<UserDto> getUsers(@RequestParam("ids") List<Integer> ids,
-                                  @RequestParam (defaultValue = "0") @PositiveOrZero int from,
-                                  @RequestParam (defaultValue = "10") @Positive int size,
+    public List<UserDto> getUsers(@RequestParam(required = false, name = "ids") List<Integer> ids,
+                                  @RequestParam (defaultValue = "0") int from,
+                                  @RequestParam (defaultValue = "10") int size,
                                   HttpServletRequest request
     ) {
         return adminService.getUsers(ids,from,size,request);
@@ -97,7 +97,7 @@ public class AdminController {
 
     @DeleteMapping("/users/{userId}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable Integer userId, HttpServletRequest request) {
+    public void deleteUser(@PathVariable @Positive int userId, HttpServletRequest request) {
        adminService.deleteUser(userId,request);
     }
 

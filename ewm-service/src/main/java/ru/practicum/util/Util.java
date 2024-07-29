@@ -104,6 +104,15 @@ public class Util {
         return LocalDateTime.parse(date,formatter);
     }
 
+    public static LocalDateTime getDateStart(String date) {
+
+        return LocalDateTime.parse(date,formatter);
+    }
+
+    public static LocalDateTime getDateEnd(String date) {
+        return LocalDateTime.parse(date,formatter);
+    }
+
     public static String encodeValue(String value) {
         String result = "";
         try {
