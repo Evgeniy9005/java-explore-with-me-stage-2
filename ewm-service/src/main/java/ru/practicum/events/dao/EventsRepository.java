@@ -25,6 +25,23 @@ public interface EventsRepository extends JpaRepository<Event,Integer> {
                          @Param("rangeEnd") LocalDateTime rangeEnd,//дата и время не позже которых должно произойти событие
                          Pageable pageable);
 
+   /*default String rewrite(String query, List<Integer> users,List<State> states,List<Integer> categories) {
+      String newQuery = "";
+      if(users == null) {
+         query = query.replaceAll(":users","select u from User");
+      }
+
+      if(states == null) {
+        query = query.replaceAll(":users","select u from User");
+      }
+
+      if(categories == null) {
+
+      }
+
+      return query;
+   }*/
+
    List<Event> findByInitiatorId(int userId,Pageable pageable);
 
    @Query("select e from Event e where UPPER(e.annotation) like UPPER(:text) " +

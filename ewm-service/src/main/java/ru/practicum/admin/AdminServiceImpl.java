@@ -137,29 +137,25 @@ public class AdminServiceImpl implements AdminService {
                                         int size,
                                         HttpServletRequest request
     ) {
+        List<Event> events;
 
         log.info("Поиск событий. Входные параметры users = {}, " +
                 "states = {}, categories = {}, rangeStart = {}, " +
                 "rangeEnd = {}, from = {}, size = {}",users,states,categories,rangeStart,rangeEnd,from,size);
 
         // log.info("{} отправлена статистика {}",ADMIN,getStatsClient().put(hit(APP,request)));
-        LocalDateTime start;
-        LocalDateTime end;
-
-        if(rangeStart == null) {
-            start = LocalDateTime.now();
-        } else {
-            start =
-        }
 
         Sort sort = Sort.by(Sort.Direction.ASC,"id");
-        List<Event> events = eventsRepository.getEvents(users,
-                states,
-                categories,
-                Util.getDate(rangeStart),
-                Util.getDate(rangeEnd),
-                Util.page(from,size,sort)
-        );
+
+
+            events = eventsRepository.getEvents(users,
+                    states,
+                    categories,
+                    Util.getDateStart(rangeStart),
+                    Util.getDateEnd(rangeEnd),
+                    Util.page(from,size,sort)
+            );
+
 
         log.info("Полученные события в количестве {}:",events.size());
         List<EventFullDto> eventFullDtos = events.stream()

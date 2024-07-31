@@ -20,6 +20,9 @@ public class Util {
 
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+    private static LocalDateTime startDate;
+    private static LocalDateTime endDate;
+
     public static Pageable page(int from, int size) {
         validFromSize(from,size);
         PageRequest pageRequest;
@@ -81,7 +84,6 @@ public class Util {
 
         String [] result = arrayString.split(",");
 
-
         List<Integer> list = Arrays.stream(result).map(i-> {
             try {
                 return Integer.parseInt(i);
@@ -106,12 +108,25 @@ public class Util {
 
     public static LocalDateTime getDateStart(String date) {
 
-        return LocalDateTime.parse(date,formatter);
+        if(date == null || date.isBlank()) {
+            startDate = LocalDateTime.now();
+            log.info("Дата начала выборки по умолчанию {}", startDate);
+        } else {
+            startDate = LocalDateTime.parse(date,formatter);
+        }
+        return startDate;
     }
 
     public static LocalDateTime getDateEnd(String date) {
-        return LocalDateTime.parse(date,formatter);
+        if(date == null || date.isBlank()) {
+            endDate = LocalDateTime.now().plusYears(10);
+            log.info("Дата конца выборки по умолчанию {}", endDate);
+        } else {
+            endDate = LocalDateTime.parse(date,formatter);
+        }
+        return endDate;
     }
+
 
     public static String encodeValue(String value) {
         String result = "";

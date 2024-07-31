@@ -4,19 +4,19 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import javax.validation.constraints.*;
 
 @RequiredArgsConstructor
 @ToString
 @Getter
 public class NewUserRequest {
+
+
     @Email
-    @Max(254)
-    @Min(6)
+    @NotNull
+    @Size(min = 6, max = 254)
     private final String email;
-    @Max(250)
-    @Min(2)
+    @NotBlank
+    @Size(min = 2, max = 250)
     private final String name;
 }

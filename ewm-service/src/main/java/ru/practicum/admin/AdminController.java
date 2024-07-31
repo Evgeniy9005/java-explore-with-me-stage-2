@@ -16,6 +16,7 @@ import ru.practicum.compilations.dto.NewCompilationDto;
 import ru.practicum.events.dto.EventFullDto;
 import ru.practicum.users.dto.UserDto;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
@@ -38,7 +39,7 @@ public class AdminController {
 
     @PostMapping("/categories")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public CategoryDto addNewCategory(@RequestBody NewCategoryDto newCategoryDto, HttpServletRequest request) {
+    public CategoryDto addNewCategory(@RequestBody @Valid NewCategoryDto newCategoryDto, HttpServletRequest request) {
 
         return adminService.addNewCategory(newCategoryDto,request);
     }
@@ -50,7 +51,7 @@ public class AdminController {
     }
 
     @PatchMapping("/categories/{catId}")
-    public CategoryDto upCategory(@RequestBody CategoryDto categoryDto,
+    public CategoryDto upCategory(@RequestBody @Valid CategoryDto categoryDto,
                                   @PathVariable Integer catId,
                                   HttpServletRequest request
     ) {
@@ -58,13 +59,13 @@ public class AdminController {
     }
 
     @GetMapping("/events")
-    public List<EventFullDto> getEvents(@RequestParam List<Integer> users,
-                                        @RequestParam List<State> states,
-                                        @RequestParam List<Integer> categories,
-                                        @RequestParam String rangeStart,
-                                        @RequestParam String rangeEnd,
-                                        @RequestParam (defaultValue = "0") int from,
-                                        @RequestParam (defaultValue = "10") int size,
+    public List<EventFullDto> getEvents(@RequestParam(defaultValue = "#{defaultData.getIdList()}") List<Integer> users,
+                                        @RequestParam(defaultValue = "#{defaultData.getStateList()}") List<State> states,
+                                        @RequestParam(defaultValue = "#{defaultData.getIdList()}") List<Integer> categories,
+                                        @RequestParam(required = false) String rangeStart,
+                                        @RequestParam(required = false) String rangeEnd,
+                                        @RequestParam(defaultValue = "0") int from,
+                                        @RequestParam(defaultValue = "10") int size,
                                         HttpServletRequest request
     ) {
 
@@ -72,7 +73,7 @@ public class AdminController {
     }
 
     @PatchMapping("/events/{eventId}")
-    public EventFullDto upEvent(@RequestBody UpdateEventAdminRequest eventAdminRequest,
+    public EventFullDto upEvent(@RequestBody @Valid UpdateEventAdminRequest eventAdminRequest,
                                 @PathVariable @Positive int eventId,
                                 HttpServletRequest request
     ) {
@@ -91,7 +92,7 @@ public class AdminController {
 
     @PostMapping("/users")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public UserDto addNewUser(@RequestBody NewUserRequest newUserRequest, HttpServletRequest request) {
+    public UserDto addNewUser(@RequestBody @Valid NewUserRequest newUserRequest, HttpServletRequest request) {
         return adminService.addNewUser(newUserRequest,request);
     }
 
@@ -103,7 +104,7 @@ public class AdminController {
 
     @PostMapping("/compilations")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public CompilationDto addNewCompilation(@RequestBody NewCompilationDto newCompilationDto, HttpServletRequest request) {
+    public CompilationDto addNewCompilation(@RequestBody @Valid NewCompilationDto newCompilationDto, HttpServletRequest request) {
         return adminService.addNewCompilation(newCompilationDto,request);
     }
 
@@ -114,7 +115,7 @@ public class AdminController {
     }
 
     @PatchMapping("/compilations/{compId}")
-    public CompilationDto upCompilation(@RequestBody UpdateCompilationRequest ucr,
+    public CompilationDto upCompilation(@RequestBody @Valid UpdateCompilationRequest ucr,
                                         @PathVariable @Positive int compId,
                                         HttpServletRequest request
     ) {
