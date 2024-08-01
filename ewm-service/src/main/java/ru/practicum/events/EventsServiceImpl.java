@@ -16,7 +16,9 @@ import ru.practicum.util.Util;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -46,66 +48,58 @@ public class EventsServiceImpl implements EventsService {
             HttpServletRequest request
     ) {
         //log.info("{} Отправлена статистика {}",EVENTS,getStatsClient().put(hit(APP,request)));
+        log.info("Входные параметры text = {}, categories = {}, paid = {}, " +
+                        "rangeStart = {}, rangeEnd = {}, onlyAvailable = {}, sort = {}, from = {}, size = {},",
+                text,categories,paid,rangeStart,rangeEnd,onlyAvailable, sort,from,size);
 
         List<Event> eventList;
-        Sort sortEvents;
-        log.info("Входные параметры text = {}, categories = {}, paid = {}, " +
-                "rangeStart = {}, rangeEnd = {}, onlyAvailable = {}, sort = {}, from = {}, size = {},",
-                text,categories,paid,rangeStart,rangeEnd,onlyAvailable, sort,from,size);
+
+        String qSort = "order by e.eventDate ";
+
+        Map<String,Object> param = new HashMap<>();
+
+        String qParticipantLimit = "";
+
+        String qPaid = ""; //учет платные или бесплатные
+
+        String qCategories = "and e.category.id in(:categories) ";
+
+        String qText = "and UPPER(e.annotation) like UPPER(:text) ";
+
+        if(onlyAvailable) { //только события у которых не исчерпан лимит запросов на участие
+            qParticipantLimit = "and (count(pr.id) < e.participantLimit or e.participantLimit = 0)";
+        }
+
+        if(paid == null) { //поиск платных и бесплатных событий
+           qPaid = "and e.paid = :paid ";
+        }
 
         //если в запросе не указан диапазон дат [rangeStart-rangeEnd],
         //то нужно выгружать события, которые произойдут позже текущей даты и времени
 
-
-
         switch (sort) {
-            case EVENT_DATE:
-                sortEvents = Sort.by(Sort.Direction.ASC,"eventDate");
-                break;
             case EVENT_VIEWS:
-                sortEvents = Sort.by(Sort.Direction.ASC,"views");
+                qSort = "order by e.views ";
                 break;
             default:
-                sortEvents = Sort.by(Sort.Direction.ASC,"eventDate");
+
         }
 
-        eventList = eventsRepository.searchE(text,categories,paid,
-                Util.getDateStart(rangeStart),Util.getDateStart(rangeEnd),Util.page(from,size,sortEvents));
+        String query = "select e from Event e " + //исчерпан лимит запросов на участие
+                "join ParticipationRequest pr on e.id = pr.event.id " +
+                "group by pr.id " +
+                "having e.eventDate >= :rangeStart " +
+                "and e.eventDate <= :rangeEnd " +
+                qText +
+                qCategories +
+                qPaid + //учет платные или бесплатные
+                qParticipantLimit +
+                qSort;
+
+        eventList = eventsRepository.searchE();
 
         log.info("ВВВВВВВВВ {}", eventList);
 
-       /* if(onlyAvailable) {//исчерпан лимит запросов на участие
-            if (paid == null) {//вернуть и платные и бесплатные
-                eventList = eventsRepository.searchEventsLimitNumberRequests(text,
-                        categories,
-                        Util.getDateStart(rangeStart),
-                        Util.getDateStart(rangeEnd),
-                        Util.page(from,size,sortEvents));
-            } else {
-                eventList = eventsRepository.searchEventsLimitNumberRequests(text,
-                        categories,
-                        paid,
-                        Util.getDateStart(rangeStart),
-                        Util.getDateStart(rangeEnd),
-                        Util.page(from,size,sortEvents));
-            }
-
-        } else { //вернуть без учета лимита
-            if (paid == null) {//вернуть и платные и бесплатные
-                eventList = eventsRepository.searchEvents(text,
-                        categories,
-                        Util.getDateStart(rangeStart),
-                        Util.getDateStart(rangeEnd),
-                        Util.page(from, size, sortEvents));
-            } else {
-                eventList = eventsRepository.searchEvents(text,
-                        categories,
-                        paid,
-                        Util.getDateStart(rangeStart),
-                        Util.getDateStart(rangeEnd),
-                        Util.page(from, size, sortEvents));
-            }
-        }*/
 
         List<EventShortDto> eventShortDtoList = eventList.stream()
                 .map(event -> eventsMapper.toEventShortDto(event))
