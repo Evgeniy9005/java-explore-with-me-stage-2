@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.NotFoundException;
 import ru.practicum.constants.SortEvents;
 import ru.practicum.events.coverter.EventsMapper;
+import ru.practicum.events.dao.CustomizedEventRepository;
 import ru.practicum.events.dao.EventsRepository;
 import ru.practicum.events.dto.EventFullDto;
 import ru.practicum.events.dto.EventShortDto;
@@ -45,48 +46,66 @@ public class EventsServiceImpl implements EventsService {
             HttpServletRequest request
     ) {
         //log.info("{} Отправлена статистика {}",EVENTS,getStatsClient().put(hit(APP,request)));
-        LocalDateTime start;
-        LocalDateTime end;
+
         List<Event> eventList;
-        Sort sortEvents = Sort.by(Sort.Direction.ASC,"id");
+        Sort sortEvents;
         log.info("Входные параметры text = {}, categories = {}, paid = {}, " +
                 "rangeStart = {}, rangeEnd = {}, onlyAvailable = {}, sort = {}, from = {}, size = {},",
                 text,categories,paid,rangeStart,rangeEnd,onlyAvailable, sort,from,size);
 
         //если в запросе не указан диапазон дат [rangeStart-rangeEnd],
         //то нужно выгружать события, которые произойдут позже текущей даты и времени
-        if (rangeStart == null) {
-            start = LocalDateTime.now();
-        } else {
-            start = Util.getDate(rangeStart);
-        }
 
-        if (rangeEnd == null) {
-            end = start.plusYears(10);
-        } else {
-            end = Util.getDate(rangeEnd);
-        }
+
 
         switch (sort) {
             case EVENT_DATE:
                 sortEvents = Sort.by(Sort.Direction.ASC,"eventDate");
+                break;
+            case EVENT_VIEWS:
+                sortEvents = Sort.by(Sort.Direction.ASC,"views");
+                break;
+            default:
+                sortEvents = Sort.by(Sort.Direction.ASC,"eventDate");
         }
 
-        if(onlyAvailable) {
-            eventList = eventsRepository.searchEventsLimitNumberRequests(text,
-                    categories,
-                    paid,
-                    start,
-                    end,
-                    Util.page(from,size,sortEvents));
-        } else {
-            eventList = eventsRepository.searchEvents(text,
-                    categories,
-                    paid,
-                    start,
-                    end,
-                    Util.page(from,size,sortEvents));
-        }
+        eventList = eventsRepository.searchE(text,categories,paid,
+                Util.getDateStart(rangeStart),Util.getDateStart(rangeEnd),Util.page(from,size,sortEvents));
+
+        log.info("ВВВВВВВВВ {}", eventList);
+
+       /* if(onlyAvailable) {//исчерпан лимит запросов на участие
+            if (paid == null) {//вернуть и платные и бесплатные
+                eventList = eventsRepository.searchEventsLimitNumberRequests(text,
+                        categories,
+                        Util.getDateStart(rangeStart),
+                        Util.getDateStart(rangeEnd),
+                        Util.page(from,size,sortEvents));
+            } else {
+                eventList = eventsRepository.searchEventsLimitNumberRequests(text,
+                        categories,
+                        paid,
+                        Util.getDateStart(rangeStart),
+                        Util.getDateStart(rangeEnd),
+                        Util.page(from,size,sortEvents));
+            }
+
+        } else { //вернуть без учета лимита
+            if (paid == null) {//вернуть и платные и бесплатные
+                eventList = eventsRepository.searchEvents(text,
+                        categories,
+                        Util.getDateStart(rangeStart),
+                        Util.getDateStart(rangeEnd),
+                        Util.page(from, size, sortEvents));
+            } else {
+                eventList = eventsRepository.searchEvents(text,
+                        categories,
+                        paid,
+                        Util.getDateStart(rangeStart),
+                        Util.getDateStart(rangeEnd),
+                        Util.page(from, size, sortEvents));
+            }
+        }*/
 
         List<EventShortDto> eventShortDtoList = eventList.stream()
                 .map(event -> eventsMapper.toEventShortDto(event))

@@ -7,6 +7,7 @@ import ru.practicum.events.model.Location;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Data
 @Builder(toBuilder = true)
@@ -15,14 +16,12 @@ public class NewEventDto {
 
     /**Краткое описание события*/
     @NotBlank
-    @Max(2000)
-    @Min(20)
+    @Size(min = 2, max = 2000)
     private final String annotation;
     /**id категории к которой относится событие*/
     private final int category;
     /**Полное описание события*/
-    @Max(7000)
-    @Min(20)
+    @Size(min = 20, max = 7000)
     private final String description;
     /**Дата и время на которые намечено событие. Дата и время указываются в формате "yyyy-MM-dd HH:mm:ss"*/
     private final String eventDate;
@@ -40,7 +39,6 @@ public class NewEventDto {
     @Builder.Default
     private final boolean requestModeration = true;
     /**Заголовок события*/
-    @Max(120)
-    @Min(3)
+    @Size(min = 3, max = 120)
     private final String title;
 }

@@ -34,7 +34,7 @@ public class EventsController {
             @RequestParam (required = false) String rangeStart, //дата и время не раньше которых должно произойти событие
             @RequestParam (required = false) String rangeEnd, //дата и время не позже которых должно произойти событие
             @RequestParam (defaultValue = "false") boolean onlyAvailable,//только события у которых не исчерпан лимит запросов на участие
-            @RequestParam (required = false) SortEvents sort,//Вариант сортировки: по дате события или по количеству просмотров
+            @RequestParam (defaultValue = "EVENT_DATE") SortEvents sort,//Вариант сортировки: по дате события или по количеству просмотров
             @RequestParam (defaultValue = "0") int from,
             @RequestParam (defaultValue = "10") int size,
             HttpServletRequest request

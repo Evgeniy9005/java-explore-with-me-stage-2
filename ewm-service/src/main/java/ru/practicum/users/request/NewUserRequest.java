@@ -10,8 +10,6 @@ import javax.validation.constraints.*;
 @ToString
 @Getter
 public class NewUserRequest {
-
-
     @Email
     @NotNull
     @Size(min = 6, max = 254)

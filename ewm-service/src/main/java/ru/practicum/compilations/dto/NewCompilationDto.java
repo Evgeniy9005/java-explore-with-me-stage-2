@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Data
@@ -16,7 +17,6 @@ public class NewCompilationDto {
     @Builder.Default
     private final boolean pinned = false;
     /**Заголовок подборки*/
-    @Max(50)
-    @Max(1)
+    @Size(min = 1, max = 50)
     private final String title;
 }
