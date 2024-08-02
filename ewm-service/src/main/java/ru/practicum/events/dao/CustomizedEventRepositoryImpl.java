@@ -24,39 +24,16 @@ public class CustomizedEventRepositoryImpl implements CustomizedEventRepository 
     public List<Event> searchE(String query,
                                Map<String,Object> param,
                                int from,
-                               int size,
-                               String sort
+                               int size
     ) {
 
-        String qParticipantLimit = "and (count(pr.id) < e.participantLimit or e.participantLimit = 0)";
-
-        String qPaid = "and e.paid = :paid "; //учет платные или бесплатные
-
-        String qCategories = "and e.category.id in(:categories) ";
-
-        String qText = "and UPPER(e.annotation) like UPPER(:text) ";
-
-
-
-        String query1 = "select e from Event e " + //исчерпан лимит запросов на участие
-                "join ParticipationRequest pr on e.id = pr.event.id " +
-                "group by pr.id " +
-                "having e.eventDate >= :rangeStart " +
-                "and e.eventDate <= :rangeEnd " +
-                qText +
-                qCategories +
-                qPaid + //учет платные или бесплатные
-                qParticipantLimit +
-                sort;
-               // "e.eventDate >= :rangeStart " +
-               // "and e.eventDate <= :rangeEnd";
-
         TypedQuery<Event> typedQuery = em.createQuery(query, Event.class);
-        param.entrySet().stream().map(e -> typedQuery.setParameter(e.getKey(),e.getValue()));
+
+       // typedQuery.setParameter("rangeStart",param.get("rangeStart"));
+        param.entrySet().stream().forEach(e -> typedQuery.setParameter(e.getKey(),e.getValue()));
 
         typedQuery.setFirstResult(from)
                 .setMaxResults(size);
-
 
         return typedQuery.getResultList();
     }

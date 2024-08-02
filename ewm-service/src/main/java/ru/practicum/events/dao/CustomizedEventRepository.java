@@ -13,6 +13,5 @@ public interface CustomizedEventRepository {
     List<Event> searchE(String query,
                         Map<String,Object> param,
                         int from,
-                        int size,
-                        String sort);
+                        int size);
 }

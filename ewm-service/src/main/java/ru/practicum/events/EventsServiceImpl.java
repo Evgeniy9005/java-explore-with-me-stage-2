@@ -49,12 +49,12 @@ public class EventsServiceImpl implements EventsService {
     ) {
         //log.info("{} Отправлена статистика {}",EVENTS,getStatsClient().put(hit(APP,request)));
         log.info("Входные параметры text = {}, categories = {}, paid = {}, " +
-                        "rangeStart = {}, rangeEnd = {}, onlyAvailable = {}, sort = {}, from = {}, size = {},",
+                        "rangeStart = {}, rangeEnd = {}, onlyAvailable = {}, sort = {}, from = {}, size = {}!",
                 text,categories,paid,rangeStart,rangeEnd,onlyAvailable, sort,from,size);
 
         List<Event> eventList;
 
-        String qSort = "order by e.eventDate ";
+        String qSort = "order by e.eventDate asc ";
 
         Map<String,Object> param = new HashMap<>();
 
@@ -62,27 +62,42 @@ public class EventsServiceImpl implements EventsService {
 
         String qPaid = ""; //учет платные или бесплатные
 
-        String qCategories = "and e.category.id in(:categories) ";
+        String qCategories = "";
 
-        String qText = "and UPPER(e.annotation) like UPPER(:text) ";
+        String qText = "";
+
+        param.put("rangeStart",Util.getDateStart(rangeStart));
+        param.put("rangeEnd",Util.getDateEnd(rangeEnd));
 
         if(onlyAvailable) { //только события у которых не исчерпан лимит запросов на участие
             qParticipantLimit = "and (count(pr.id) < e.participantLimit or e.participantLimit = 0)";
         }
 
-        if(paid == null) { //поиск платных и бесплатных событий
+        if(paid != null) { //поиск платных и бесплатных событий
            qPaid = "and e.paid = :paid ";
+           param.put("paid",paid);
         }
 
+        if(categories != null) {
+            qCategories = "and e.category.id in(:categories) ";
+            param.put("categories",categories);
+        }
+
+        if(text != null) {
+            qText = "and UPPER(e.annotation) like UPPER(:text) ";
+            param.put("text",text);
+        }
+
+        log.info("Параметры запроса для привязки {}!",param);
         //если в запросе не указан диапазон дат [rangeStart-rangeEnd],
         //то нужно выгружать события, которые произойдут позже текущей даты и времени
 
         switch (sort) {
             case EVENT_VIEWS:
-                qSort = "order by e.views ";
+                qSort = "order by e.views asc ";
                 break;
             default:
-
+                qSort = "order by e.eventDate asc ";
         }
 
         String query = "select e from Event e " + //исчерпан лимит запросов на участие
@@ -96,16 +111,18 @@ public class EventsServiceImpl implements EventsService {
                 qParticipantLimit +
                 qSort;
 
-        eventList = eventsRepository.searchE();
+        log.info("Запрос на выборку! {}",query);
 
-        log.info("ВВВВВВВВВ {}", eventList);
-
+        eventList = eventsRepository.searchE(query,param,from,size);
 
         List<EventShortDto> eventShortDtoList = eventList.stream()
                 .map(event -> eventsMapper.toEventShortDto(event))
                 .collect(Collectors.toList());
+
         log.info("Получено событий в размере {}",eventShortDtoList.size());
+
         eventShortDtoList.stream().forEach(event -> log.info(event.toString()));
+
         return eventShortDtoList;
     }
 
