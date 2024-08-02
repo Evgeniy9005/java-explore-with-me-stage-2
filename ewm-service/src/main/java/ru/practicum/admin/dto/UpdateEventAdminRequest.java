@@ -18,15 +18,12 @@ import javax.validation.constraints.Size;
 public class UpdateEventAdminRequest {
 
     /**Новая аннотация*/
-    @Max(2000)
-    @Min(20)
-    @Size(min = 20, max = )
+    @Size(min = 20, max = 2000)
     private final String annotation;
     /**Новая категория*/
     private final Integer category;
     /**Новое описание*/
-    @Max(7000)
-    @Min(20)
+    @Size(min = 20, max = 7000)
     private final String description;
     /**Новые дата и время на которые намечено событие. Дата и время указываются в формате "yyyy-MM-dd HH:mm:ss*/
     private final String eventDate;

@@ -29,7 +29,6 @@ public class CustomizedEventRepositoryImpl implements CustomizedEventRepository 
 
         TypedQuery<Event> typedQuery = em.createQuery(query, Event.class);
 
-       // typedQuery.setParameter("rangeStart",param.get("rangeStart"));
         param.entrySet().stream().forEach(e -> typedQuery.setParameter(e.getKey(),e.getValue()));
 
         typedQuery.setFirstResult(from)

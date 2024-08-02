@@ -14,6 +14,7 @@ import ru.practicum.events.model.Location;
 import ru.practicum.users.dto.UpdateEventUserRequest;
 
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,11 +59,12 @@ public class Patch {
                 .requestModeration(requestModeration == null ? updated.isRequestModeration() : requestModeration)
                 .state(state)
                 .title(title == null ? updated.getTitle() : title)
+                .publishedOn(state.equals(State.PUBLISHED) ? LocalDateTime.now() : null)
                 .build();
     }
 
     private static State getStateAdmin(String stateAction, int eventId ) {
-        switch (stateAction.toString()) {
+        switch (stateAction) {
             case "PUBLISH_EVENT": return State.PUBLISHED;
             case "REJECT_EVENT": return State.CANCELED;
            // case "SEND_TO_REVIEW": return State.PENDING;
@@ -95,8 +97,8 @@ public class Patch {
         Boolean paid = patch.getPaid();
         Boolean requestModeration = patch.getRequestModeration();
         State state = getStateUser(patch.getStateAction(),eventId);
-        if(!updated.getState().equals(State.PENDING)) {
-            throw new ConflictException("Событие можно публиковать, только если оно в состоянии ожидания публикации!");
+        if(updated.getState().equals(State.PUBLISHED) ) {
+            throw new ConflictException("Событие можно публиковать, только если оно в состоянии ожидания публикации или отменено!");
         }
 
         String title = patch.getTitle();

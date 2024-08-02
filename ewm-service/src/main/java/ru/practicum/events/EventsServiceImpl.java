@@ -6,6 +6,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.NotFoundException;
 import ru.practicum.constants.SortEvents;
+import ru.practicum.constants.State;
 import ru.practicum.events.coverter.EventsMapper;
 import ru.practicum.events.dao.CustomizedEventRepository;
 import ru.practicum.events.dao.EventsRepository;
@@ -126,10 +127,10 @@ public class EventsServiceImpl implements EventsService {
         return eventShortDtoList;
     }
 
-    @Override
+    @Override //для публичного эндпоинта можно вернуть только опубликованные события
     public EventFullDto getEvent(int id, HttpServletRequest request) {
-        Event event = eventsRepository.findById(id)
-                .orElseThrow(()-> new NotFoundException("Не найдено событие под id = {}",id));
+        Event event = eventsRepository.findByIdAndState(id, State.PUBLISHED)
+                .orElseThrow(()-> new NotFoundException("Не найдено событие под id = #",id));
 
         EventFullDto eventFullDto = eventsMapper.toEventFullDto(event);
 

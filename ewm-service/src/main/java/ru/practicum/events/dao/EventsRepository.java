@@ -28,7 +28,11 @@ public interface EventsRepository extends JpaRepository<Event,Integer> ,Customiz
 
    List<Event> findByInitiatorId(int userId,Pageable pageable);
 
-   @Query("select e from Event e where UPPER(e.annotation) like UPPER(:text) " +
+   Optional<Event> findByInitiatorIdAndId(int userId, int eventId);
+
+   Optional<Event> findByIdAndState(int eventId,State state); //для публичного эндпоинта можно вернуть только опубликованные события
+
+  /* @Query("select e from Event e where UPPER(e.annotation) like UPPER(:text) " +
            "and e.category.id in(:categories) " +
            "and e.paid = :paid " + //учет платные или бесплатные
            "and e.eventDate >= :rangeStart " +
@@ -38,9 +42,9 @@ public interface EventsRepository extends JpaRepository<Event,Integer> ,Customiz
                             @Param("paid") boolean paid,
                             @Param("rangeStart") LocalDateTime rangeStart,
                             @Param("rangeEnd") LocalDateTime rangeEnd,
-                            Pageable pageable);
+                            Pageable pageable);*/
 
-   @Query("select e from Event e " + //исчерпан лимит запросов на участие
+  /* @Query("select e from Event e " + //исчерпан лимит запросов на участие
            "join ParticipationRequest pr on e.id = pr.event.id " +
            "group by pr.id " +
            "having UPPER(e.annotation) like UPPER(:text) " +
@@ -54,10 +58,10 @@ public interface EventsRepository extends JpaRepository<Event,Integer> ,Customiz
                                @Param("paid") boolean paid,
                                @Param("rangeStart") LocalDateTime rangeStart,
                                @Param("rangeEnd") LocalDateTime rangeEnd,
-                               Pageable pageable);
+                               Pageable pageable);*/
 
 
-   @Query("select e from Event e where UPPER(e.annotation) like UPPER(:text) " + //без paid
+/*   @Query("select e from Event e where UPPER(e.annotation) like UPPER(:text) " + //без paid
            "and e.category.id in(:categories) " +
            "and e.eventDate >= :rangeStart " +
            "and e.eventDate <= :rangeEnd")
@@ -65,9 +69,9 @@ public interface EventsRepository extends JpaRepository<Event,Integer> ,Customiz
                             @Param("categories") List<Integer> categories,
                             @Param("rangeStart") LocalDateTime rangeStart,
                             @Param("rangeEnd") LocalDateTime rangeEnd,
-                            Pageable pageable);
+                            Pageable pageable);*/
 
-   @Query("select e from Event e " + //исчерпан лимит запросов на участие //без paid
+  /* @Query("select e from Event e " + //исчерпан лимит запросов на участие //без paid
            "join ParticipationRequest pr on e.id = pr.event.id " +
            "group by pr.id " +
            "having UPPER(e.annotation) like UPPER(:text) " +
@@ -79,8 +83,8 @@ public interface EventsRepository extends JpaRepository<Event,Integer> ,Customiz
                                                @Param("categories") List<Integer> categories,
                                                @Param("rangeStart") LocalDateTime rangeStart,
                                                @Param("rangeEnd") LocalDateTime rangeEnd,
-                                               Pageable pageable);
+                                               Pageable pageable);*/
 
 
-   Optional<Event> findByInitiatorIdAndId(int userId, int eventId);
+
 }
