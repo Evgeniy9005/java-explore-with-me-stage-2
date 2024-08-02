@@ -1,9 +1,9 @@
 package ru.practicum.constants;
 
 public enum StateAction {
-    /**ОПУБЛИКОВАТЬ СОБЫТИЕ*/
+    /**Oпубликовать событие*/
     PUBLISH_EVENT,
-    /**ОТКЛОНИТЬ СОБЫТИЕ*/
+    /**Отклонить событие*/
     REJECT_EVENT,
 
 }

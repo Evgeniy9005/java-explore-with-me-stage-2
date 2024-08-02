@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import ru.practicum.events.model.Location;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 
 
 /**Данные для изменения информации о событии. Если поле в запросе не указано (равно null)
@@ -19,6 +20,7 @@ public class UpdateEventAdminRequest {
     /**Новая аннотация*/
     @Max(2000)
     @Min(20)
+    @Size(min = 20, max = )
     private final String annotation;
     /**Новая категория*/
     private final Integer category;

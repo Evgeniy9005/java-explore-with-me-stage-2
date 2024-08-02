@@ -2,6 +2,7 @@ package ru.practicum.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.validation.annotation.Validated;
 import ru.practicum.ConflictException;
 import ru.practicum.admin.dto.UpdateEventAdminRequest;
 import ru.practicum.category.model.Category;
@@ -12,9 +13,12 @@ import ru.practicum.events.model.Event;
 import ru.practicum.events.model.Location;
 import ru.practicum.users.dto.UpdateEventUserRequest;
 
+import javax.validation.constraints.NotBlank;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+
 
 public class Patch {
     public static Event patchEventAdmin(Event updated,
@@ -76,8 +80,10 @@ public class Patch {
     ) {
 
         String annotation = patch.getAnnotation();
-        Integer category = patch.getCategory();
         String description = patch.getDescription();
+        Integer participantLimit = patch.getParticipantLimit();
+
+        Integer category = patch.getCategory();
         String eventDate = patch.getEventDate();
         Location location = patch.getLocation();
         Float lat = null;
@@ -87,7 +93,6 @@ public class Patch {
             lon = location.getLon();
         }
         Boolean paid = patch.getPaid();
-        Integer participantLimit = patch.getParticipantLimit();
         Boolean requestModeration = patch.getRequestModeration();
         State state = getStateUser(patch.getStateAction(),eventId);
         if(!updated.getState().equals(State.PENDING)) {

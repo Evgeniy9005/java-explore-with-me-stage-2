@@ -2,10 +2,10 @@ package ru.practicum.users.dto;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import ru.practicum.annotations.DoHeBlank;
 import ru.practicum.events.model.Location;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Size;
+
+import javax.validation.constraints.*;
 
 
 /**Данные для изменения информации о событии. Если поле в запросе не указано (равно null)
@@ -14,11 +14,13 @@ import javax.validation.constraints.Size;
 @RequiredArgsConstructor
 public class UpdateEventUserRequest {
     /**Новая аннотация*/
+    @DoHeBlank(message = "Аннотация не должна быть пустая!")
     @Size(min = 20, max = 2000)
     private final String annotation;
     /**Новая категория*/
     private final Integer category;
     /**Новое описание*/
+    @DoHeBlank(message = "Описание не должна быть пустым!")
     @Size(min = 20, max = 7000)
     private final String description;
     /**Новые дата и время на которые намечено событие. Дата и время указываются в формате "yyyy-MM-dd HH:mm:ss"*/
@@ -28,6 +30,7 @@ public class UpdateEventUserRequest {
     /**Новое значение флага о платности мероприятия*/
     private final Boolean paid;
     /**Новый лимит пользователей*/
+    @Positive
     private final Integer participantLimit;
     /**Нужна ли пре-модерация заявок на участие*/
     private final Boolean requestModeration;

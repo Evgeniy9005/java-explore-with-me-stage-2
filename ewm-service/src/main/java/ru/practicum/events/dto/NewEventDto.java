@@ -4,10 +4,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import ru.practicum.events.model.Location;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+
+import javax.validation.constraints.*;
 
 @Data
 @Builder(toBuilder = true)
@@ -21,6 +19,7 @@ public class NewEventDto {
     /**id категории к которой относится событие*/
     private final int category;
     /**Полное описание события*/
+    @NotBlank
     @Size(min = 20, max = 7000)
     private final String description;
     /**Дата и время на которые намечено событие. Дата и время указываются в формате "yyyy-MM-dd HH:mm:ss"*/
@@ -31,6 +30,7 @@ public class NewEventDto {
     @Builder.Default
     private final boolean paid = false;
     /**Ограничение на количество участников. Значение 0 - означает отсутствие ограничения*/
+    @Positive
     @Builder.Default
     private final int participantLimit = 0;
     /**Нужна ли пре-модерация заявок на участие. Если true,

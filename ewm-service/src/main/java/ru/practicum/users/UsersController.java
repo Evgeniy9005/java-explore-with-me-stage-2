@@ -14,6 +14,7 @@ import ru.practicum.users.request.dto.ParticipationRequestDto;
 import ru.practicum.users.dto.UpdateEventUserRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
 import java.util.List;
@@ -43,7 +44,7 @@ public class UsersController {
 
     @PostMapping("/users/{userId}/events") //Добавление нового события пользователем
     @ResponseStatus(code = HttpStatus.CREATED)
-    public EventFullDto addEventUser(@RequestBody NewEventDto newEventDto,
+    public EventFullDto addEventUser(@RequestBody @Valid NewEventDto newEventDto,
                                      @PathVariable @Positive int userId,
                                      HttpServletRequest request
     ) {
@@ -62,7 +63,7 @@ public class UsersController {
     }
 
     @PatchMapping("/users/{userId}/events/{eventId}") //Изменение события добавленного текущим пользователем
-    public EventFullDto upEventAddedByCurrentUser(@RequestBody UpdateEventUserRequest eventUserRequest,
+    public EventFullDto upEventAddedByCurrentUser(@RequestBody @Valid UpdateEventUserRequest eventUserRequest,
                                                   @PathVariable @Positive int userId,
                                                   @PathVariable @Positive int eventId,
                                                   HttpServletRequest request
@@ -82,7 +83,7 @@ public class UsersController {
 
     @PatchMapping("/users/{userId}/events/{eventId}/requests") //Изменение статуса (подтверждена, отменена) заявок на участие в событии текущего пользователя
     public EventRequestStatusUpdateResult upStatusApplicationsParticipationEventCurrentUser(
-            @RequestBody EventRequestStatusUpdateRequest updateRequest,
+            @RequestBody @Valid EventRequestStatusUpdateRequest updateRequest,
             @PathVariable @Positive int userId,
             @PathVariable @Positive int eventId,
             HttpServletRequest request
