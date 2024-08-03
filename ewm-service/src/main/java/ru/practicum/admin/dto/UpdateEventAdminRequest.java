@@ -4,6 +4,7 @@ package ru.practicum.admin.dto;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import ru.practicum.annotations.DoDateArrived;
 import ru.practicum.events.model.Location;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -26,6 +27,7 @@ public class UpdateEventAdminRequest {
     @Size(min = 20, max = 7000)
     private final String description;
     /**Новые дата и время на которые намечено событие. Дата и время указываются в формате "yyyy-MM-dd HH:mm:ss*/
+    @DoDateArrived
     private final String eventDate;
     /**Широта и долгота места проведения события*/
     private final Location location;

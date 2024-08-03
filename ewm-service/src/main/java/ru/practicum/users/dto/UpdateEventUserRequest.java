@@ -2,6 +2,7 @@ package ru.practicum.users.dto;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import ru.practicum.annotations.DoDateArrived;
 import ru.practicum.annotations.DoHeBlank;
 import ru.practicum.events.model.Location;
 
@@ -24,6 +25,7 @@ public class UpdateEventUserRequest {
     @Size(min = 20, max = 7000)
     private final String description;
     /**Новые дата и время на которые намечено событие. Дата и время указываются в формате "yyyy-MM-dd HH:mm:ss"*/
+    @DoDateArrived
     private final String eventDate;
     /**Широта и долгота места проведения события*/
     private final Location location;

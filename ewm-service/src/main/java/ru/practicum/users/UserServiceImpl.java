@@ -225,9 +225,9 @@ public class UserServiceImpl implements UserService {
         log.info("Получение количества подтвержденных заявок {} на событие {}!",countParticipant,eventId);
 
         for (ParticipationRequest pr : prList) {
-            if (pr.getStatus().equals(StatusRequest.CONFIRMED)) {
+            if (status.equals(StatusRequest.REJECTED) && pr.getStatus().equals(StatusRequest.CONFIRMED)) {
                 throw new ConflictException(
-                        "Попытка отменить уже принятую заявку # на участие в событии!",pr.getId()
+                        "Попытка отменить уже принятую заявку # на участие в событии #!",pr.getId(),eventId
                 );
             }
 
@@ -247,7 +247,7 @@ public class UserServiceImpl implements UserService {
             countParticipant += 1;
 
             if (status.equals(StatusRequest.CONFIRMED)) {
-                newPrRejectedList.add(pr.toBuilder().status(status).build());
+                newPrConfirmedList.add(pr.toBuilder().status(status).build());
             } else if (status.equals(StatusRequest.REJECTED)) {
                 newPrRejectedList.add(pr.toBuilder().status(status).build());
             } else {
@@ -353,10 +353,10 @@ public class UserServiceImpl implements UserService {
 
         //если для события отключена пре-модерация запросов на участие, то запрос должен автоматически
         // перейти в состояние подтвержденного
-        if (moderation) { //true - заявка подтверждается инициатором
-            status = StatusRequest.PENDING;
-        } else { // false - заявка на событие подтверждается автоматически
+        if (moderation) { //true - заявка на событие подтверждается автоматически
             status = StatusRequest.CONFIRMED;
+        } else { //false - заявка подтверждается инициатором
+            status = StatusRequest.PENDING;
         }
 
         ParticipationRequest pr = ParticipationRequest.builder()

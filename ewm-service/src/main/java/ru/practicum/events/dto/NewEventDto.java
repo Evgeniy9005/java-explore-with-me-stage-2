@@ -3,6 +3,7 @@ package ru.practicum.events.dto;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import ru.practicum.annotations.DoDateArrived;
 import ru.practicum.events.model.Location;
 
 import javax.validation.constraints.*;
@@ -23,6 +24,8 @@ public class NewEventDto {
     @Size(min = 20, max = 7000)
     private final String description;
     /**Дата и время на которые намечено событие. Дата и время указываются в формате "yyyy-MM-dd HH:mm:ss"*/
+    @DoDateArrived
+    @NotBlank
     private final String eventDate;
     /**Широта и долгота места проведения события*/
     private final Location location;
@@ -30,7 +33,7 @@ public class NewEventDto {
     @Builder.Default
     private final boolean paid = false;
     /**Ограничение на количество участников. Значение 0 - означает отсутствие ограничения*/
-    @Positive
+    @PositiveOrZero
     @Builder.Default
     private final int participantLimit = 0;
     /**Нужна ли пре-модерация заявок на участие. Если true,

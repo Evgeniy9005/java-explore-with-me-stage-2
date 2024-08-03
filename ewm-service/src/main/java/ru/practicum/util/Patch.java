@@ -2,7 +2,6 @@ package ru.practicum.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.validation.annotation.Validated;
 import ru.practicum.ConflictException;
 import ru.practicum.admin.dto.UpdateEventAdminRequest;
 import ru.practicum.category.model.Category;
@@ -13,12 +12,8 @@ import ru.practicum.events.model.Event;
 import ru.practicum.events.model.Location;
 import ru.practicum.users.dto.UpdateEventUserRequest;
 
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 
 
 public class Patch {
@@ -42,7 +37,7 @@ public class Patch {
         Boolean paid = patch.getPaid();
         Integer participantLimit = patch.getParticipantLimit();
         Boolean requestModeration = patch.getRequestModeration();
-        State state = getStateAdmin(patch.getStateAction(),eventId);
+        State state = getState(patch.getStateAction(),updated.getState(),eventId);
         if(!updated.getState().equals(State.PENDING)) {
             throw new ConflictException("Событие можно публиковать, только если оно в состоянии ожидания публикации!");
         }
@@ -63,15 +58,23 @@ public class Patch {
                 .build();
     }
 
-    private static State getStateAdmin(String stateAction, int eventId ) {
-        switch (stateAction) {
-            case "PUBLISH_EVENT": return State.PUBLISHED;
-            case "REJECT_EVENT": return State.CANCELED;
-           // case "SEND_TO_REVIEW": return State.PENDING;
-           // case "CANCEL_REVIEW": return State.PENDING;
-            default:
-                throw  new ConflictException("Не удается определить значение # " +
-                        "статуса, на изменение статуса события #",stateAction,eventId);
+    private static State getState(String stateAction, State eventState, int eventId ) {
+        if(stateAction != null) {
+            switch (stateAction) {
+                case "PUBLISH_EVENT":
+                    return State.PUBLISHED;
+                case "REJECT_EVENT":
+                    return State.CANCELED;
+                case "SEND_TO_REVIEW":
+                    return State.PENDING;
+                case "CANCEL_REVIEW":
+                    return State.CANCELED;
+                default:
+                    throw new ConflictException("Не удается определить значение # " +
+                            "статуса, на изменение статуса события #", stateAction, eventId);
+            }
+        } else {
+            return eventState;
         }
     }
 
@@ -96,7 +99,7 @@ public class Patch {
         }
         Boolean paid = patch.getPaid();
         Boolean requestModeration = patch.getRequestModeration();
-        State state = getStateUser(patch.getStateAction(),eventId);
+        State state = getState(patch.getStateAction(),updated.getState(),eventId);
         if(updated.getState().equals(State.PUBLISHED) ) {
             throw new ConflictException("Событие можно публиковать, только если оно в состоянии ожидания публикации или отменено!");
         }
@@ -147,7 +150,7 @@ public class Patch {
     return result;
     }
 
-    private static State getStateUser(String stateAction, int eventId ) {
+    /*private static State getStateUser(String stateAction, int eventId ) {
         switch (stateAction.toString()) {
             case "SEND_TO_REVIEW": return State.PENDING;
             case "CANCEL_REVIEW": return State.CANCELED;
@@ -155,6 +158,6 @@ public class Patch {
                 throw  new ConflictException("Не удается определить значение # " +
                         "статуса, на изменение статуса события #",stateAction,eventId);
         }
-    }
+    }*/
 
 }

@@ -41,7 +41,7 @@ public class ErrorHandler {
         return ApiError.builder()
                 /*.errors(Arrays.stream(e.getStackTrace()).map(stackTraceElement -> stackTraceElement.toString())
                         .collect(Collectors.toList()))*/
-                .status(HttpStatus.NOT_FOUND.toString())
+                .status(HttpStatus.BAD_REQUEST.toString())
                 .reason(e.toString())
                 .message(e.getMessage())
                 .timestamp(LocalDateTime.now().format(Util.getFormatter()))
