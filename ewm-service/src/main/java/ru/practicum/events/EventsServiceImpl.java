@@ -15,12 +15,17 @@ import ru.practicum.events.dto.EventShortDto;
 import ru.practicum.events.model.Event;
 import ru.practicum.util.Util;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static ru.practicum.stats.Stats.getStatsClient;
+import static ru.practicum.stats.Stats.hit;
 
 @Slf4j
 @Service
@@ -34,6 +39,8 @@ public class EventsServiceImpl implements EventsService {
     private final EventsRepository eventsRepository;
 
     private final EventsMapper eventsMapper;
+
+    private Map<Integer,List<String>> address = new HashMap<>();
 
     @Override
     public List<EventShortDto> getEvents(
@@ -129,14 +136,41 @@ public class EventsServiceImpl implements EventsService {
 
     @Override //для публичного эндпоинта можно вернуть только опубликованные события
     public EventFullDto getEvent(int id, HttpServletRequest request) {
+        String ip = request.getRemoteAddr();
+
         Event event = eventsRepository.findByIdAndState(id, State.PUBLISHED)
                 .orElseThrow(()-> new NotFoundException("Не найдено событие под id = #",id));
 
-        EventFullDto eventFullDto = eventsMapper.toEventFullDto(event);
+        int views = event.getViews();
+
+        if (searchIP(id,ip)) {
+            views += 1;
+        }
+
+        Event newEvent = eventsRepository.save(event.toBuilder().views(views).build());
+
+        EventFullDto eventFullDto = eventsMapper.toEventFullDto(newEvent);
 
         log.info("Получено событие {}",eventFullDto);
 
        // log.info("{} Отправлена статистика {}",EVENTS,getStatsClient().put(hit(APP,request)));
         return eventFullDto;
+    }
+
+    private boolean searchIP(int eventId, String ip) {
+        List<String> ipList = new ArrayList<>();
+
+        if(address.containsKey(eventId)) {//если событие просматривалось
+            if(address.get(eventId).contains(ip)) {//с этого ip был запрос на просмотр
+                return false;
+            } else { //если не было, то запомнить
+                address.get(eventId).add(ip);
+                return true;
+            }
+        } else {//если событие не просматривалось
+            ipList.add(ip);
+            address.put(eventId,ipList);
+            return true;
+        }
     }
 }

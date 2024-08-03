@@ -198,9 +198,10 @@ public class UserServiceImpl implements UserService {
         List<ParticipationRequest> newPrUnitedList = new ArrayList<>();
         EventIdAndParticipantId ep;
         int pl;
-        long countParticipant = 0;
+        Long countParticipant = 0L;
         boolean flag = false;
         String exceptionMessage = null;
+        Event event;
 
         List<ParticipationRequest> prList = requestRepository.findAllById(requestIds);
         log.info("Получены затребованные заявки {} !",requestIds);
@@ -210,12 +211,14 @@ public class UserServiceImpl implements UserService {
                     "Пустой список заявок при (подтверждена, отменена) заявок на участие в событии # ",eventId
             );
         } else {
-            pl = prList.get(0).getEvent().getParticipantLimit();
+            event = prList.get(0).getEvent();
+            pl = event.getParticipantLimit();
         }
 
         ep = requestRepository.numberEventsAndNumberParticipants(eventId,StatusRequest.CONFIRMED);
 
         if (ep != null) {//значит подтвержденные заявки есть
+
             countParticipant = ep.getCountParticipant();
         }
 
@@ -235,6 +238,7 @@ public class UserServiceImpl implements UserService {
                     exceptionMessage = String.format(
                             "Попытка принять заявку на участие в событии, когда лимит %s уже достигнут!",pl);
                 }
+
                 //если лимит превышен, то отменить все следующие заявки
                 newPrRejectedList.add(pr.toBuilder().status(StatusRequest.REJECTED).build());
 
@@ -262,8 +266,11 @@ public class UserServiceImpl implements UserService {
             newPrUnitedList.addAll(newPrRejectedList);
             log.info("Объединенный список заявок для сохранения в количестве {}!", newPrUnitedList.size());
 
+            Event newEvent = eventsRepository.save(event.toBuilder().confirmedRequests(countParticipant.intValue()).build());
+            log.info("Обновлено значение confirmedRequests = {} у события {} ",newEvent.getConfirmedRequests(),eventId);
+
             List<ParticipationRequest> newPrList = requestRepository.saveAll(newPrUnitedList);
-            log.info("Получены заявки на события после обновления в количестве {}!",newPrList.size());
+            log.info("Обновленные заявки на события после обновления в количестве {}!",newPrList.size());
 
             newPrList.stream()
                     .peek(pr -> {
@@ -276,7 +283,6 @@ public class UserServiceImpl implements UserService {
                                 }
 
                     });
-
 
         if(flag) {
              throw new ConflictException(exceptionMessage);

@@ -3,18 +3,18 @@ package ru.practicum.annotations;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-
-import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@Target({ FIELD })
+@Target({PARAMETER})
 @Retention(RUNTIME)
-@Constraint(validatedBy = DoHeBlankValidator.class)
+@Constraint(validatedBy = IdsValidateValidator.class)
 @Documented
-public @interface DoHeBlank {
-    String message() default "{Значение не должно содержать только пробелы!}";
+public @interface IdsValidate {
+    String message() default "{Один из идентификаторов равен 0!}";
 
     Class<?>[] groups() default { };
 

@@ -11,6 +11,7 @@ import ru.practicum.ConflictException;
 import ru.practicum.NotFoundException;
 import ru.practicum.util.Util;
 
+import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -32,6 +33,20 @@ public class ErrorHandler {
                 .build();
     }
 
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handle(final ConstraintViolationException e) {
+        log.debug("Получен статус 404 Not found {}",e.getMessage(),e);
+        return ApiError.builder()
+                /*.errors(Arrays.stream(e.getStackTrace()).map(stackTraceElement -> stackTraceElement.toString())
+                        .collect(Collectors.toList()))*/
+                .status(HttpStatus.NOT_FOUND.toString())
+                .reason(e.toString())
+                .message(e.getMessage())
+                .timestamp(LocalDateTime.now().format(Util.getFormatter()))
+                .build();
+    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)

@@ -3,7 +3,7 @@ package ru.practicum.annotations;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class Validator implements ConstraintValidator<DoHeBlank, String> {
+public class DoHeBlankValidator implements ConstraintValidator<DoHeBlank, String> {
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
