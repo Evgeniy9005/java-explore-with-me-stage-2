@@ -34,6 +34,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static ru.practicum.constants.StatusRequest.CONFIRMED;
+import static ru.practicum.constants.StatusRequest.REJECTED;
 import static ru.practicum.util.Patch.patchEventUser;
 
 
@@ -198,7 +200,6 @@ public class UserServiceImpl implements UserService {
         List<ParticipationRequest> newPrUnitedList = new ArrayList<>();
         EventIdAndParticipantId ep;
         int pl;
-        Long countParticipant = 0L;
         boolean flag = false;
         String exceptionMessage = null;
         Event event;
@@ -215,23 +216,40 @@ public class UserServiceImpl implements UserService {
             pl = event.getParticipantLimit();
         }
 
-        ep = requestRepository.numberEventsAndNumberParticipants(eventId,StatusRequest.CONFIRMED);
+        //вернуть количество принятых заявок
+        int confirmedRequests = event.getConfirmedRequests();
 
-        if (ep != null) {//значит подтвержденные заявки есть
+       // ep = requestRepository.numberEventsAndNumberParticipants(eventId,StatusRequest.CONFIRMED);
 
-            countParticipant = ep.getCountParticipant();
+        /*if (ep != null) {//значит подтвержденные заявки есть
+            confirmedRequests = ep.getCountParticipant();
+        }*/
+
+        //надо сделать проверку заполнен ли лимит на участие сравнив лимит с подтвержденными
+
+        //если заполнен лимит на участие в событии, то отменить все последующие заявки
+
+        log.info("Полученное количество подтвержденных заявок {} на событие {}!",confirmedRequests,eventId);
+
+        if (pl != 0 && confirmedRequests == pl) {//значит нужно отменить все непринятые заявки
+
         }
 
-        log.info("Получение количества подтвержденных заявок {} на событие {}!",countParticipant,eventId);
+        if (status.equals(CONFIRMED))//если на подтверждение
+         prList.stream()
+                 .filter(pr -> !pr.getStatus().equals(CONFIRMED)) //убрать уже принятые заявки
+
+        //надо исключить те заявки которые уже были подтверждены
 
         for (ParticipationRequest pr : prList) {
-            if (status.equals(StatusRequest.REJECTED) && pr.getStatus().equals(StatusRequest.CONFIRMED)) {
+            //при отмене заявок должен проверятся статус на отмену и что заявка была принята
+            if (status.equals(REJECTED) && pr.getStatus().equals(CONFIRMED)) {
                 throw new ConflictException(
                         "Попытка отменить уже принятую заявку # на участие в событии #!",pr.getId(),eventId
                 );
             }
 
-            if (pl != 0 && pl <= countParticipant) {
+            if (pl != 0 && pl <= confirmedRequests) {//говорит о том что лимит заполнен
                 flag = true;
 
                 if (exceptionMessage == null) {
@@ -240,15 +258,15 @@ public class UserServiceImpl implements UserService {
                 }
 
                 //если лимит превышен, то отменить все следующие заявки
-                newPrRejectedList.add(pr.toBuilder().status(StatusRequest.REJECTED).build());
+                newPrRejectedList.add(pr.toBuilder().status(REJECTED).build());
 
             }
 
-            countParticipant += 1;
+            confirmedRequests += 1;
 
-            if (status.equals(StatusRequest.CONFIRMED)) {
+            if (status.equals(CONFIRMED)) {
                 newPrConfirmedList.add(pr.toBuilder().status(status).build());
-            } else if (status.equals(StatusRequest.REJECTED)) {
+            } else if (status.equals(REJECTED)) {
                 newPrRejectedList.add(pr.toBuilder().status(status).build());
             } else {
                 throw new ConflictException("Ошибка обновления заявок на участие в событиях! " +
@@ -258,15 +276,15 @@ public class UserServiceImpl implements UserService {
         }
 
             log.info("Подготовлены для обновления заявки с измененным статусом на {} в количестве {}!",
-                    StatusRequest.REJECTED,newPrRejectedList.size());
+                    REJECTED,newPrRejectedList.size());
             log.info("Подготовлены для обновления заявки с измененным статусом на {} в количестве {}!",
-                    StatusRequest.CONFIRMED,newPrConfirmedList.size());
+                    CONFIRMED,newPrConfirmedList.size());
 
             newPrUnitedList.addAll(newPrConfirmedList);
             newPrUnitedList.addAll(newPrRejectedList);
             log.info("Объединенный список заявок для сохранения в количестве {}!", newPrUnitedList.size());
 
-            Event newEvent = eventsRepository.save(event.toBuilder().confirmedRequests(countParticipant.intValue()).build());
+            Event newEvent = eventsRepository.save(event.toBuilder().confirmedRequests(confirmedRequests).build());
             log.info("Обновлено значение confirmedRequests = {} у события {} ",newEvent.getConfirmedRequests(),eventId);
 
             List<ParticipationRequest> newPrList = requestRepository.saveAll(newPrUnitedList);
@@ -331,7 +349,7 @@ public class UserServiceImpl implements UserService {
 
         moderation = event.isRequestModeration();
 
-        numberParticipants = requestRepository.numberParticipants(eventId,StatusRequest.CONFIRMED);
+        numberParticipants = requestRepository.numberParticipants(eventId, CONFIRMED);
 
         log.info("Количество участников = {}, лимит участников = {}, событие {} ",
                 numberParticipants,participantLimit,eventId);
@@ -352,9 +370,9 @@ public class UserServiceImpl implements UserService {
         }
 
         //если для события отключена пре-модерация запросов на участие, то запрос должен автоматически
-        // перейти в состояние подтвержденного
+        //перейти в состояние подтвержденного
         if (moderation) { //true - заявка на событие подтверждается автоматически
-            status = StatusRequest.CONFIRMED;
+            status = CONFIRMED;
         } else { //false - заявка подтверждается инициатором
             status = StatusRequest.PENDING;
         }
