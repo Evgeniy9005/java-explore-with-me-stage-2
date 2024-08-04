@@ -5,7 +5,7 @@ public enum StatusRequest {
     PENDING,
 
     /**Отмененный*/
-    CANCELED,
+   /* CANCELED,*/
 
     /**Подтвержденный*/
     CONFIRMED,
