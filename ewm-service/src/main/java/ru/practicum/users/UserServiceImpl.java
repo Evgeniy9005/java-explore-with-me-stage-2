@@ -315,7 +315,7 @@ public class UserServiceImpl implements UserService {
                                                                          int eventId,
                                                                          HttpServletRequest request
     ) {
-        StatusRequest status;
+        StatusRequest status = StatusRequest.PENDING;
 
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(()-> new NotFoundException(
@@ -348,9 +348,12 @@ public class UserServiceImpl implements UserService {
 
         //если для события отключена пре-модерация запросов на участие, то запрос должен автоматически
         //перейти в состояние подтвержденного
-        if (moderation) {// true- заявка подтверждается инициатором
+
+       /* if (moderation) {// moderation = true- заявка подтверждается инициатором
             status = StatusRequest.PENDING;
-        } else {// false - заявка на событие подтверждается автоматически
+        }*/
+
+        if (!moderation || participantLimit == 0) {// moderation = false - заявка на событие подтверждается автоматически
             status = StatusRequest.CONFIRMED;
             event = eventsRepository.save(event.toBuilder().confirmedRequests(event.getConfirmedRequests() + 1).build());
             log.info(
