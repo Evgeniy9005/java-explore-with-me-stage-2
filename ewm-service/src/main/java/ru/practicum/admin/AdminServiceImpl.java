@@ -38,6 +38,7 @@ import ru.practicum.util.Patch;
 import ru.practicum.util.Util;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -241,8 +242,13 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public CompilationDto addNewCompilation(NewCompilationDto newCompilationDto,HttpServletRequest request) {
         log.info("Входные параметры при добавлении подборки событий newCompilationDto = {}",newCompilationDto);
+        List<Event> eventList = new ArrayList<>();
         List<Integer> eventIds = newCompilationDto.getEvents();
-        List<Event> eventList = eventsRepository.findAllById(eventIds);
+
+        if (eventIds != null) {
+            eventList = eventsRepository.findAllById(eventIds);
+        }
+
         String json;
         try {
             json = objectMapper.writeValueAsString(eventIds);
@@ -257,9 +263,7 @@ public class AdminServiceImpl implements AdminService {
                 .build();
 
         Compilation newCompilation = compilationRepository.save(compilation);
-        /*List<EventShortDto> eventShortDtoList = eventList.stream()
-                .map(event -> eventsMapper.toEventShortDto(event))
-                .collect(Collectors.toList());*/
+
         CompilationDto compilationDto = compilationMapper.toCompilationDto(newCompilation,eventList);
         log.info("Добавлена подборка событий {}",compilationDto);
         return compilationDto;

@@ -65,6 +65,7 @@ public class CompilationServiceImpl implements CompilationService {
             return compilationDtoList;
         }
 
+
        compilationList.stream().forEach(c -> {
            List<Integer> list = parsingJsonIdEvents(c.getEvents());
            compilationListMap.put(c, list);
@@ -114,7 +115,11 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     private List<Integer> parsingJsonIdEvents(String json){
-        List<Integer> eventIds;
+        List<Integer> eventIds = new ArrayList<>();
+
+        if(json == null){
+            return eventIds;
+        }
 
         log.info("json для десериализации = {}",json);
 
