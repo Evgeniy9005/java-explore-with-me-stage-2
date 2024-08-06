@@ -249,7 +249,7 @@ public class AdminServiceImpl implements AdminService {
             eventList = eventsRepository.findAllById(eventIds);
         }
 
-        String json;
+        String json = "[]";
         try {
             json = objectMapper.writeValueAsString(eventIds);
         } catch (JsonProcessingException e) {

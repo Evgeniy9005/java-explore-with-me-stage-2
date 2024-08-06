@@ -68,12 +68,12 @@ public class CompilationServiceImpl implements CompilationService {
 
        compilationList.stream().forEach(c -> {
            List<Integer> list = parsingJsonIdEvents(c.getEvents());
-           compilationListMap.put(c, list);
+         //  compilationListMap.put(c, list);
            eventIds.addAll(list);
            log.info("Список id событий {} на подборку {}", eventIds,c.getId());
        });
 
-        log.info("Получение compilationListMap со значениями в размере {}",compilationListMap.size());
+       // log.info("Получение compilationListMap со значениями в размере {}",compilationListMap.size());
         // List<Integer> integerList = compilationListMap.values().stream().flatMap(List::stream).collect(Collectors.toList());
 
         List<Event> eventList = eventsRepository.findAllById(eventIds);
