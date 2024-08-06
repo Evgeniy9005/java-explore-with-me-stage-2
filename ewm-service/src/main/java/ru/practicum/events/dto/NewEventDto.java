@@ -15,7 +15,7 @@ public class NewEventDto {
 
     /**Краткое описание события*/
     @NotBlank
-    @Size(min = 2, max = 2000)
+    @Size(min = 20, max = 2000)
     private final String annotation;
     /**id категории к которой относится событие*/
     private final int category;
@@ -40,7 +40,7 @@ public class NewEventDto {
      то все заявки будут ожидать подтверждения инициатором события.
      Если false - то будут подтверждаться автоматически*/
     @Builder.Default
-    private final boolean requestModeration = true;
+    private final Boolean requestModeration = true;
     /**Заголовок события*/
     @Size(min = 3, max = 120)
     private final String title;

@@ -25,7 +25,7 @@ class NewEventDtoTest {
 
     @Test
     void isRequestModeration() {
-        assertFalse(newEventDtoList.get(0).isRequestModeration());
+        assertFalse(newEventDtoList.get(0).getRequestModeration());
     }
 
     @Test

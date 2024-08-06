@@ -78,7 +78,8 @@ public class EventsServiceImpl implements EventsService {
         param.put("rangeEnd",Util.getDateEnd(rangeEnd));
 
         if(onlyAvailable) { //только события у которых не исчерпан лимит запросов на участие
-            qParticipantLimit = "and (count(pr.id) < e.participantLimit or e.participantLimit = 0)";
+          //  qParticipantLimit = "and (count(pr.id) < e.participantLimit or e.participantLimit = 0)";
+            qParticipantLimit = "and e.confirmedRequests < e.participantLimit or e.participantLimit = 0) ";
         }
 
         if(paid != null) { //поиск платных и бесплатных событий
@@ -109,6 +110,15 @@ public class EventsServiceImpl implements EventsService {
         }
 
         String query = "select e from Event e " + //исчерпан лимит запросов на участие
+                "where e.eventDate >= :rangeStart " +
+                "and e.eventDate <= :rangeEnd " +
+                qText +
+                qCategories +
+                qPaid + //учет платные или бесплатные
+                qParticipantLimit +
+                qSort;
+
+        /*String query = "select e from Event e " + //исчерпан лимит запросов на участие
                 "join ParticipationRequest pr on e.id = pr.event.id " +
                 "group by pr.id " +
                 "having e.eventDate >= :rangeStart " +
@@ -117,7 +127,7 @@ public class EventsServiceImpl implements EventsService {
                 qCategories +
                 qPaid + //учет платные или бесплатные
                 qParticipantLimit +
-                qSort;
+                qSort;*/
 
         log.info("Запрос на выборку! {}",query);
 

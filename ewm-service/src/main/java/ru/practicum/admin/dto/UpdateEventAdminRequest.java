@@ -40,5 +40,6 @@ public class UpdateEventAdminRequest {
     /**Новое состояние события*/
     private final String stateAction;
     /**Новый заголовок*/
+    @Size(min = 3,max = 120)
     private final String title;
 }

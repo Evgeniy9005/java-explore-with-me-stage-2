@@ -109,7 +109,7 @@ public class Util {
     public static LocalDateTime getDateStart(String date) {
 
         if(date == null || date.isBlank()) {
-            startDate = LocalDateTime.now();
+            startDate = LocalDateTime.now().minusSeconds(1);
             log.info("Дата начала выборки по умолчанию {}", startDate);
         } else {
             startDate = LocalDateTime.parse(date,formatter);

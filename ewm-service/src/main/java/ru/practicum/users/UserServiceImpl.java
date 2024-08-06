@@ -88,6 +88,8 @@ public class UserServiceImpl implements UserService {
        // log.info("Отправлена статистика {}",getStatsClient().put(hit(APP,request)));
         Location location = newEventDto.getLocation();
 
+        boolean moderation = newEventDto.getRequestModeration() == null ? true : newEventDto.getRequestModeration();
+
         Event event = Event.builder()
                 .annotation(newEventDto.getAnnotation())
                 .category(categoryRepository.findById(newEventDto.getCategory())
@@ -98,7 +100,7 @@ public class UserServiceImpl implements UserService {
                 .lon(location.getLon())
                 .paid(newEventDto.isPaid())
                 .participantLimit(newEventDto.getParticipantLimit())
-                .requestModeration(newEventDto.isRequestModeration())
+                .requestModeration(moderation)
                 .title(newEventDto.getTitle())
                 .initiator(userRepository.findById(userId)
                         .orElseThrow(() -> new NotFoundException("Не найден пользователь при добавлении события")))
@@ -109,7 +111,9 @@ public class UserServiceImpl implements UserService {
         log.info( "Создано событие {}",newEvent);
 
         EventFullDto eventFullDto = eventsMapper.toEventFullDto(event);
+
         log.info("Конвертированное событие {}",eventFullDto);
+
         return eventFullDto;
     }
 

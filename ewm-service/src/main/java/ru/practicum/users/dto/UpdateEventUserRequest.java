@@ -32,12 +32,13 @@ public class UpdateEventUserRequest {
     /**Новое значение флага о платности мероприятия*/
     private final Boolean paid;
     /**Новый лимит пользователей*/
-    @Positive
+    @PositiveOrZero
     private final Integer participantLimit;
     /**Нужна ли пре-модерация заявок на участие*/
     private final Boolean requestModeration;
     /**Изменение состояния события*/
     private final String stateAction;
     /**Новый заголовок*/
+    @Size(min = 3, max = 120)
     private final String title;
 }

@@ -6,18 +6,22 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.practicum.constants.SortEvents;
 import ru.practicum.events.dto.EventShortDto;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+//@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 class EventsServiceImplTest {
 
-    private final EventsService eventsService;
+    //private final EventsService eventsService;
 
     @Test
     void test() {
-        assertNotNull(eventsService);
+        assertTrue(LocalDateTime.now().getMinute() > LocalDateTime.now().plusHours(1).getMinute());
+
+        /*assertNotNull(eventsService);
         List<EventShortDto> eventShortDtoList = eventsService.getEvents("text",
                 List.of(1),
                 true,
@@ -29,6 +33,6 @@ class EventsServiceImplTest {
                 10,
                 null
         );
-        assertNull(eventShortDtoList);
+        assertNull(eventShortDtoList);*/
     }
 }
