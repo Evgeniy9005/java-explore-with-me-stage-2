@@ -244,16 +244,15 @@ public class AdminServiceImpl implements AdminService {
         log.info("Входные параметры при добавлении подборки событий newCompilationDto = {}",newCompilationDto);
         List<Event> eventList = new ArrayList<>();
         List<Integer> eventIds = newCompilationDto.getEvents();
+        String json = "[]";
 
         if (eventIds != null) {
             eventList = eventsRepository.findAllById(eventIds);
-        }
-
-        String json = "[]";
-        try {
-            json = objectMapper.writeValueAsString(eventIds);
-        } catch (JsonProcessingException e) {
-            throw new ConflictException("Ошибка преобразования данных #",eventIds);
+            try {
+                json = objectMapper.writeValueAsString(eventIds);
+            } catch (JsonProcessingException e) {
+                throw new ConflictException("Ошибка преобразования данных #",eventIds);
+            }
         }
 
         Compilation compilation = Compilation.builder()
