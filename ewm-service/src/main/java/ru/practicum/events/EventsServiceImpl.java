@@ -55,7 +55,7 @@ public class EventsServiceImpl implements EventsService {
             int size,
             HttpServletRequest request
     ) {
-       // log.info("{} Отправлена статистика {}",EVENTS,getStatsClient().put(hit(APP,request)));
+        log.info("{} Отправлена статистика {}",EVENTS,getStatsClient().put(hit(APP,request)));
 
         log.info("Входные параметры text = {}, categories = {}, paid = {}, " +
                         "rangeStart = {}, rangeEnd = {}, onlyAvailable = {}, sort = {}, from = {}, size = {}!",
@@ -137,7 +137,7 @@ public class EventsServiceImpl implements EventsService {
 
     @Override //для публичного эндпоинта можно вернуть только опубликованные события
     public EventFullDto getEvent(int id, HttpServletRequest request) {
-       // log.info("{} Отправлена статистика {}",EVENTS,getStatsClient().put(hit(APP,request)));
+        log.info("{} Отправлена статистика {}",EVENTS,getStatsClient().put(hit(APP,request)));
         String ip = request.getRemoteAddr();
 
         Event event = eventsRepository.findByIdAndState(id, State.PUBLISHED)

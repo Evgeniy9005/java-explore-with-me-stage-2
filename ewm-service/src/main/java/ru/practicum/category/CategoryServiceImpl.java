@@ -13,6 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.practicum.stats.Stats.getStatsClient;
+import static ru.practicum.stats.Stats.hit;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -27,8 +30,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDto> getCategories( int from, int size, HttpServletRequest request) {
+        log.info("{} отправлена статистика {}",CATEGORY,getStatsClient().put(hit(APP,request)));
         log.info("{} запрос на получение списка категорий от {} до {}",CATEGORY,from,size);
-        // log.info("{} отправлена статистика {}",CATEGORY,getStatsClient().put(hit(APP,request)));
         List<CategoryDto> categoryDtoList = categoryRepository.findAll(Util.page(from,size))
                 .stream().map(category -> categoryMapper.toCategoryDto(category)).collect(Collectors.toList());
         log.info("Получен список категорий {}",categoryDtoList);
@@ -37,8 +40,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto getCategory(Integer catId, HttpServletRequest request) {
+        log.info("{} отправлена статистика {}",CATEGORY,getStatsClient().put(hit(APP,request)));
         log.info("{} запрос на получение категории по id {}",CATEGORY, catId);
-        //  log.info("{} отправлена статистика {}",CATEGORY,getStatsClient().put(hit(APP,request)));
         Category category = categoryRepository.findById(catId)
                 .orElseThrow(()-> new NotFoundException("Не найдена категория под id = #",catId));
         log.info("Получена категория {}",category);
