@@ -24,10 +24,6 @@ import java.util.List;
 @Validated
 public class EventsController {
 
-    private static final String EVENTS = "Events: ";
-
-    private static final String APP = "ewm-main-service";
-
     private final EventsService eventsService;
 
     @GetMapping("/events")

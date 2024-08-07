@@ -10,8 +10,10 @@ import ru.practicum.events.EventsService;
 import ru.practicum.events.dto.EventShortDto;
 import ru.practicum.users.UserService;
 import ru.practicum.users.request.model.ParticipationRequest;
+import ru.practicum.util.Util;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,14 +47,14 @@ class ServiceEWMTest {
         List<EventShortDto>  eventShortDtoList = eventsService.getEvents("text",
                 List.of(1),
                 true,
-                "rangeStart",
-                "rangeEnd",
+                LocalDateTime.now().format(Util.getFormatter()),
+                LocalDateTime.now().plusYears(1).format(Util.getFormatter()),
                 false,
                 SortEvents.EVENT_DATE,
                 0,
                 10,
                 null
                 );
-        assertNull(eventShortDtoList);
+        assertNotNull(eventShortDtoList);
     }
 }

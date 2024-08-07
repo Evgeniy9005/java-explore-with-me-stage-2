@@ -393,7 +393,7 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException("Пользователь # не создавал запрос # на событие!",userId,requestId);
         }
 
-        ParticipationRequest newPr = requestRepository.save(pr.toBuilder().status(StatusRequest.REJECTED).build());
+        ParticipationRequest newPr = requestRepository.save(pr.toBuilder().status(StatusRequest.CANCELED).build());
 
         ParticipationRequestDto newPrDto = requestMapper.toDto(newPr);
 

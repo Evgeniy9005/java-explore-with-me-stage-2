@@ -150,14 +150,4 @@ public class Patch {
     return result;
     }
 
-    /*private static State getStateUser(String stateAction, int eventId ) {
-        switch (stateAction.toString()) {
-            case "SEND_TO_REVIEW": return State.PENDING;
-            case "CANCEL_REVIEW": return State.CANCELED;
-            default:
-                throw  new ConflictException("Не удается определить значение # " +
-                        "статуса, на изменение статуса события #",stateAction,eventId);
-        }
-    }*/
-
 }

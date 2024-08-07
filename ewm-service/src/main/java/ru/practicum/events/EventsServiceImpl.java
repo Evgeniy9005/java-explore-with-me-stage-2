@@ -55,7 +55,8 @@ public class EventsServiceImpl implements EventsService {
             int size,
             HttpServletRequest request
     ) {
-        //log.info("{} Отправлена статистика {}",EVENTS,getStatsClient().put(hit(APP,request)));
+       // log.info("{} Отправлена статистика {}",EVENTS,getStatsClient().put(hit(APP,request)));
+
         log.info("Входные параметры text = {}, categories = {}, paid = {}, " +
                         "rangeStart = {}, rangeEnd = {}, onlyAvailable = {}, sort = {}, from = {}, size = {}!",
                 text,categories,paid,rangeStart,rangeEnd,onlyAvailable, sort,from,size);
@@ -98,6 +99,7 @@ public class EventsServiceImpl implements EventsService {
         }
 
         log.info("Параметры запроса для привязки {}!",param);
+
         //если в запросе не указан диапазон дат [rangeStart-rangeEnd],
         //то нужно выгружать события, которые произойдут позже текущей даты и времени
 
@@ -118,17 +120,6 @@ public class EventsServiceImpl implements EventsService {
                 qParticipantLimit +
                 qSort;
 
-        /*String query = "select e from Event e " + //исчерпан лимит запросов на участие
-                "join ParticipationRequest pr on e.id = pr.event.id " +
-                "group by pr.id " +
-                "having e.eventDate >= :rangeStart " +
-                "and e.eventDate <= :rangeEnd " +
-                qText +
-                qCategories +
-                qPaid + //учет платные или бесплатные
-                qParticipantLimit +
-                qSort;*/
-
         log.info("Запрос на выборку! {}",query);
 
         eventList = eventsRepository.searchE(query,param,from,size);
@@ -146,6 +137,7 @@ public class EventsServiceImpl implements EventsService {
 
     @Override //для публичного эндпоинта можно вернуть только опубликованные события
     public EventFullDto getEvent(int id, HttpServletRequest request) {
+       // log.info("{} Отправлена статистика {}",EVENTS,getStatsClient().put(hit(APP,request)));
         String ip = request.getRemoteAddr();
 
         Event event = eventsRepository.findByIdAndState(id, State.PUBLISHED)
@@ -163,7 +155,6 @@ public class EventsServiceImpl implements EventsService {
 
         log.info("Получено событие {}",eventFullDto);
 
-       // log.info("{} Отправлена статистика {}",EVENTS,getStatsClient().put(hit(APP,request)));
         return eventFullDto;
     }
 

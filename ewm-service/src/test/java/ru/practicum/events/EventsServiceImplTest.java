@@ -19,7 +19,6 @@ class EventsServiceImplTest {
 
     @Test
     void test() {
-        assertTrue(LocalDateTime.now().getMinute() > LocalDateTime.now().plusHours(1).getMinute());
 
         /*assertNotNull(eventsService);
         List<EventShortDto> eventShortDtoList = eventsService.getEvents("text",

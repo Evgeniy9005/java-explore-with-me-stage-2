@@ -1,27 +1,20 @@
 package ru.practicum.category;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.category.dto.CategoryDto;
-import ru.practicum.category.dto.NewCategoryDto;
 import javax.servlet.http.HttpServletRequest;
-
+import javax.validation.constraints.Positive;
 import java.util.List;
 
-import static ru.practicum.stats.Stats.getStatsClient;
-import static ru.practicum.stats.Stats.hit;
 
-@Slf4j
+
+@Validated
 @RestController
 @RequestMapping("/categories")
 @RequiredArgsConstructor
-@Validated
 public class CategoryController {
-    private static final String CATEGORY = "Category: ";
-
-    private static final String APP = "ewm-main-service";
 
     private final CategoryService categoryService;
 
@@ -34,9 +27,7 @@ public class CategoryController {
     }
 
     @GetMapping("{catId}")
-    public CategoryDto getCategory(@PathVariable Integer catId,
-                                           HttpServletRequest request
-    ) {
+    public CategoryDto getCategory(@PathVariable @Positive int catId, HttpServletRequest request) {
 
         return categoryService.getCategory(catId,request);
     }

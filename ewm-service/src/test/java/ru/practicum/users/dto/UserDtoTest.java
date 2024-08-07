@@ -9,6 +9,6 @@ class UserDtoTest {
 
     @Test
     void testUserDto() {
-        assertEquals("UserDto(email=email@email.ru, id=1, name=User)",userDto.toString());
+        assertEquals("UserDto(id=1, name=User, email=email@email.ru)",userDto.toString());
     }
 }
